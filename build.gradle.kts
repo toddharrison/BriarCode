@@ -4,7 +4,6 @@ plugins {
     id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
     id("net.minecrell.plugin-yml.bukkit") version "0.5.2" apply false // Generates plugin.yml
     id("info.solidsoft.pitest") version "1.9.11" apply true // Pitest
-    id("maven-publish") apply false // Maven publish
 }
 
 repositories {
