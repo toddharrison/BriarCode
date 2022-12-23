@@ -21,7 +21,9 @@ jobs:
           arguments: build
       - uses: actions/upload-artifact@v3
         with:
-          name: Package
           path: |
-            kotlin/build/libs/kotlin-[1-9.]*.jar
-            fakeblock/build/libs/*.jar
+            kotlin/build/libs/kotlin-[1-9\.]*.jar
+      - uses: actions/upload-artifact@v3
+        with:
+          path: |
+            fake-block/build/libs/*.jar
