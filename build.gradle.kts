@@ -15,6 +15,7 @@ subprojects {
     apply(plugin = "xyz.jpenilla.run-paper")
     apply(plugin = "net.minecrell.plugin-yml.bukkit")
     apply(plugin = "info.solidsoft.pitest")
+    apply(plugin = "maven-publish")
 
     group = "com.briarcraft"
 
@@ -73,5 +74,23 @@ subprojects {
         verbose.set(false)
         threads.set(8)
         junit5PluginVersion.set("1.1.0")
+    }
+
+    configure<PublishingExtension> {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/toddharrison/BriarCode")
+                credentials {
+                    username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                    password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+                }
+            }
+        }
+        publications {
+            register<MavenPublication>("gpr") {
+                from(components["java"])
+            }
+        }
     }
 }

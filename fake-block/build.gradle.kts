@@ -26,7 +26,7 @@ dependencies {
 }
 
 task("apiJar", type = Jar::class) {
-    archiveFileName.set("fake-block-${apiVersion}.jar")
+    archiveFileName.set("fake-block-api-${apiVersion}.jar")
     from(sourceSets.main.get().output) {
         include("com/briarcraft/fakeblock/api/**")
     }
