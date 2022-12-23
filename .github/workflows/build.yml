@@ -22,4 +22,6 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Package
-          path: /**/build/libs/*.jar
+          path: |
+            kotlin/build/libs/kotlin-[1-9.]*.jar
+            fakeblock/build/libs/*.jar
