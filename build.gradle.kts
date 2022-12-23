@@ -4,6 +4,7 @@ plugins {
     id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
     id("net.minecrell.plugin-yml.bukkit") version "0.5.2" apply false // Generates plugin.yml
     id("info.solidsoft.pitest") version "1.9.11" apply true // Pitest
+    id("maven-publish") apply false // Maven publish
 }
 
 repositories {
@@ -15,6 +16,7 @@ subprojects {
     apply(plugin = "xyz.jpenilla.run-paper")
     apply(plugin = "net.minecrell.plugin-yml.bukkit")
     apply(plugin = "info.solidsoft.pitest")
+    apply(plugin = "maven-publish")
 
     group = "com.briarcraft"
 
@@ -73,5 +75,23 @@ subprojects {
         verbose.set(false)
         threads.set(8)
         junit5PluginVersion.set("1.1.0")
+    }
+
+    configure<PublishingExtension> {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/toddharrison/BriarCode")
+                credentials {
+                    username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                    password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+                }
+            }
+        }
+        publications {
+            register<MavenPublication>("gpr") {
+                from(components["java"])
+            }
+        }
     }
 }
