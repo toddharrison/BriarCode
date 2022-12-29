@@ -1,6 +1,7 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder
 
 plugins {
+    kotlin("jvm") version "1.7.21"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.21"
     id("com.github.johnrengelman.shadow") version "7.1.2" // shadowJar
     id("io.papermc.paperweight.userdev") version "1.3.5" // paperweight
@@ -9,8 +10,23 @@ plugins {
 version = "1.7.21.1"
 description = ""
 
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+val paperVersion: String by rootProject.extra
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 dependencies {
-    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+    api(platform("org.jetbrains.kotlin:kotlin-bom"))
+    paperDevBundle(paperVersion)
 
     library("org.jetbrains.kotlin:kotlin-stdlib")
     library("org.jetbrains.kotlin:kotlin-reflect")
@@ -23,6 +39,9 @@ dependencies {
     library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.8.0")
 
     implementation("xyz.jpenilla:reflection-remapper:0.1.0-SNAPSHOT")
+
+    testImplementation(kotlin("test"))
+    testImplementation("org.mockito.kotlin", "mockito-kotlin", "4.0.0")
 }
 
 tasks {
@@ -37,6 +56,9 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
+    test {
+        useJUnitPlatform()
+    }
 }
 
 bukkit {
@@ -46,4 +68,40 @@ bukkit {
     apiVersion = "1.19"
     prefix = project.name
     authors = listOf("toddharrison")
+}
+
+configure<PublishingExtension> {
+    publications {
+        register<MavenPublication>("plugin") {
+//            from(components["kotlin"])
+            artifact(tasks.reobfJar)
+            includeDependencies(pom)
+        }
+    }
+}
+
+
+
+fun includeDependencies(pom: MavenPom) {
+    pom.withXml {
+        val dependencies = asNode().appendNode("dependencies")
+        configurations.implementation.get().allDependencies
+            .filter { it.name != "reflection-remapper" }
+            .filter { it.name != "kotlin-bom" }
+            .forEach {
+                val depNode = dependencies.appendNode("dependency")
+                depNode.appendNode("groupId", it.group)
+                depNode.appendNode("artifactId", it.name)
+                depNode.appendNode("version", it.version)
+                depNode.appendNode("scope", "runtime")
+            }
+        configurations.library.get().allDependencies
+            .forEach {
+                val depNode = dependencies.appendNode("dependency")
+                depNode.appendNode("groupId", it.group)
+                depNode.appendNode("artifactId", it.name)
+                depNode.appendNode("version", it.version)
+                depNode.appendNode("scope", "runtime")
+            }
+    }
 }
