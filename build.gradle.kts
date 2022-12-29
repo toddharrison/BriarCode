@@ -79,7 +79,7 @@ subprojects {
     configure<PublishingExtension> {
         publications {
             register<MavenPublication>("gpr") {
-                from(components["java"])
+                from(components["kotlin"])
             }
         }
         repositories {
@@ -90,15 +90,6 @@ subprojects {
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")
                 }
-            }
-        }
-    }
-
-    sourceSets {
-        main {
-            java {
-                exclude("**/*-dev.jar")
-                exclude("**/*-dev-all.jar")
             }
         }
     }
