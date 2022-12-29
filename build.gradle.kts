@@ -77,21 +77,28 @@ subprojects {
     }
 
     configure<PublishingExtension> {
+        publications {
+            register<MavenPublication>("gpr") {
+                from(components["java"])
+            }
+        }
         repositories {
             maven {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/toddharrison/BriarCode")
                 credentials {
-//                     username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-//                     password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")
                 }
             }
         }
-        publications {
-            register<MavenPublication>("gpr") {
-                from(components["java"])
+    }
+
+    sourceSets {
+        main {
+            java {
+                exclude("**/*-dev.jar")
+                exclude("**/*-dev-all.jar")
             }
         }
     }
