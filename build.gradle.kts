@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.7.21"
+//    kotlin("jvm") version "1.7.21"
+    java
     id("io.papermc.paperweight.userdev") version "1.3.5" apply false
     id("xyz.jpenilla.run-paper") version "1.0.6" // Adds runServer and runMojangMappedServer tasks for testing
     id("net.minecrell.plugin-yml.bukkit") version "0.5.2" apply false // Generates plugin.yml
@@ -10,8 +11,11 @@ repositories {
     gradlePluginPortal()
 }
 
+val paperVersion by extra { "1.19.2-R0.1-SNAPSHOT" }
+
 subprojects {
-    apply(plugin = "kotlin")
+//    apply(plugin = "kotlin")
+    apply(plugin = "java")
     apply(plugin = "xyz.jpenilla.run-paper")
     apply(plugin = "net.minecrell.plugin-yml.bukkit")
     apply(plugin = "info.solidsoft.pitest")
@@ -19,11 +23,11 @@ subprojects {
 
     group = "com.briarcraft"
 
-    kotlin {
-        jvmToolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        }
-    }
+//    kotlin {
+//        jvmToolchain {
+//            languageVersion.set(JavaLanguageVersion.of(17))
+//        }
+//    }
 
     repositories {
         mavenCentral()
@@ -39,22 +43,9 @@ subprojects {
     }
 
     dependencies {
-        api(platform("org.jetbrains.kotlin:kotlin-bom"))
-        api("io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT")
+//        api("io.papermc.paper:paper-api:$paperVersion")
+        implementation("io.papermc.paper:paper-api:$paperVersion")
 
-        implementation("org.jetbrains.kotlin:kotlin-stdlib")
-        implementation("org.jetbrains.kotlin:kotlin-reflect")
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
-
-        implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.8.0")
-        implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.9.0")
-
-        // Test
-        testImplementation(kotlin("test"))
-        testImplementation("org.mockito.kotlin", "mockito-kotlin", "4.0.0")
         testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.0.0")
     }
 
@@ -62,11 +53,8 @@ subprojects {
         compileJava {
             options.release.set(17)
         }
-        test {
-            useJUnitPlatform()
-        }
         runServer {
-            minecraftVersion("1.19.2")
+            minecraftVersion(paperVersion.split("-")[0])
         }
     }
 
@@ -76,29 +64,19 @@ subprojects {
         junit5PluginVersion.set("1.1.0")
     }
 
-    val rpmFile = layout.buildDirectory.file("libs/*.jar")
-    val rpmArtifact = artifacts.add("archives", rpmFile.get().asFile) {
-        type = "jar"
-//        builtBy("rpm")
-    }
-
     configure<PublishingExtension> {
-        publications {
-            register<MavenPublication>("gpr") {
-                artifact(rpmArtifact)
-//                from(components["java"])
-//                from(components["kotlin"])
-            }
-        }
         repositories {
             maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/toddharrison/BriarCode")
-                credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
-                }
+                url = uri("$buildDir/local-repository")
             }
+//            maven {
+//                name = "GitHubPackages"
+//                url = uri("https://maven.pkg.github.com/toddharrison/BriarCode")
+//                credentials {
+//                    username = System.getenv("GITHUB_ACTOR")
+//                    password = System.getenv("GITHUB_TOKEN")
+//                }
+//            }
         }
     }
 }

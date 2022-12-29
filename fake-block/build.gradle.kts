@@ -3,7 +3,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 version = "1.0.0-SNAPSHOT"
 description = ""
 
-val apiVersion = "1.0"
+val apiVersion = "1.0-SNAPSHOT"
 
 dependencies {
     // Lombok
@@ -25,10 +25,13 @@ dependencies {
     testImplementation("org.mockito", "mockito-junit-jupiter", "4.6.1")
 }
 
-task("apiJar", type = Jar::class) {
-    archiveFileName.set("fake-block-api-${apiVersion}.jar")
-    from(sourceSets.main.get().output) {
-        include("com/briarcraft/fakeblock/api/**")
+tasks {
+    task<Jar>("apiJar") {
+        archiveVersion.set(apiVersion)
+        archiveClassifier.set("api")
+        from(sourceSets.main.get().output) {
+            include("com/briarcraft/fakeblock/api/**")
+        }
     }
 }
 
@@ -58,5 +61,35 @@ bukkit {
             description = "Allows you to run the fakeblock commands"
             default = BukkitPluginDescription.Permission.Default.OP
         }
+    }
+}
+
+configure<PublishingExtension> {
+    publications {
+        register<MavenPublication>("plugin") {
+            from(components["java"])
+        }
+        register<MavenPublication>("api") {
+            version = apiVersion
+            artifact(tasks["apiJar"])
+            includeDependencies(pom)
+        }
+    }
+}
+
+
+
+fun includeDependencies(pom: MavenPom) {
+    pom.withXml {
+        val dependencies = asNode().appendNode("dependencies")
+        configurations.implementation.get().allDependencies
+//            .filter { !it.name.contains("kotlin") }
+            .forEach {
+                val depNode = dependencies.appendNode("dependency")
+                depNode.appendNode("groupId", it.group)
+                depNode.appendNode("artifactId", it.name)
+                depNode.appendNode("version", it.version)
+                depNode.appendNode("scope", "runtime")
+            }
     }
 }
