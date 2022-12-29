@@ -19,8 +19,8 @@ dependencies {
     library("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     library("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
 
-    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.6.0")
-    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.6.0")
+    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.8.0")
+    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.8.0")
 
     implementation("xyz.jpenilla:reflection-remapper:0.1.0-SNAPSHOT")
 }
