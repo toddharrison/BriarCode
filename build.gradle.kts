@@ -49,8 +49,8 @@ subprojects {
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
 
-        implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.4.0")
-        implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.4.0")
+        implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.8.0")
+        implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.9.0")
 
         // Test
         testImplementation(kotlin("test"))
@@ -76,10 +76,18 @@ subprojects {
         junit5PluginVersion.set("1.1.0")
     }
 
+    val rpmFile = layout.buildDirectory.file("libs/*.jar")
+    val rpmArtifact = artifacts.add("archives", rpmFile.get().asFile) {
+        type = "jar"
+//        builtBy("rpm")
+    }
+
     configure<PublishingExtension> {
         publications {
             register<MavenPublication>("gpr") {
-                from(components["java"])
+                artifact(rpmArtifact)
+//                from(components["java"])
+//                from(components["kotlin"])
             }
         }
         repositories {
@@ -90,15 +98,6 @@ subprojects {
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")
                 }
-            }
-        }
-    }
-
-    sourceSets {
-        main {
-            java {
-                exclude("**/*-dev.jar")
-                exclude("**/*-dev-all.jar")
             }
         }
     }
