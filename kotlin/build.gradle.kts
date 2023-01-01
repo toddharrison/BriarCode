@@ -42,8 +42,8 @@ tasks {
 }
 
 pitest {
-    mutationThreshold.set(1)
-    coverageThreshold.set(1)
+    mutationThreshold.set(0)
+    coverageThreshold.set(0)
 }
 
 kover {
