@@ -13,6 +13,7 @@ description = ""
 
 dependencies {
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+    compileOnly("xyz.jpenilla:reflection-remapper:0.1.0-SNAPSHOT")
 
     library("org.jetbrains.kotlin:kotlin-stdlib")
     library("org.jetbrains.kotlin:kotlin-reflect")
@@ -23,8 +24,6 @@ dependencies {
 
     library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.6.0")
     library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.6.0")
-
-    implementation("xyz.jpenilla:reflection-remapper:0.1.0-SNAPSHOT")
 }
 
 tasks {
@@ -63,4 +62,18 @@ bukkit {
     description = "Kotlin dependency plugin"
     load = PluginLoadOrder.STARTUP
     main = "com.briarcraft.kotlin.KotlinPlugin"
+}
+
+val javaComponent = components["java"] as AdhocComponentWithVariants
+javaComponent.withVariantsFromConfiguration(configurations["apiElements"]) { skip() }
+javaComponent.withVariantsFromConfiguration(configurations["runtimeElements"]) { skip() }
+javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) { skip() }
+javaComponent.addVariantsFromConfiguration(configurations["reobf"]) {
+    mapToMavenScope("runtime")
+    dependencies {
+        configurations.library.get().allDependencies
+            .forEach {
+                add("reobf", "${it.group}:${it.name}:${it.version}")
+            }
+    }
 }

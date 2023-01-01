@@ -19,6 +19,7 @@ dependencies {
 
 tasks {
     shadowJar {
+        archiveClassifier.set("")
         dependencies {
             include(dependency(":fake-block-api"))
         }
