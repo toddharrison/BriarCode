@@ -16,15 +16,15 @@ jobs:
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           arguments: build
-      - uses: actions/upload-artifact@v3
-        with:
-          name: briar-plugins
-          path: |
-            kotlin/build/libs/kotlin-*.jar
-            !kotlin/build/libs/kotlin-*-dev.jar
-            !kotlin/build/libs/kotlin-*-dev-all.jar
-      - uses: actions/upload-artifact@v3
-        with:
-          name: briar-plugins
-          path: |
-            fake-block/build/libs/*.jar
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: briar-plugins
+#          path: |
+#            kotlin/build/libs/kotlin-*.jar
+#            !kotlin/build/libs/kotlin-*-dev.jar
+#            !kotlin/build/libs/kotlin-*-dev-all.jar
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: briar-plugins
+#          path: |
+#            fake-block/build/libs/*.jar
