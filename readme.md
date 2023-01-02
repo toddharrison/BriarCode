@@ -11,11 +11,11 @@ convenience.
 ## Plugin Releases
 Download the latest plugin releases below, or use the [releases](../../releases) link at right to download specific versions.
 * [kotlin-1.7.21.1](../../releases/download/kotlin-1.7.21.1/kotlin-1.7.21.1.jar)
-* fake-block
+* [fake-block](../../releases/download/fake-block-1.0.0/fake-block-1.0.0.jar)
 * [fake-block-api-1.0](../../releases/download/fake-block-api-1.0/fake-block-api-1.0.jar)
 
 ## Latest Builds
 Under [actions](../../actions) above you can download snapshot builds of plugins, if available, in the artifacts section of each build.
 
 ## Developer
-TBD
+Look in [buildSrc](../../tree/main/buildSrc) for some of my development notes. Usage of plugin APIs will be included in their own readmes.
