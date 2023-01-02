@@ -28,6 +28,7 @@ public class GroupServiceImpl implements GroupService {
     private final @Nonnull GroupConfig groupConfig;
     private final @Nonnull Map<String, Group> groups;
     private final @Nonnull Map<World, Map<ChunkPosition, Map<String, List<Chunklet>>>> chunklets = new HashMap<>();
+    private final @Nonnull Map<World, Map<BlockPosition, Map<String, FakeBlock>>> fakeBlocks = new HashMap<>();
 
     public GroupServiceImpl(
             final @Nonnull PluginManager pluginManager,
@@ -43,6 +44,7 @@ public class GroupServiceImpl implements GroupService {
         this.groups = new HashMap<>(groups);
 
         this.groups.values().forEach(this::updateChunklets);
+        this.groups.values().forEach(this::updateFakeBlocks);
     }
 
     @Override
@@ -73,6 +75,7 @@ public class GroupServiceImpl implements GroupService {
         if (!event.isCancelled()) {
             groups.put(groupName, group);
             setChunklets(group);
+            setFakeBlocks(group);
             groupConfig.save(getGroups());
             return true;
         } else return false;
@@ -90,6 +93,7 @@ public class GroupServiceImpl implements GroupService {
                 val added = groupBlocks.addAll(fakeBlocks);
                 if (added) {
                     updateChunklets(group);
+                    updateFakeBlocks(group);
                     groupConfig.save(getGroups());
                 }
                 return added;
@@ -111,6 +115,7 @@ public class GroupServiceImpl implements GroupService {
                 val removed = groupBlocks.removeAll(removedBlocks);
                 if (removed) {
                     updateChunklets(group);
+                    updateFakeBlocks(group);
                     groupConfig.save(getGroups());
                 }
                 return removedBlocks;
@@ -134,6 +139,7 @@ public class GroupServiceImpl implements GroupService {
                         .forEach(playerId -> playerGroupService.hideGroup(groupName, playerId));
 
                 deleteChunklets(groupName);
+                deleteFakeBlocks(groupName);
                 val removedGroup = groups.remove(groupName);
                 groupConfig.save(getGroups());
                 return removedGroup.getFakeBlocks();
@@ -147,6 +153,18 @@ public class GroupServiceImpl implements GroupService {
         if (group != null) {
             return Set.copyOf(group.getFakeBlocks());
         } else return Set.of();
+    }
+
+    @Override
+    public @Nonnull Map<String, FakeBlock> getBlocks(final @Nonnull Set<String> groups, final @Nonnull World world, final @Nonnull BlockPosition blockPosition) {
+        val worldBlocks = fakeBlocks.get(world);
+        if (worldBlocks != null) {
+            val blocks = worldBlocks.get(blockPosition);
+            if (blocks != null) {
+                return blocks;
+            }
+        }
+        return Map.of();
     }
 
     @Override
@@ -197,5 +215,26 @@ public class GroupServiceImpl implements GroupService {
 
     private void deleteChunklets(final @Nonnull String groupName) {
         chunklets.forEach((world, worldGroups) -> worldGroups.forEach((chunkPosition, chunkGroups) -> chunkGroups.remove(groupName)));
+    }
+
+    private void updateFakeBlocks(final @Nonnull Group group) {
+        deleteFakeBlocks(group.getName());
+        setFakeBlocks(group);
+    }
+
+    private void setFakeBlocks(final @Nonnull Group group) {
+        val world = group.getWorld();
+        val worldPositions = fakeBlocks.getOrDefault(world, new HashMap<>());
+        group.getFakeBlocks().forEach(fakeBlock -> {
+            val position = fakeBlock.getPosition();
+            val groups = worldPositions.getOrDefault(position, new HashMap<>());
+            groups.put(group.getName(), fakeBlock);
+            worldPositions.put(fakeBlock.getPosition(), groups);
+        });
+        fakeBlocks.put(world, worldPositions);
+    }
+
+    private void deleteFakeBlocks(final @Nonnull String groupName) {
+        fakeBlocks.forEach((world, worldPositions) -> worldPositions.forEach((groups, fakeBlocks) -> fakeBlocks.remove(groupName)));
     }
 }

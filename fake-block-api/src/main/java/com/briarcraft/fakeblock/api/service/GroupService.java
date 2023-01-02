@@ -9,6 +9,7 @@ import org.bukkit.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface GroupService {
@@ -21,6 +22,7 @@ public interface GroupService {
     @Nonnull Set<FakeBlock> delete(@Nonnull String groupName);
 
     @Nonnull Set<FakeBlock> getBlocks(@Nonnull String groupName);
+    @Nonnull Map<String, FakeBlock> getBlocks(@Nonnull Set<String> groups, @Nonnull World world, @Nonnull BlockPosition blockPosition);
     @Nonnull List<Chunklet> getChunklets(@Nonnull Set<String> groups, @Nonnull World world, @Nonnull ChunkPosition chunkPosition);
     @Nonnull List<Chunklet> getChunklets(@Nonnull String groupName, @Nonnull World world);
 }
