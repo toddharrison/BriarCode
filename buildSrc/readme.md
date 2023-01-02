@@ -11,7 +11,7 @@ provide templates and common configuration across all the plugins. The template 
 * briarcode.paper: Paper Plugins
   * target Java 17
   * configures common repositories
-  * pitest mutation test coverages
+  * pitest mutation test coverage
 * briarcode.plugin: Base Plugins
   * inherits from `paper` and `publish`
   * run-paper server execution (`./gradlew :plugin:runServer`)
