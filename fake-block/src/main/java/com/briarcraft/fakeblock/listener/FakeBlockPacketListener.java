@@ -37,7 +37,13 @@ public class FakeBlockPacketListener extends PacketAdapter {
         if (packetType == PacketType.Play.Server.BLOCK_CHANGE) {
             val position = packet.getBlockPositionModifier().read(0);
             if (position != null) {
-//                packet.getBlockData().write(0, blockData);
+                val groups = playerGroupService.getVisibleGroups(player);
+                groupService.getBlocks(groups, world, position).values().stream()
+                        .findFirst()
+                        .ifPresent(block -> {
+                            val wrappedBlockData = protocolLibService.wrapBlockData(block.getBlockData());
+                            packet.getBlockData().write(0, wrappedBlockData);
+                        });
             }
         } else if (packetType == PacketType.Play.Server.MAP_CHUNK) {
             val ints = packet.getIntegers();

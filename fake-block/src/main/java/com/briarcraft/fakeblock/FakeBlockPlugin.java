@@ -23,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public class FakeBlockPlugin extends JavaPlugin {
     static {
         ConfigurationSerialization.registerClass(Group.class, "Group");
@@ -61,19 +62,20 @@ public class FakeBlockPlugin extends JavaPlugin {
         servicesManager.register(PlayerGroupService.class, playerGroupService, this, ServicePriority.Normal);
 
         // Register all listeners
-        pluginManager.registerEvents(new FlyingKickListener(), this);
+//        pluginManager.registerEvents(new FlyingKickListener(), this);
         val packetAdapter = new FakeBlockPacketListener(this, protocolLibService, groupService, playerGroupService);
         protocolManager.addPacketListener(packetAdapter);
 
         // Register all commands
-        getCommand(FakeBlockCommand.NAME).setExecutor(new FakeBlockCommand(worldEditService, groupService, playerGroupService));
+        val command = getCommand(FakeBlockCommand.NAME);
+        if (command != null) command.setExecutor(new FakeBlockCommand(worldEditService, groupService, playerGroupService));
     }
 
     @Override
     public void onDisable() {
         // Unregister all commands
         val command = getServer().getPluginCommand(FakeBlockCommand.NAME);
-        command.setExecutor(null);
+        if (command != null) command.setExecutor(null);
 
         // Unregister all listeners
         val protocolManager = ProtocolLibrary.getProtocolManager();

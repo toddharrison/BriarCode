@@ -6,7 +6,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0"
 description = ""
 
 dependencies {

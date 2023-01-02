@@ -19,6 +19,10 @@ import javax.annotation.Nonnull;
 public class ProtocolLibService {
     private final @Nonnull ProtocolManager protocolManager;
 
+    public @Nonnull WrappedBlockData wrapBlockData(final @Nonnull BlockData blockData) {
+        return WrappedBlockData.createData(blockData);
+    }
+
     public @Nonnull PacketContainer createPacket(final @Nonnull Location location, final @Nonnull BlockData blockData) {
         val packet = protocolManager.createPacket(PacketType.Play.Server.BLOCK_CHANGE);
         val blockPosition = new BlockPosition(location.toVector());
