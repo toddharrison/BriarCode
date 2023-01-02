@@ -23,9 +23,5 @@ jobs:
             kotlin/build/libs/kotlin-*.jar
             !kotlin/build/libs/kotlin-*-dev.jar
             !kotlin/build/libs/kotlin-*-dev-all.jar
-      - uses: actions/upload-artifact@v3
-        with:
-          name: briar-plugins
-          path: |
             fake-block/build/libs/fake-block-*.jar
             fake-block-api/build/libs/fake-block-api-*.jar
