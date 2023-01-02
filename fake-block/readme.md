@@ -11,6 +11,7 @@ Currently tested on:
 * [Installation](#installation)
 * [Getting Started](#getting-started)
 * [Commands](#commands)
+* [Permissions](#permissions)
 * [Suggestions and Support](#suggestions-and-support)
 * [Future Features](#future-features)
 
@@ -74,6 +75,10 @@ also be used in the console.
 ### `/fb hide <group-name> <player-name>`
 Hides the specified group from the specified player (player may be online or offline). This shows the real air blocks.
 May also be used in the console.
+
+## Permissions
+Fake-block requires only one permission, which allows calling the commands above (OP is always allowed):
+`fakeblock`
 
 ## Suggestions and Support
 Please feel free to provide suggestions (this plugin is in active development) or ask questions using the [BriarCraft
