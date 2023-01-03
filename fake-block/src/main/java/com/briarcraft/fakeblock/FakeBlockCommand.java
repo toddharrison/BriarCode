@@ -62,7 +62,7 @@ public class FakeBlockCommand implements TabExecutor {
                 default -> badSubcommand(player);
             };
         } else if (sender instanceof ConsoleCommandSender) {
-            return switch (label) {
+            return switch (subcommand) {
                 case "delete" -> deleteGroup(sender, groupName);
                 case "show" -> showGroup(sender, groupName, playerName);
                 case "hide" -> hideGroup(sender, groupName, playerName);
