@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
+/**
+ * This data class represents a FakeBlock, consisting of a BlockPosition and BlockData. It is Serializable and designed
+ * to use Bukkit built-in persistence. FakeBlocks are considered the same if they have the same BlockPosition.
+ */
 @SerializableAs("FakeBlock")
 @Data
 public class FakeBlock implements Comparable<FakeBlock>, ConfigurationSerializable {
@@ -55,10 +59,7 @@ public class FakeBlock implements Comparable<FakeBlock>, ConfigurationSerializab
         if (x == 0) {
             val z = Integer.compare(position.getZ(), fakeBlock.position.getZ());
             if (z == 0) {
-                val y = Integer.compare(position.getY(), fakeBlock.position.getY());
-                if (y == 0) {
-                    return blockData.getAsString().compareTo(fakeBlock.blockData.getAsString());
-                } else return y;
+                return Integer.compare(position.getY(), fakeBlock.position.getY());
             } else return z;
         } else return x;
     }

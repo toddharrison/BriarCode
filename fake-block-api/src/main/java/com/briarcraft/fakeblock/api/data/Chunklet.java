@@ -9,6 +9,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+/**
+ * This data class represents a horizontal slice of a Chunk known as a Chunklet. Chunklets are the sets of block data
+ * that are sent to the Minecraft client via multi-block change packets.
+ */
 @Data
 public class Chunklet {
     private final @Nonnull BlockPosition position;

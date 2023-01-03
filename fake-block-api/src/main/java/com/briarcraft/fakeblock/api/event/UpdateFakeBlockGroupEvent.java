@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+/**
+ * This CancellableEvent is called when an existing Group is modified, either through an add or remove of FakeBlocks.
+ */
 @RequiredArgsConstructor
 @Getter
 public class UpdateFakeBlockGroupEvent extends CancellableEvent {

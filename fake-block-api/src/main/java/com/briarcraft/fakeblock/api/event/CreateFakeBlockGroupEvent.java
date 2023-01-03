@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;
 
+/**
+ * This CancellableEvent is called when an existing Group is created.
+ */
 @RequiredArgsConstructor
 @Getter
 public class CreateFakeBlockGroupEvent extends CancellableEvent {
