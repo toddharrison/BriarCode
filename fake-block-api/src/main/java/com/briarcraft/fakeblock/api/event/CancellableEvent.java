@@ -7,11 +7,18 @@ import org.bukkit.event.HandlerList;
 import javax.annotation.Nonnull;
 
 public abstract class CancellableEvent extends Event implements Cancellable {
-    private static final @Nonnull HandlerList handlers = new HandlerList();
 
+    // TODO: Does every custom event need this separately?
+    private static final @Nonnull HandlerList handlers = new HandlerList();
     public static @Nonnull HandlerList getHandlerList() {
         return handlers;
     }
+    @Override
+    public @Nonnull HandlerList getHandlers() {
+        return handlers;
+    }
+
+
 
     private boolean isCancelled;
 
@@ -23,10 +30,5 @@ public abstract class CancellableEvent extends Event implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         this.isCancelled = cancel;
-    }
-
-    @Override
-    public @Nonnull HandlerList getHandlers() {
-        return handlers;
     }
 }

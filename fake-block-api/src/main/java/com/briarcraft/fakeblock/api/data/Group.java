@@ -11,6 +11,11 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This data class represents a fake-block Group, consisting of a name, World, and Set of FakeBlocks it comprises. It is
+ * Serializable and designed to use Bukkit built-in class persistence. Groups are considered the same if they have the
+ * same name.
+ */
 @SerializableAs("Group")
 @Data
 public class Group implements Comparable<Group>, ConfigurationSerializable {
