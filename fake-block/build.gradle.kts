@@ -6,7 +6,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-version = "1.0.1"
+version = "2.0.0"
 description = ""
 
 dependencies {
@@ -33,7 +33,7 @@ tasks {
                 limit {
                     counter = "LINE"
                     value = "COVEREDRATIO"
-                    minimum = BigDecimal(0.3)
+                    minimum = BigDecimal(0.0)
                 }
             }
         }

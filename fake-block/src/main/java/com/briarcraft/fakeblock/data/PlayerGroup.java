@@ -7,25 +7,29 @@ import org.bukkit.configuration.serialization.SerializableAs;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @SerializableAs("PlayerGroup")
 @Data
 public class PlayerGroup implements Comparable<PlayerGroup>, ConfigurationSerializable {
+    private static final @Nonnull String ARG_PLAYER_ID = "playerId";
+    private static final @Nonnull String ARG_GROUPS = "groups";
+
     private final @Nonnull UUID playerId;
-    private final @Nonnull Set<String> groupNames;
+    private final @Nonnull Map<String, Boolean> groupNames;
 
     @Override
     public @Nonnull Map<String, Object> serialize() {
         val map = new TreeMap<>(String::compareTo);
-        map.put("playerId", playerId.toString());
-        map.put("groups", groupNames.stream().sorted().toList());
+        map.put(ARG_PLAYER_ID, playerId.toString());
+        val groups = new TreeMap<>(groupNames);
+        map.put(ARG_GROUPS, groups);
         return map;
     }
 
+    @SuppressWarnings("unused")
     public static @Nonnull PlayerGroup deserialize(final @Nonnull Map<String, Object> args) {
-        val playerId = UUID.fromString((String) args.get("playerId"));
-        val groupNames = ((List<String>) args.get("groups")).stream().collect(Collectors.toSet());
+        val playerId = UUID.fromString((String) args.get(ARG_PLAYER_ID));
+        val groupNames = (Map<String, Boolean>) args.get(ARG_GROUPS);
         return new PlayerGroup(playerId, groupNames);
     }
 

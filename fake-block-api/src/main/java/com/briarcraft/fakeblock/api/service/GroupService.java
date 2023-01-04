@@ -23,11 +23,24 @@ public interface GroupService {
     @Nonnull Set<String> getGroupNames();
 
     /**
+     * Get the Set of all Group names in this service that are shown by default.
+     * @return The Set of Group names shown by default.
+     */
+    @Nonnull Set<String> getDefaultShownGroupNames();
+
+    /**
      * Determine if this service has a Group by the specified name.
      * @param groupName The name of the Group.
      * @return True if this service has the Group, false otherwise.
      */
     boolean hasGroup(@Nonnull String groupName);
+
+    /**
+     * Determine if this service has a Group by the specified name and if it is shown by default.
+     * @param groupName The name of the Group.
+     * @return True if this service has the Group and it is shown by default, false otherwise.
+     */
+    boolean isGroupShownByDefault(@Nonnull String groupName);
 
     /**
      * Get the World that the specified Group exists within.
@@ -41,9 +54,10 @@ public interface GroupService {
      * @param groupName The name for the new Group.
      * @param world The World the Group exists in.
      * @param fakeBlocks The Set of FakeBlocks making up the Group.
+     * @param isGroupShownByDefault If the Group should be shown by default.
      * @return True if creating the Group succeeded, false otherwise.
      */
-    boolean create(@Nonnull String groupName, @Nonnull World world, @Nonnull Set<FakeBlock> fakeBlocks);
+    boolean create(@Nonnull String groupName, @Nonnull World world, @Nonnull Set<FakeBlock> fakeBlocks, boolean isGroupShownByDefault);
 
     /**
      * Add the specified blocks in the specified World to an existing Group in this service.

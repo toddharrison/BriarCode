@@ -56,26 +56,29 @@ Get an instance to this service using the following code:
 ```java
 getServer().getServicesManager().getRegistration(PlayerGroupService.class);
 ```
-This service provides methods to show and hide Groups for Players. Refer to the
+This service provides methods to show, hide, and clear Groups for Players. Refer to the
 [JavaDoc](src/main/java/com/briarcraft/fakeblock/api/service/PlayerGroupService.java) for specific method capabilities.
 
 ## Events
 Fake-block emits cancellable Bukkit Events every time it is going to take an action. These events are:
 
-### CreateFakeBlockGroupEvent
+### `CreateFakeBlockGroupEvent`
 This event is called when fake-block is about to create a new Group.
 
-### DeleteFakeBlockGroupEvent
+### `DeleteFakeBlockGroupEvent`
 This event is called when fake-block is about to delete an existing Group.
 
-### UpdateFakeBlockGroupEvent
+### `UpdateFakeBlockGroupEvent`
 This event is called when fake-block is about to modify the Set of FakeBlocks belonging to an existing Group.
 
-### ShowFakeBlockGroupEvent
+### `ShowFakeBlockGroupEvent`
 This event is called when fake-block is about to show a Group to a Player.
 
-### HideFakeBlockGroupEvent
+### `HideFakeBlockGroupEvent`
 This event is called when fake-block is about to hide a Group from a Player.
+
+### `ClearFakeBlockGroupEvent`
+This event is called when fake-block is about to clear the Group configurations of a Player.
 
 ## Suggestions and Support
 Please feel free to provide suggestions (this plugin is in active development) or ask questions using the [BriarCraft

@@ -9,16 +9,24 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import lombok.val;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FakeBlockPacketListener extends PacketAdapter {
     private final @Nonnull ProtocolLibService protocolLibService;
     private final @Nonnull GroupService groupService;
     private final @Nonnull PlayerGroupService playerGroupService;
 
-    public FakeBlockPacketListener(final @Nonnull Plugin plugin, final @Nonnull ProtocolLibService protocolLibService, final @Nonnull GroupService groupService, final @Nonnull PlayerGroupService playerGroupService) {
+    public FakeBlockPacketListener(
+            final @Nonnull Plugin plugin,
+            final @Nonnull ProtocolLibService protocolLibService,
+            final @Nonnull GroupService groupService,
+            final @Nonnull PlayerGroupService playerGroupService
+    ) {
         super(plugin, ListenerPriority.HIGHEST, PacketType.Play.Server.BLOCK_CHANGE, PacketType.Play.Server.MAP_CHUNK);
         this.protocolLibService = protocolLibService;
         this.groupService = groupService;
@@ -37,8 +45,8 @@ public class FakeBlockPacketListener extends PacketAdapter {
         if (packetType == PacketType.Play.Server.BLOCK_CHANGE) {
             val position = packet.getBlockPositionModifier().read(0);
             if (position != null) {
-                val groups = playerGroupService.getVisibleGroups(player);
-                groupService.getBlocks(groups, world, position).values().stream()
+                val shownGroups = getShownGroups(player);
+                groupService.getBlocks(shownGroups, world, position).values().stream()
                         .findFirst()
                         .ifPresent(block -> {
                             val wrappedBlockData = protocolLibService.wrapBlockData(block.getBlockData());
@@ -55,11 +63,25 @@ public class FakeBlockPacketListener extends PacketAdapter {
                     Thread.yield();
                 }
                 plugin.getServer().getScheduler().runTask(plugin, () -> {
-                    val groups = playerGroupService.getVisibleGroups(player);
-                    groupService.getChunklets(groups, world, new ChunkPosition(chunkX, chunkZ))
+                    val shownGroups = getShownGroups(player);
+                    groupService.getChunklets(shownGroups, world, new ChunkPosition(chunkX, chunkZ))
                             .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet));
                 });
             });
         }
+    }
+
+    private @Nonnull Set<String> getShownGroups(final @Nonnull Player player) {
+        val defaultGroups = groupService.getDefaultShownGroupNames();
+        val playerGroups = playerGroupService.getConfiguredGroups(player);
+        val shownGroups = new HashSet<>(defaultGroups);
+        playerGroups.forEach((groupName, isShown) -> {
+            if (isShown) {
+                shownGroups.add(groupName);
+            } else {
+                shownGroups.remove(groupName);
+            }
+        });
+        return shownGroups;
     }
 }

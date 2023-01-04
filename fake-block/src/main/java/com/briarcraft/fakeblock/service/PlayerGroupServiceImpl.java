@@ -1,5 +1,6 @@
 package com.briarcraft.fakeblock.service;
 
+import com.briarcraft.fakeblock.api.event.ClearFakeBlockGroupEvent;
 import com.briarcraft.fakeblock.api.service.GroupService;
 import com.briarcraft.fakeblock.api.service.PlayerGroupService;
 import com.briarcraft.fakeblock.api.event.HideFakeBlockGroupEvent;
@@ -20,8 +21,8 @@ import java.util.stream.Collectors;
 
 public class PlayerGroupServiceImpl implements PlayerGroupService {
     private final @Nonnull PluginManager pluginManager;
-    private final @Nonnull Function<UUID, Player> getPlayer;
-    private final @Nonnull Map<UUID, Set<String>> playerGroups;
+    private final @Nonnull Function<UUID, OfflinePlayer> getPlayer;
+    private final @Nonnull Map<UUID, Map<String, Boolean>> playerGroups;
 
     private final @Nonnull GroupService groupService;
     private final @Nonnull ProtocolLibService protocolLibService;
@@ -32,98 +33,112 @@ public class PlayerGroupServiceImpl implements PlayerGroupService {
             final @Nonnull GroupService groupService,
             final @Nonnull ProtocolLibService protocolLibService,
             final @Nonnull PlayerGroupConfig playerGroupConfig,
-            final @Nonnull Function<UUID, Player> getPlayer,
-            final @Nonnull Map<UUID, Set<String>> playerGroups
+            final @Nonnull Function<UUID, OfflinePlayer> getPlayer,
+            final @Nonnull Map<UUID, Map<String, Boolean>> playerGroups
     ) {
         this.pluginManager = pluginManager;
         this.groupService = groupService;
         this.protocolLibService = protocolLibService;
         this.playerGroupConfig = playerGroupConfig;
         this.getPlayer = getPlayer;
-        this.playerGroups = new HashMap<>(playerGroups);
+        this.playerGroups = new HashMap<>();
+        playerGroups.forEach((playerId, groups) -> this.playerGroups.put(playerId, new HashMap<>(groups)));
     }
 
     @Override
-    public boolean isVisible(final @Nonnull String groupName, final @Nonnull OfflinePlayer player) {
-        return getVisibleGroups(player).contains(groupName);
+    public boolean isShown(final @Nonnull String groupName, final @Nonnull OfflinePlayer player) {
+        val playerGroups = getConfiguredGroups(player);
+        return (playerGroups.containsKey(groupName) && playerGroups.get(groupName))
+                || groupService.isGroupShownByDefault(groupName);
     }
 
     @Override
-    public @Nonnull Set<String> getVisibleGroups(final @Nonnull OfflinePlayer player) {
+    public boolean isHidden(final @Nonnull String groupName, final @Nonnull OfflinePlayer player) {
+        val playerGroups = getConfiguredGroups(player);
+        return (playerGroups.containsKey(groupName) && !playerGroups.get(groupName))
+                || !groupService.isGroupShownByDefault(groupName);
+    }
+
+    @Override
+    public @Nonnull Map<String, Boolean> getConfiguredGroups(final @Nonnull OfflinePlayer player) {
         val playerId = player.getUniqueId();
-        return Set.copyOf(playerGroups.getOrDefault(playerId, Set.of()));
+        return Map.copyOf(playerGroups.getOrDefault(playerId, Map.of()));
     }
 
     @Override
-    public @Nonnull Set<UUID> getPlayersVisibleTo(final @Nonnull String groupName) {
+    public @Nonnull Set<UUID> getPlayersConfiguredIn(final @Nonnull String groupName) {
         return playerGroups.entrySet().stream()
-                .filter(entry -> entry.getValue().contains(groupName))
+                .filter(entry -> entry.getValue().containsKey(groupName))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
-    public boolean showGroup(final @Nonnull String groupName, final @Nonnull OfflinePlayer player) {
+    public boolean showGroup(final @Nonnull String groupName, final @Nonnull OfflinePlayer offlinePlayer) {
         if (!Boolean.TRUE.equals(isGroupPresent(groupName))) return false;
 
-        val event = new ShowFakeBlockGroupEvent(player, groupName);
+        val event = new ShowFakeBlockGroupEvent(offlinePlayer, groupName);
         pluginManager.callEvent(event);
         if (!event.isCancelled()) {
-            val playerId = player.getUniqueId();
+            val playerId = offlinePlayer.getUniqueId();
             val groups = playerGroups.get(playerId);
             if (groups == null) {
-                val newGroups = new HashSet<String>();
-                newGroups.add(groupName);
+                val newGroups = new HashMap<String, Boolean>();
+                newGroups.put(groupName, true);
                 playerGroups.put(playerId, newGroups);
                 playerGroupConfig.save(generatePlayerGroups());
                 return true;
             } else {
-                val added = groups.add(groupName);
-                if (added) {
+                var isShown = false;
+                if (!groups.containsKey(groupName) || !groups.get(groupName)) {
+                    groups.put(groupName, true);
                     playerGroupConfig.save(generatePlayerGroups());
+                    isShown = true;
+
+                    if (offlinePlayer instanceof Player player) {
+                        groupService.getChunklets(groupName, player.getWorld())
+                                .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet));
+                    }
                 }
-                return added;
+                return isShown;
             }
         } else return false;
     }
 
     @Override
-    public boolean showGroup(final @Nonnull String groupName, final @Nonnull Player player) {
-        val isShown = showGroup(groupName, (OfflinePlayer) player);
-        if (isShown) {
-            groupService.getChunklets(groupName, player.getWorld())
-                    .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet));
-        }
-        return isShown;
-    }
-
-    @Override
     public boolean showGroup(final @Nonnull String groupName, final @Nonnull UUID playerId) {
-        val player = getPlayer.apply(playerId);
-        if (player != null) {
-            return showGroup(groupName, player);
+        val offlinePlayer = getPlayer.apply(playerId);
+        if (offlinePlayer != null) {
+            return showGroup(groupName, offlinePlayer);
         } else return false;
     }
 
     @Override
-    public boolean hideGroup(final @Nonnull String groupName, final @Nonnull OfflinePlayer player) {
+    public boolean hideGroup(final @Nonnull String groupName, final @Nonnull OfflinePlayer offlinePlayer) {
         if (!Boolean.TRUE.equals(isGroupPresent(groupName))) return false;
 
-        val event = new HideFakeBlockGroupEvent(player, groupName);
+        val event = new HideFakeBlockGroupEvent(offlinePlayer, groupName);
         pluginManager.callEvent(event);
         if (!event.isCancelled()) {
-            val playerId = player.getUniqueId();
+            val playerId = offlinePlayer.getUniqueId();
             val groups = playerGroups.get(playerId);
             if (groups == null) {
-                return false;
+                val newGroups = new HashMap<String, Boolean>();
+                newGroups.put(groupName, false);
+                playerGroups.put(playerId, newGroups);
+                playerGroupConfig.save(generatePlayerGroups());
+                return true;
             } else {
-                val isHidden = groups.remove(groupName);
-                if (isHidden) {
-                    if (player instanceof Player onlinePlayer) {
-                        groupService.getChunklets(groupName, onlinePlayer.getWorld())
-                                .forEach(chunklet -> protocolLibService.sendChunklet(onlinePlayer, chunklet, Material.AIR));
-                    }
+                var isHidden = false;
+                if (!groups.containsKey(groupName) || groups.get(groupName)) {
+                    groups.put(groupName, false);
                     playerGroupConfig.save(generatePlayerGroups());
+                    isHidden = true;
+
+                    if (offlinePlayer instanceof Player player) {
+                        groupService.getChunklets(groupName, player.getWorld())
+                                .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet, Material.AIR));
+                    }
                 }
                 return isHidden;
             }
@@ -131,16 +146,73 @@ public class PlayerGroupServiceImpl implements PlayerGroupService {
     }
 
     @Override
-    public boolean hideGroup(final @Nonnull String groupName, final @Nonnull Player player) {
-        return hideGroup(groupName, (OfflinePlayer) player);
+    public boolean hideGroup(final @Nonnull String groupName, final @Nonnull UUID playerId) {
+        val offlinePlayer = getPlayer.apply(playerId);
+        if (offlinePlayer != null) {
+            return hideGroup(groupName, offlinePlayer);
+        } else return false;
     }
 
     @Override
-    public boolean hideGroup(final @Nonnull String groupName, final @Nonnull UUID playerId) {
-        val player = getPlayer.apply(playerId);
-        if (player != null) {
-            return hideGroup(groupName, player);
+    public boolean clearGroup(final @Nonnull String groupName, final @Nonnull OfflinePlayer offlinePlayer) {
+        if (!Boolean.TRUE.equals(isGroupPresent(groupName))) return false;
+
+        val event = new ClearFakeBlockGroupEvent(offlinePlayer, groupName);
+        pluginManager.callEvent(event);
+        if (!event.isCancelled()) {
+            val playerId = offlinePlayer.getUniqueId();
+            val groups = playerGroups.get(playerId);
+            if (groups == null) {
+                return false;
+            } else {
+                var isCleared = false;
+                if (groups.containsKey(groupName)) {
+                    groups.remove(groupName);
+                    playerGroupConfig.save(generatePlayerGroups());
+                    isCleared = true;
+
+                    if (offlinePlayer instanceof Player player) {
+                        val isShownByDefault = groupService.isGroupShownByDefault(groupName);
+                        if (isShownByDefault) {
+                            groupService.getChunklets(groupName, player.getWorld())
+                                    .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet));
+                        } else {
+                            groupService.getChunklets(groupName, player.getWorld())
+                                    .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet, Material.AIR));
+                        }
+                    }
+                }
+                return isCleared;
+            }
         } else return false;
+    }
+
+    @Override
+    public boolean clearGroup(final @Nonnull String groupName, final @Nonnull UUID playerId) {
+        val offlinePlayer = getPlayer.apply(playerId);
+        if (offlinePlayer != null) {
+            return clearGroup(groupName, offlinePlayer);
+        } else return false;
+    }
+
+    @Override
+    public @Nullable Map<String, Boolean> clearGroups(final @Nonnull UUID playerId) {
+        val offlinePlayer = getPlayer.apply(playerId);
+        val groups = playerGroups.remove(playerId);
+        groups.forEach((groupName, a) -> {
+            if (offlinePlayer instanceof Player player) {
+                val isShownByDefault = groupService.isGroupShownByDefault(groupName);
+                if (isShownByDefault) {
+                    groupService.getChunklets(groupName, player.getWorld())
+                            .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet));
+                } else {
+                    groupService.getChunklets(groupName, player.getWorld())
+                            .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet, Material.AIR));
+                }
+            }
+        });
+        playerGroupConfig.save(generatePlayerGroups());
+        return groups;
     }
 
     public @Nullable Boolean isGroupPresent(final @Nonnull String groupName) {

@@ -15,6 +15,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import lombok.val;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.ServicePriority;
@@ -58,7 +59,13 @@ public class FakeBlockPlugin extends JavaPlugin {
         val servicesManager = getServer().getServicesManager();
         val groupService = new GroupServiceImpl(pluginManager, servicesManager, chunkService, groupConfig, groups);
         servicesManager.register(GroupService.class, groupService, this, ServicePriority.Normal);
-        val playerGroupService = new PlayerGroupServiceImpl(pluginManager, groupService, protocolLibService, playerGroupConfig, Bukkit::getPlayer, playerGroups);
+        val playerGroupService = new PlayerGroupServiceImpl(pluginManager, groupService, protocolLibService, playerGroupConfig, (playerId) -> {
+            OfflinePlayer player = Bukkit.getPlayer(playerId);
+            if (player == null) {
+                player = Bukkit.getOfflinePlayer(playerId);
+            }
+            return player;
+        }, playerGroups);
         servicesManager.register(PlayerGroupService.class, playerGroupService, this, ServicePriority.Normal);
 
         // Register all listeners
