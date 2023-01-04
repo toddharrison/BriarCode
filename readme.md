@@ -11,8 +11,8 @@ convenience.
 ## Plugin Releases
 Download the latest plugin releases below, or use the [releases](../../releases) link at right to download specific versions.
 * [kotlin-1.7.21.1](../../releases/download/kotlin-1.7.21.1/kotlin-1.7.21.1.jar)
-* [fake-block-1.0.1](../../releases/download/fake-block-1.0.0/fake-block-1.0.1.jar)
-* [fake-block-api-1.0](../../releases/download/fake-block-1.0.0/fake-block-api-1.0.jar)
+* [fake-block-2.0.0](../../releases/download/fake-block-2.0.0/fake-block-2.0.0.jar)
+* [fake-block-api-2.0](../../releases/download/fake-block-2.0.0/fake-block-api-2.0.jar)
 
 ## Latest Builds
 Under [actions](../../actions) above you can download snapshot builds of plugins, if available, in the artifacts section of each build.
