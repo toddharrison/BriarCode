@@ -12,6 +12,7 @@ import com.briarcraft.fakeblock.api.service.GroupService;
 import com.briarcraft.fakeblock.api.service.PlayerGroupService;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import lombok.val;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
@@ -52,9 +53,26 @@ public class GroupServiceImpl implements GroupService {
         return Set.copyOf(groups.keySet());
     }
 
+    public @Nonnull Set<String> getDefaultShownGroupNames() {
+        return groups.entrySet().stream()
+                .filter(entry -> entry.getValue().isShownByDefault())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+    }
+
     @Override
     public boolean hasGroup(final @Nonnull String groupName) {
         return groups.containsKey(groupName);
+    }
+
+    @Override
+    public boolean isGroupShownByDefault(final @Nonnull String groupName) {
+        var isShownByDefault = false;
+        val group = groups.get(groupName);
+        if (group != null) {
+            isShownByDefault = group.isShownByDefault();
+        }
+        return isShownByDefault;
     }
 
     @Override
@@ -66,10 +84,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public boolean create(final @Nonnull String groupName, final @Nonnull World world, final @Nonnull Set<FakeBlock> fakeBlocks) {
+    public boolean create(final @Nonnull String groupName, final @Nonnull World world, final @Nonnull Set<FakeBlock> fakeBlocks, final boolean isGroupShownByDefault) {
         if (groups.containsKey(groupName)) return false;
 
         val group = new Group(groupName, world, new HashSet<>(fakeBlocks));
+        group.setShownByDefault(isGroupShownByDefault);
         val event = new CreateFakeBlockGroupEvent(group);
         pluginManager.callEvent(event);
         if (!event.isCancelled()) {
@@ -77,6 +96,8 @@ public class GroupServiceImpl implements GroupService {
             setChunklets(group);
             setFakeBlocks(group);
             groupConfig.save(getGroups());
+            fakeBlocks.forEach(fakeBlock ->
+                    fakeBlock.getPosition().toLocation(world).getBlock().setType(Material.AIR, false));
             return true;
         } else return false;
     }
@@ -95,6 +116,8 @@ public class GroupServiceImpl implements GroupService {
                     updateChunklets(group);
                     updateFakeBlocks(group);
                     groupConfig.save(getGroups());
+                    fakeBlocks.forEach(fakeBlock ->
+                            fakeBlock.getPosition().toLocation(group.getWorld()).getBlock().setType(Material.AIR, false));
                 }
                 return added;
             } else return false;
@@ -118,6 +141,8 @@ public class GroupServiceImpl implements GroupService {
                     updateFakeBlocks(group);
                     groupConfig.save(getGroups());
                 }
+                removedBlocks.forEach(fakeBlock ->
+                        fakeBlock.getPosition().toLocation(group.getWorld()).getBlock().setBlockData(fakeBlock.getBlockData()));
                 return removedBlocks;
             } else return Set.of();
         } else return Set.of();
@@ -135,14 +160,17 @@ public class GroupServiceImpl implements GroupService {
             if (!event.isCancelled()) {
                 // Remove players from group being deleted
                 val playerGroupService = serviceProvider.getProvider();
-                playerGroupService.getPlayersVisibleTo(groupName)
-                        .forEach(playerId -> playerGroupService.hideGroup(groupName, playerId));
+                playerGroupService.getPlayersConfiguredIn(groupName)
+                        .forEach(playerId -> playerGroupService.clearGroup(groupName, playerId));
 
                 deleteChunklets(groupName);
                 deleteFakeBlocks(groupName);
                 val removedGroup = groups.remove(groupName);
                 groupConfig.save(getGroups());
-                return removedGroup.getFakeBlocks();
+                val removedFakeBlocks = removedGroup.getFakeBlocks();
+                removedFakeBlocks.forEach(fakeBlock ->
+                        fakeBlock.getPosition().toLocation(group.getWorld()).getBlock().setBlockData(fakeBlock.getBlockData()));
+                return removedFakeBlocks;
             } else return Set.of();
         } else return Set.of();
     }
@@ -161,7 +189,9 @@ public class GroupServiceImpl implements GroupService {
         if (worldBlocks != null) {
             val blocks = worldBlocks.get(blockPosition);
             if (blocks != null) {
-                return blocks;
+                return blocks.entrySet().stream()
+                        .filter(it -> groups.contains(it.getKey()))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
             }
         }
         return Map.of();

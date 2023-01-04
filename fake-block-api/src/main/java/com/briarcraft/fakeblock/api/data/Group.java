@@ -19,24 +19,36 @@ import java.util.stream.Collectors;
 @SerializableAs("Group")
 @Data
 public class Group implements Comparable<Group>, ConfigurationSerializable {
+    private static final @Nonnull String ARG_NAME = "name";
+    private static final @Nonnull String ARG_WORLD = "world";
+    private static final @Nonnull String ARG_BLOCKS = "fakeBlocks";
+    private static final @Nonnull String ARG_SHOW_DEFAULT = "isShowDefault";
+
     private final @Nonnull String name;
     private final @Nonnull World world;
     private final @Nonnull Set<FakeBlock> fakeBlocks;
+    private boolean isShownByDefault;
 
     @Override
     public @Nonnull Map<String, Object> serialize() {
         val map = new TreeMap<>(String::compareTo);
-        map.put("name", name);
-        map.put("world", world.getName());
-        map.put("fakeBlocks", fakeBlocks.stream().sorted().toList());
+        map.put(ARG_NAME, name);
+        map.put(ARG_WORLD, world.getName());
+        map.put(ARG_BLOCKS, fakeBlocks.stream().sorted().toList());
+        map.put(ARG_SHOW_DEFAULT, isShownByDefault);
         return map;
     }
 
+    @SuppressWarnings("unused")
     public static @Nonnull Group deserialize(final @Nonnull Map<String, Object> args) {
-        val name = (String) args.get("name");
-        val world = Bukkit.getWorld((String) args.get("world"));
-        val fakeBlocks = ((List<FakeBlock>) args.get("fakeBlocks")).stream().collect(Collectors.toSet());
-        return new Group(name, world, fakeBlocks);
+        val name = (String) args.get(ARG_NAME);
+        val world = Bukkit.getWorld((String) args.get(ARG_WORLD));
+        val fakeBlocks = ((List<FakeBlock>) args.get(ARG_BLOCKS)).stream().collect(Collectors.toSet());
+        val isShowDefault = (Boolean) args.get(ARG_SHOW_DEFAULT);
+
+        val group = new Group(name, world, fakeBlocks);
+        group.setShownByDefault(isShowDefault);
+        return group;
     }
 
     @Override

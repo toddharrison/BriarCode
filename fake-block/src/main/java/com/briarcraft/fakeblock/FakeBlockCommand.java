@@ -29,6 +29,14 @@ import java.util.stream.StreamSupport;
 
 @RequiredArgsConstructor
 public class FakeBlockCommand implements TabExecutor {
+    private static final @Nonnull String COMMAND_CREATE = "create";
+    private static final @Nonnull String COMMAND_DELETE = "delete";
+    private static final @Nonnull String COMMAND_ADD = "add";
+    private static final @Nonnull String COMMAND_REMOVE = "remove";
+    private static final @Nonnull String COMMAND_SHOW = "show";
+    private static final @Nonnull String COMMAND_HIDE = "hide";
+    private static final @Nonnull String COMMAND_SETDEFAULT = "setdefault";
+
     public static final @Nonnull String NAME = "fakeblock";
 
     private final @Nonnull WorldEditService worldEditService;
@@ -43,29 +51,23 @@ public class FakeBlockCommand implements TabExecutor {
             final @Nonnull String[] args
     ) {
         val subcommand = getFromArray(args, 0, "");
-
-        val groupName = getFromArray(args, 1);
-        if (groupName == null) {
-            sender.sendMessage(Component.text("No group specified!", Style.style(NamedTextColor.GRAY)));
-            return false;
-        }
-
-        val playerName = getFromArray(args, 2);
         if (sender instanceof Player player) {
             return switch (subcommand) {
-                case "create" -> createGroup(player, groupName);
-                case "delete" -> deleteGroup(player, groupName);
-                case "add" -> addToGroup(player, groupName);
-                case "remove" -> removeFromGroup(player, groupName);
-                case "show" -> showGroup(player, groupName, playerName);
-                case "hide" -> hideGroup(player, groupName, playerName);
+                case COMMAND_CREATE -> createGroup(player, args);
+                case COMMAND_DELETE -> deleteGroup(player, args);
+                case COMMAND_ADD -> addToGroup(player, args);
+                case COMMAND_REMOVE -> removeFromGroup(player, args);
+                case COMMAND_SHOW -> showGroup(player, args);
+                case COMMAND_HIDE -> hideGroup(player, args);
+                case COMMAND_SETDEFAULT -> clearAllGroups(player, args);
                 default -> badSubcommand(player);
             };
         } else if (sender instanceof ConsoleCommandSender) {
             return switch (subcommand) {
-                case "delete" -> deleteGroup(sender, groupName);
-                case "show" -> showGroup(sender, groupName, playerName);
-                case "hide" -> hideGroup(sender, groupName, playerName);
+                case COMMAND_DELETE -> deleteGroup(sender, args);
+                case COMMAND_SHOW -> showGroup(sender, args);
+                case COMMAND_HIDE -> hideGroup(sender, args);
+                case COMMAND_SETDEFAULT -> clearAllGroups(sender, args);
                 default -> badSubcommand(sender);
             };
         } else return false;
@@ -79,23 +81,61 @@ public class FakeBlockCommand implements TabExecutor {
             final @Nonnull String[] args
     ) {
         if (args.length == 1) {
-            return List.of("create", "delete", "add", "remove", "show", "hide");
+            return getSubcommandMatches(args[0]);
         } else if (args.length == 2) {
-            return groupService.getGroupNames().stream().sorted().toList();
+            return switch (args[0]) {
+                case COMMAND_CREATE, COMMAND_DELETE, COMMAND_ADD, COMMAND_REMOVE, COMMAND_SHOW, COMMAND_HIDE -> getGroupNameMatches(args[1]);
+                case COMMAND_SETDEFAULT -> getPlayerNameMatches(args[1]);
+                default -> null;
+            };
         } else if (args.length == 3) {
-            return Stream.concat(Bukkit.getOnlinePlayers().stream(), Arrays.stream(Bukkit.getOfflinePlayers()))
-                    .map(OfflinePlayer::getName)
-                    .filter(Objects::nonNull)
-                    .sorted()
-                    .collect(Collectors.toList());
+            return switch (args[0]) {
+                case COMMAND_CREATE -> getBooleanMatch(args[2]);
+                case COMMAND_SHOW, COMMAND_HIDE -> getPlayerNameMatches(args[2]);
+                default -> null;
+            };
         } else return null;
     }
 
-    private boolean createGroup(final @Nonnull Player player, final @Nonnull String groupName) {
+    private @Nonnull List<String> getSubcommandMatches(final @Nonnull String prefix) {
+        return Stream.of(COMMAND_CREATE, COMMAND_DELETE, COMMAND_ADD, COMMAND_REMOVE, COMMAND_SHOW, COMMAND_HIDE, COMMAND_SETDEFAULT)
+                .filter(it -> it.startsWith(prefix))
+                .toList();
+    }
+
+    private @Nonnull List<String> getGroupNameMatches(final @Nonnull String prefix) {
+        return groupService.getGroupNames().stream()
+                .filter(it -> it.startsWith(prefix))
+                .sorted()
+                .toList();
+    }
+
+    private @Nonnull List<String> getPlayerNameMatches(final @Nonnull String prefix) {
+        return Stream.concat(Bukkit.getOnlinePlayers().stream(), Arrays.stream(Bukkit.getOfflinePlayers()))
+                .map(OfflinePlayer::getName)
+                .filter(Objects::nonNull)
+                .filter(it -> it.startsWith(prefix))
+                .sorted()
+                .toList();
+    }
+
+    private @Nonnull List<String> getBooleanMatch(final @Nonnull String prefix) {
+        return Stream.of("true", "false")
+                .filter(it -> it.startsWith(prefix.toLowerCase()))
+                .toList();
+    }
+
+    private boolean createGroup(final @Nonnull Player player, final @Nonnull String[] args) {
+        val groupName = getFromArray(args, 1);
+        if (groupName == null) {
+            player.sendMessage(Component.text("No group specified!", Style.style(NamedTextColor.GRAY)));
+            return false;
+        }
         if (groupService.hasGroup(groupName)) {
             player.sendMessage(Component.text("Group does not exist!", Style.style(NamedTextColor.GRAY)));
             return false;
         }
+        val isGroupShownByDefault = Boolean.parseBoolean(getFromArray(args, 2));
         val selection = worldEditService.getPlayerSelection(player);
         if (selection != null) {
             val world = selection.getWorld();
@@ -108,10 +148,8 @@ public class FakeBlockCommand implements TabExecutor {
                         .filter(pair -> !pair.getSecond().getMaterial().isAir())
                         .map(pair -> new FakeBlock(pair.getFirst(), pair.getSecond()))
                         .collect(Collectors.toSet());
-                val created = groupService.create(groupName, realWorld, fakeBlocks);
+                val created = groupService.create(groupName, realWorld, fakeBlocks, isGroupShownByDefault);
                 if (created) {
-                    fakeBlocks.forEach(fakeBlock ->
-                            fakeBlock.getPosition().toLocation(realWorld).getBlock().setType(Material.AIR, false));
                     player.sendMessage(Component.text("Created new fakeblock group!", Style.style(NamedTextColor.GRAY)));
                 } else {
                     player.sendMessage(Component.text("Group not created!", Style.style(NamedTextColor.GRAY)));
@@ -126,12 +164,15 @@ public class FakeBlockCommand implements TabExecutor {
         return false;
     }
 
-    private boolean deleteGroup(final @Nonnull CommandSender sender, final @Nonnull String groupName) {
+    private boolean deleteGroup(final @Nonnull CommandSender sender, final @Nonnull String[] args) {
+        val groupName = getFromArray(args, 1);
+        if (groupName == null) {
+            sender.sendMessage(Component.text("No group specified!", Style.style(NamedTextColor.GRAY)));
+            return false;
+        }
         val world = groupService.getWorld(groupName);
         if (world != null) {
             val fakeBlocks = groupService.delete(groupName);
-            fakeBlocks.forEach(fakeBlock ->
-                    fakeBlock.getPosition().toLocation(world).getBlock().setBlockData(fakeBlock.getBlockData()));
             val isDeleted = !fakeBlocks.isEmpty();
             if (isDeleted) {
                 sender.sendMessage(Component.text("Group deleted!", Style.style(NamedTextColor.GRAY)));
@@ -145,7 +186,12 @@ public class FakeBlockCommand implements TabExecutor {
         }
     }
 
-    private boolean addToGroup(final @Nonnull Player player, final @Nonnull String groupName) {
+    private boolean addToGroup(final @Nonnull Player player, final @Nonnull String[] args) {
+        val groupName = getFromArray(args, 1);
+        if (groupName == null) {
+            player.sendMessage(Component.text("No group specified!", Style.style(NamedTextColor.GRAY)));
+            return false;
+        }
         if (!groupService.hasGroup(groupName)) {
             player.sendMessage(Component.text("Group does not exist!", Style.style(NamedTextColor.GRAY)));
             return false;
@@ -165,8 +211,6 @@ public class FakeBlockCommand implements TabExecutor {
                             .collect(Collectors.toSet());
                     val created = groupService.addBlocks(groupName, fakeBlocks);
                     if (created) {
-                        fakeBlocks.forEach(fakeBlock ->
-                                fakeBlock.getPosition().toLocation(realWorld).getBlock().setType(Material.AIR, false));
                         player.sendMessage(Component.text("Blocks added to group!", Style.style(NamedTextColor.GRAY)));
                     } else {
                         player.sendMessage(Component.text("No blocks added to group!", Style.style(NamedTextColor.GRAY)));
@@ -182,7 +226,12 @@ public class FakeBlockCommand implements TabExecutor {
         return false;
     }
 
-    private boolean removeFromGroup(final @Nonnull Player player, final @Nonnull String groupName) {
+    private boolean removeFromGroup(final @Nonnull Player player, final @Nonnull String[] args) {
+        val groupName = getFromArray(args, 1);
+        if (groupName == null) {
+            player.sendMessage(Component.text("No group specified!", Style.style(NamedTextColor.GRAY)));
+            return false;
+        }
         if (!groupService.hasGroup(groupName)) {
             player.sendMessage(Component.text("Group does not exist!", Style.style(NamedTextColor.GRAY)));
             return false;
@@ -197,8 +246,6 @@ public class FakeBlockCommand implements TabExecutor {
                             .map(vector -> new BlockPosition(vector.getX(), vector.getY(), vector.getZ()))
                             .collect(Collectors.toSet());
                     val removedBlocks = groupService.removeBlocks(groupName, blockPositions);
-                    removedBlocks.forEach(fakeBlock ->
-                            fakeBlock.getPosition().toLocation(realWorld).getBlock().setBlockData(fakeBlock.getBlockData()));
                     val blocksRemoved = removedBlocks.size() > 0;
                     if (blocksRemoved) {
                         player.sendMessage(Component.text("Blocks removed from group!", Style.style(NamedTextColor.GRAY)));
@@ -218,7 +265,13 @@ public class FakeBlockCommand implements TabExecutor {
         return false;
     }
 
-    private boolean showGroup(final @Nonnull CommandSender sender, final @Nonnull String groupName, final @Nullable String playerName) {
+    private boolean showGroup(final @Nonnull CommandSender sender, final @Nonnull String[] args) {
+        val groupName = getFromArray(args, 1);
+        if (groupName == null) {
+            sender.sendMessage(Component.text("No group specified!", Style.style(NamedTextColor.GRAY)));
+            return false;
+        }
+        val playerName = getFromArray(args, 2);
         if (playerName == null) {
             sender.sendMessage(Component.text("No player specified!", Style.style(NamedTextColor.GRAY)));
             return false;
@@ -238,7 +291,13 @@ public class FakeBlockCommand implements TabExecutor {
         }
     }
 
-    private boolean hideGroup(final @Nonnull CommandSender sender, final @Nonnull String groupName, final @Nullable String playerName) {
+    private boolean hideGroup(final @Nonnull CommandSender sender, final @Nonnull String[] args) {
+        val groupName = getFromArray(args, 1);
+        if (groupName == null) {
+            sender.sendMessage(Component.text("No group specified!", Style.style(NamedTextColor.GRAY)));
+            return false;
+        }
+        val playerName = getFromArray(args, 2);
         if (playerName == null) {
             sender.sendMessage(Component.text("No player specified!", Style.style(NamedTextColor.GRAY)));
             return false;
@@ -252,6 +311,21 @@ public class FakeBlockCommand implements TabExecutor {
                 sender.sendMessage(Component.text("Group not hidden from player!", Style.style(NamedTextColor.GRAY)));
             }
             return isHidden;
+        } else {
+            sender.sendMessage(Component.text("Specified invalid player!", Style.style(NamedTextColor.GRAY)));
+            return false;
+        }
+    }
+
+    private boolean clearAllGroups(final @Nonnull CommandSender sender, final @Nullable String[] args) {
+        val playerName = getFromArray(args, 1);
+        if (playerName == null) {
+            sender.sendMessage(Component.text("No player specified!", Style.style(NamedTextColor.GRAY)));
+            return false;
+        }
+        val playerId = Bukkit.getPlayerUniqueId(playerName);
+        if (playerId != null) {
+            return playerGroupService.clearGroups(playerId) != null;
         } else {
             sender.sendMessage(Component.text("Specified invalid player!", Style.style(NamedTextColor.GRAY)));
             return false;

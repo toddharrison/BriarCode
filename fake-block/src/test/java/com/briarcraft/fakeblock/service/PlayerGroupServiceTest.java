@@ -48,7 +48,7 @@ public class PlayerGroupServiceTest {
 
             // Act
             service.showGroup(groupName, player);
-            val response = service.isVisible(groupName, player);
+            val response = service.isShown(groupName, player);
 
             // Assert
             assertTrue(response);
@@ -63,7 +63,7 @@ public class PlayerGroupServiceTest {
 
             // Act
             service.showGroup(groupName, player);
-            val response = service.isVisible(groupName, player);
+            val response = service.isShown(groupName, player);
 
             // Assert
             assertFalse(response);
@@ -76,7 +76,7 @@ public class PlayerGroupServiceTest {
 
             // Act
             service.showGroup(groupName, player);
-            val response = service.isVisible(groupName, player);
+            val response = service.isShown(groupName, player);
 
             // Assert
             assertFalse(response);
@@ -96,10 +96,10 @@ public class PlayerGroupServiceTest {
 
             // Act
             service.showGroup(groupName, player);
-            val response = service.getVisibleGroups(player);
+            val response = service.getConfiguredGroups(player);
 
             // Assert
-            assertEquals(Set.of(groupName), response);
+            assertEquals(Map.of(groupName, true), response);
         }
     }
 
@@ -119,7 +119,7 @@ public class PlayerGroupServiceTest {
 
             // Act
             service.showGroup(groupName, player);
-            val response = service.getPlayersVisibleTo(groupName);
+            val response = service.getPlayersConfiguredIn(groupName);
 
             // Assert
             assertEquals(Set.of(playerId), response);
@@ -140,7 +140,7 @@ public class PlayerGroupServiceTest {
             // Act
             service.showGroup(groupName1, player1);
             service.showGroup(groupName2, player2);
-            val response = service.getPlayersVisibleTo(groupName1);
+            val response = service.getPlayersConfiguredIn(groupName1);
 
             // Assert
             assertEquals(Set.of(playerId1), response);
@@ -198,7 +198,7 @@ public class PlayerGroupServiceTest {
 
             // Assert
             assertTrue(response);
-            assertEquals(Set.of(groupName1, groupName2), service.getVisibleGroups(player));
+            assertEquals(Map.of(groupName1, true, groupName2, true), service.getConfiguredGroups(player));
         }
 
         @Test
@@ -316,7 +316,7 @@ public class PlayerGroupServiceTest {
             val response = service.hideGroup(groupName2, player);
 
             // Assert
-            assertFalse(response);
+            assertTrue(response);
         }
 
         @Test
@@ -332,7 +332,7 @@ public class PlayerGroupServiceTest {
             val response = service.hideGroup(groupName, player);
 
             // Assert
-            assertFalse(response);
+            assertTrue(response);
         }
 
         @Test

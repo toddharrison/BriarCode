@@ -55,12 +55,13 @@ You can also modify an existing group by adding and removing blocks. See the com
 ## Commands
 All of these commands are available as an OP in Minecraft.
 
-### `/fb create <group-name>`
-Creates a new group with the specified name using the current WorldEdit selection.
+### `/fb create <group-name> <is-group-shown-by-default>`
+Creates a new group with the specified name using the current WorldEdit selection. `is-group-shown-by-default` is an
+optional parameter and defaults to `false`.
 
 ### `/fb delete <group-name>`
-Deletes the group with the specified name and restores the blocks that were turned to air. May also be used in the
-console.
+Deletes the group with the specified name and restores the blocks that were turned to air.
+May also be used in the console.
 
 ### `/fb add <group-name>`
 Adds the current WorldEdit selection to the group with the specified name.
@@ -69,11 +70,15 @@ Adds the current WorldEdit selection to the group with the specified name.
 Removes the current WorldEdit selection from the group with the specified name.
 
 ### `/fb show <group-name> <player-name>`
-Shows the specified group to the specified player (player may be online or offline). This shows the fake blocks. May
-also be used in the console.
+Shows the specified group to the specified player (player may be online or offline). This shows the fake blocks.
+May also be used in the console.
 
 ### `/fb hide <group-name> <player-name>`
 Hides the specified group from the specified player (player may be online or offline). This shows the real air blocks.
+May also be used in the console.
+
+### `/fb setdefault <player-name>`
+Clears any show or hide configuration for the specified player, allowing the default to apply.
 May also be used in the console.
 
 ## Permissions

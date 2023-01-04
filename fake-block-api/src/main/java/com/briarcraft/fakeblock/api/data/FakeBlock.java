@@ -22,6 +22,9 @@ import java.util.TreeMap;
 @SerializableAs("FakeBlock")
 @Data
 public class FakeBlock implements Comparable<FakeBlock>, ConfigurationSerializable {
+    private static final @Nonnull String ARG_POSITION = "position";
+    private static final @Nonnull String ARG_BLOCK_DATA = "blockData";
+
     private final @Nonnull BlockPosition position;
     private final @Nonnull BlockData blockData;
 
@@ -41,15 +44,16 @@ public class FakeBlock implements Comparable<FakeBlock>, ConfigurationSerializab
     @Override
     public @Nonnull Map<String, Object> serialize() {
         val map = new TreeMap<>(String::compareTo);
-        map.put("position", position.toVector());
-        map.put("blockData", blockData.getAsString());
+        map.put(ARG_POSITION, position.toVector());
+        map.put(ARG_BLOCK_DATA, blockData.getAsString());
         return map;
     }
 
+    @SuppressWarnings("unused")
     public static @Nonnull FakeBlock deserialize(final @Nonnull Map<String, Object> args) {
         return new FakeBlock(
-                new BlockPosition((Vector) args.get("position")),
-                Bukkit.getServer().createBlockData((String) args.get("blockData"))
+                new BlockPosition((Vector) args.get(ARG_POSITION)),
+                Bukkit.getServer().createBlockData((String) args.get(ARG_BLOCK_DATA))
         );
     }
 
