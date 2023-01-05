@@ -7,6 +7,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SerializableAs("PlayerGroup")
 @Data
@@ -29,7 +30,10 @@ public class PlayerGroup implements Comparable<PlayerGroup>, ConfigurationSerial
     @SuppressWarnings("unused")
     public static @Nonnull PlayerGroup deserialize(final @Nonnull Map<String, Object> args) {
         val playerId = UUID.fromString((String) args.get(ARG_PLAYER_ID));
-        val groupNames = (Map<String, Boolean>) args.get(ARG_GROUPS);
+        val groupNames = ((Map<?, ?>) args.get(ARG_GROUPS)).entrySet().stream()
+                .filter(entry -> entry.getKey() instanceof String)
+                .filter(entry -> entry.getValue() instanceof Boolean)
+                .collect(Collectors.toMap(entry -> (String) entry.getKey(), entry -> (Boolean) entry.getValue()));
         return new PlayerGroup(playerId, groupNames);
     }
 
