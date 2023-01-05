@@ -42,9 +42,15 @@ public class Group implements Comparable<Group>, ConfigurationSerializable {
     @SuppressWarnings("unused")
     public static @Nonnull Group deserialize(final @Nonnull Map<String, Object> args) {
         val name = (String) args.get(ARG_NAME);
-        val world = Bukkit.getWorld((String) args.get(ARG_WORLD));
-        val fakeBlocks = ((List<FakeBlock>) args.get(ARG_BLOCKS)).stream().collect(Collectors.toSet());
+        val worldName = (String) args.get(ARG_WORLD);
+        val world = Bukkit.getWorld(worldName);
+        val fakeBlocks = ((List<?>) args.get(ARG_BLOCKS)).stream()
+                .filter(FakeBlock.class::isInstance)
+                .map(FakeBlock.class::cast)
+                .collect(Collectors.toSet());
         val isShowDefault = (Boolean) args.get(ARG_SHOW_DEFAULT);
+
+        if (world == null) throw new IllegalStateException("World '" + worldName + "' was not found!");
 
         val group = new Group(name, world, fakeBlocks);
         group.setShownByDefault(isShowDefault);

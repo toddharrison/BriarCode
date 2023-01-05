@@ -87,6 +87,11 @@ public class PlayerGroupServiceImpl implements PlayerGroupService {
                 newGroups.put(groupName, true);
                 playerGroups.put(playerId, newGroups);
                 playerGroupConfig.save(generatePlayerGroups());
+
+                if (offlinePlayer instanceof Player player) {
+                    groupService.getChunklets(groupName, player.getWorld())
+                            .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet));
+                }
                 return true;
             } else {
                 var isShown = false;
@@ -127,6 +132,11 @@ public class PlayerGroupServiceImpl implements PlayerGroupService {
                 newGroups.put(groupName, false);
                 playerGroups.put(playerId, newGroups);
                 playerGroupConfig.save(generatePlayerGroups());
+
+                if (offlinePlayer instanceof Player player) {
+                    groupService.getChunklets(groupName, player.getWorld())
+                            .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet, Material.AIR));
+                }
                 return true;
             } else {
                 var isHidden = false;
