@@ -324,7 +324,13 @@ public class FakeBlockCommand implements TabExecutor {
         }
         val playerId = Bukkit.getPlayerUniqueId(playerName);
         if (playerId != null) {
-            return playerGroupService.clearGroups(playerId) != null;
+            val cleared = playerGroupService.clearGroups(playerId) != null;
+            if (cleared) {
+                sender.sendMessage(Component.text("Cleared player groups!", Style.style(NamedTextColor.GRAY)));
+            } else {
+                sender.sendMessage(Component.text("Player had no groups to clear!", Style.style(NamedTextColor.GRAY)));
+            }
+            return cleared;
         } else {
             sender.sendMessage(Component.text("Specified invalid player!", Style.style(NamedTextColor.GRAY)));
             return false;

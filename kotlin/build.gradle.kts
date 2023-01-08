@@ -8,16 +8,15 @@ plugins {
     id("io.papermc.paperweight.userdev")
 }
 
-version = "1.7.21.1"
+version = "1.8.0.0"
 description = ""
 
 dependencies {
-    paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+    paperDevBundle("1.19.3-R0.1-SNAPSHOT")
     compileOnly("xyz.jpenilla:reflection-remapper:0.1.0-SNAPSHOT")
 
     library("org.jetbrains.kotlin:kotlin-stdlib")
     library("org.jetbrains.kotlin:kotlin-reflect")
-    library("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     library("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
     library("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     library("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
