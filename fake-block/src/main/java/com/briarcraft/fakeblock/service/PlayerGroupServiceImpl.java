@@ -209,19 +209,21 @@ public class PlayerGroupServiceImpl implements PlayerGroupService {
     public @Nullable Map<String, Boolean> clearGroups(final @Nonnull UUID playerId) {
         val offlinePlayer = getPlayer.apply(playerId);
         val groups = playerGroups.remove(playerId);
-        groups.forEach((groupName, a) -> {
-            if (offlinePlayer instanceof Player player) {
-                val isShownByDefault = groupService.isGroupShownByDefault(groupName);
-                if (isShownByDefault) {
-                    groupService.getChunklets(groupName, player.getWorld())
-                            .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet));
-                } else {
-                    groupService.getChunklets(groupName, player.getWorld())
-                            .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet, Material.AIR));
+        if (groups != null) {
+            groups.forEach((groupName, a) -> {
+                if (offlinePlayer instanceof Player player) {
+                    val isShownByDefault = groupService.isGroupShownByDefault(groupName);
+                    if (isShownByDefault) {
+                        groupService.getChunklets(groupName, player.getWorld())
+                                .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet));
+                    } else {
+                        groupService.getChunklets(groupName, player.getWorld())
+                                .forEach(chunklet -> protocolLibService.sendChunklet(player, chunklet, Material.AIR));
+                    }
                 }
-            }
-        });
-        playerGroupConfig.save(generatePlayerGroups());
+            });
+            playerGroupConfig.save(generatePlayerGroups());
+        }
         return groups;
     }
 

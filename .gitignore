@@ -6,4 +6,6 @@
 build
 run
 
+plugins
+
 .DS_Store
