@@ -4,6 +4,11 @@ They prevent players from walking through them or breaking them.
 
 Currently tested on:
 * Paper 19.2
+  * ProtocolLib-600
+  * WorldEdit-7.2.12
+* Paper 19.3
+  * ProtocolLib-608
+  * WorldEdit-7-2.13
 
 ***NOTE: Still in beta! Test before using on a production server.***
 
@@ -18,11 +23,9 @@ Currently tested on:
 ## Installation
 To install fake-block:
 1. Download and install ProtocolLib and WorldEdit
-    * Tested with ProtocolLib-600 and WorldEdit-7.2.12
 2. Download and install the latest release of fake-block
     * No plugin configuration is presently required
 3. Fake blocks are saved in two yaml files: groups.yml and playerGroups.yml
-    * Neither of these files should be edited by hand
     * The groups yaml specifies the defined fake-block groups
     * The player groups yaml specifies which player can see which groups
 
@@ -82,7 +85,7 @@ Clears any show or hide configuration for the specified player, allowing the def
 May also be used in the console.
 
 ## Permissions
-Fake-block requires only one permission, which allows calling the commands above (OP is always allowed):
+Fake-block requires only one permission, which allows calling the admin commands above (OP is always allowed):
 `fakeblock`
 
 ## Suggestions and Support
@@ -92,6 +95,5 @@ discord plugin](https://discord.gg/ycwxwQXN74) channel.
 ## Future Features
 This is a list of features I'm currently considering, checked I'm working on:
 * [X] Prevention of players being kicked for flying when walking on fake blocks
-* [X] Global groups, shown and hidden to all players at once
 * [ ] Group priorities to handle overlapping groups in a deterministic way
-* [ ] Permission support for showing and hiding groups to players
+* [X] Permission support for showing and hiding groups to players (LuckPerms)
