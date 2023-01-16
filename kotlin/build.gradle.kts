@@ -21,8 +21,8 @@ dependencies {
     library("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     library("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
 
-    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.6.0")
-    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.6.0")
+    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.9.0")
+    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.9.0")
 }
 
 tasks {
