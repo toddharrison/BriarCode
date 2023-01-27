@@ -67,7 +67,6 @@ val javaComponent = components["java"] as AdhocComponentWithVariants
 javaComponent.withVariantsFromConfiguration(configurations["apiElements"]) { skip() }
 javaComponent.withVariantsFromConfiguration(configurations["runtimeElements"]) { skip() }
 javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) { skip() }
-configurations.asMap.keys.forEach { println(it) }
 javaComponent.addVariantsFromConfiguration(configurations["reobf"]) {
     mapToMavenScope("runtime")
     dependencies {
