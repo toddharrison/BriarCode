@@ -16,6 +16,7 @@ repositories {
     maven("https://jitpack.io") // Vault, CommandAPI
     maven("https://repo.codemc.org/repository/maven-public/") // CommandAPI dependencies
     maven("https://repo.dmulloy2.net/repository/public/") // ProtocolLib
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PAPI
 }
 
 dependencies {
