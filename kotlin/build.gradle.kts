@@ -13,7 +13,7 @@ description = ""
 
 dependencies {
     paperDevBundle("1.19.3-R0.1-SNAPSHOT")
-    compileOnly("xyz.jpenilla:reflection-remapper:0.1.0-SNAPSHOT")
+    implementation("xyz.jpenilla:reflection-remapper:0.1.0-SNAPSHOT")
 
     library("org.jetbrains.kotlin:kotlin-stdlib")
     library("org.jetbrains.kotlin:kotlin-reflect")
@@ -67,6 +67,7 @@ val javaComponent = components["java"] as AdhocComponentWithVariants
 javaComponent.withVariantsFromConfiguration(configurations["apiElements"]) { skip() }
 javaComponent.withVariantsFromConfiguration(configurations["runtimeElements"]) { skip() }
 javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) { skip() }
+configurations.asMap.keys.forEach { println(it) }
 javaComponent.addVariantsFromConfiguration(configurations["reobf"]) {
     mapToMavenScope("runtime")
     dependencies {
