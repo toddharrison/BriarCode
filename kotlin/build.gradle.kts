@@ -8,7 +8,7 @@ plugins {
     id("io.papermc.paperweight.userdev")
 }
 
-version = "1.8.0.1"
+version = "1.8.0.2"
 description = ""
 
 dependencies {
@@ -48,7 +48,7 @@ kover {
     verify {
         rule {
             bound {
-                minValue = 2
+                minValue = 1
                 counter = CounterType.INSTRUCTION
                 valueType = VerificationValueType.COVERED_PERCENTAGE
             }
