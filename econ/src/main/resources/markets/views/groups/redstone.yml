@@ -1,0 +1,7 @@
+title: Redstone
+icon: REDSTONE_BLOCK
+sub-groups:
+  - raw_redstone
+  - devices
+  - buttons
+  - pressure_plates

@@ -1,0 +1,10 @@
+
+title: Sell Market
+market: main
+type: sell
+price-multiplier: 1.0
+fee:
+  percentage: 0.0
+  minimum: 0.0
+groups:
+  - stone

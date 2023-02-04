@@ -1,0 +1,11 @@
+title: Gold
+icon: GOLD_ORE
+items:
+  - GOLD_ORE
+  - DEEPSLATE_GOLD_ORE
+  - NETHER_GOLD_ORE
+  - RAW_GOLD
+  - RAW_GOLD_BLOCK
+  - GOLD_NUGGET
+  - GOLD_INGOT
+  - GOLD_BLOCK

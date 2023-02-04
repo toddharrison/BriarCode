@@ -1,0 +1,4 @@
+datasource-config: db-h2.properties
+#datasource-config: db-mysql.properties
+#datasource-config: db-test.properties
+enable-h2: true

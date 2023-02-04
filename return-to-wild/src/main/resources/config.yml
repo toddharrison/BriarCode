@@ -1,0 +1,29 @@
+#worldguard.flag:
+#  do-not-record: return-to-wild-exclude
+#  do-not-restore: return-to-wild
+#
+#record:
+#  sheep-eat: false
+#  enderman-take: true
+#  villager-farm: false
+#
+#persist:
+#  auto.enabled: true
+#  frequency: PT10S
+#  batch-size: 1000
+#  table-prefix: rtw3_
+#
+#restore:
+#  enabled: true
+#  frequency: PT1H
+#  batch-size: 100
+#  since: P3D
+#  light-cleaner:
+#    enabled: false
+#    range: 1
+#
+#command:
+#  name: rtw
+#  permission-prefix: rtw
+#
+#verify-threading: false

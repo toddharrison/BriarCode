@@ -1,0 +1,19 @@
+
+title: Buy Market
+market: main
+type: buy
+price-multiplier: 1.0
+fee:
+  percentage: 0.0
+  minimum: 0.0
+groups:
+  - blocks
+  - ores
+  - redstone
+  - transportation
+  - tools
+  - combat
+  - decoration
+  - plants
+  - foods
+  - parts
