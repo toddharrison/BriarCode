@@ -3,6 +3,13 @@ This repository serves as the root for all the public resources for the BriarCra
 own readme containing more information and usage about that particular plugin or API. Below are some quick links for
 convenience.
 
+## Releases
+Download the latest plugin and library releases below, or use the [releases](../../releases) link at right to download
+specific versions. If there isn't a release of a module, it's still in beta!
+* [kotlin-1.7.21.1](../../releases/download/kotlin-1.7.21.1/kotlin-1.7.21.1.jar)
+* [fake-block-2.0.1](../../releases/download/fake-block-2.0.1/fake-block-2.0.1.jar)
+* [fake-block-api-2.0](../../releases/download/fake-block-2.0.0/fake-block-api-2.0.jar)
+
 ## Plugin APIs
 BriarCode offers both Java and Kotlin APIs that may be used to integrate the functionality provided by BriarCode plugins
 into independent plugins.
@@ -48,13 +55,6 @@ is optimized to load the Kotlin dependencies as libraries instead of being shado
 
 ### Java
 * [papi-briar](papi-briar): PAPI extension providing some new, interesting properties required by BriarCode plugins
-
-## Releases
-Download the latest plugin and library releases below, or use the [releases](../../releases) link at right to download
-specific versions. If there isn't a release of a module, it's still in beta!
-* [kotlin-1.7.21.1](../../releases/download/kotlin-1.7.21.1/kotlin-1.7.21.1.jar)
-* [fake-block-2.0.1](../../releases/download/fake-block-2.0.1/fake-block-2.0.1.jar)
-* [fake-block-api-2.0](../../releases/download/fake-block-2.0.0/fake-block-api-2.0.jar)
 
 ## Latest Builds
 Under [actions](../../actions) above you can download snapshot builds of plugins, if available, in the artifacts section
