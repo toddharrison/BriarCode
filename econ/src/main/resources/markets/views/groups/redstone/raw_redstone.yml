@@ -1,0 +1,7 @@
+title: Raw Redstone
+icon: REDSTONE_ORE
+items:
+  - REDSTONE_ORE
+  - DEEPSLATE_REDSTONE_ORE
+  - REDSTONE
+  - REDSTONE_BLOCK

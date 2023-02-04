@@ -1,0 +1,16 @@
+title: Dirt Blocks
+icon: DIRT
+items:
+  - DIRT
+  - GRASS_BLOCK
+  - COARSE_DIRT
+  - ROOTED_DIRT
+  - MYCELIUM
+  - PODZOL
+  - MUD
+  - MUD_BRICKS
+  - MUD_BRICK_SLAB
+  - MUD_BRICK_STAIRS
+  - MUD_BRICK_WALL
+  - PACKED_MUD
+  - MUDDY_MANGROVE_ROOTS

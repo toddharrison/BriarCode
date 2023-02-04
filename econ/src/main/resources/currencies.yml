@@ -1,0 +1,17 @@
+currency:
+  default: berry
+currencies:
+  berry:
+    plural: berries
+    display:
+      symbol: Ƀ
+      symbol-color: aqua
+      format: '#,##0'
+      number-color: dark_aqua
+  dollar:
+    plural: dollars
+    display:
+      symbol: $
+      symbol-color: aqua
+      format: '#,##0.00'
+      number-color: dark_aqua

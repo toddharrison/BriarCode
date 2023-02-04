@@ -1,0 +1,8 @@
+
+default:
+  market: main
+markets:
+  - main
+views:
+  - main-buy
+  - main-sell

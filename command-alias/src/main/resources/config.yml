@@ -1,0 +1,23 @@
+roles:
+  admin:
+    perm: plhide.group.admin
+    timeout: 1h
+    title: --- Admin ---
+    color: RED
+  creator:
+    perm: plhide.group.creator
+    timeout: 4h
+    title: --- Creator ---
+    color: GREEN
+  questdev:
+    perm: plhide.group.questdev
+    timeout: 4h
+    title: --- Quest Dev ---
+    color: BLUE
+  manager:
+    perm: plhide.group.manager
+    timeout: 1h
+    title: --- Manager ---
+    color: YELLOW
+warps:
+  spawn: briar;80.0,78.0,-144.0;0.0,0.0

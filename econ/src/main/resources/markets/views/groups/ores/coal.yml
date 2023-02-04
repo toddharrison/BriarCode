@@ -1,0 +1,8 @@
+title: Coal
+icon: COAL_ORE
+items:
+  - COAL_ORE
+  - DEEPSLATE_COAL_ORE
+  - COAL
+  - COAL_BLOCK
+  - CHARCOAL

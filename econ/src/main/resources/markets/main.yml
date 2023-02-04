@@ -1,0 +1,12 @@
+
+type: dynamic
+currency: berry
+default:
+  curve: 0.9
+  min-price-multiplier: 0.125
+stock:
+  COBBLESTONE:
+    amount: 100.0
+    max-amount: 100000.0
+    max-price: 100.0
+    curve: 0.95

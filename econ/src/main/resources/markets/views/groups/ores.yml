@@ -1,0 +1,11 @@
+title: Ores
+icon: DIAMOND_ORE
+sub-groups:
+  - coal
+  - copper
+  - iron
+  - gold
+  - netherite
+  - lapis_lazuli
+  - emerald
+  - diamond
