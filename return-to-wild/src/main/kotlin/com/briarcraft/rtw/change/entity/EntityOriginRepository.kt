@@ -9,6 +9,7 @@ import org.bukkit.Server
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.EntityType
 import java.sql.Timestamp
+import java.time.Instant
 
 class EntityOriginRepository(
     override val server: Server,
@@ -50,7 +51,27 @@ class EntityOriginRepository(
         }
     }
 
-    suspend fun find(type: EntityType, location: Location, range: Int): List<EntityOrigin> {
+    suspend fun updateTimestampToNow(entity: EntityOrigin) {
+        dataSource.update("""
+            UPDATE $tableName
+            SET timestamp = ?
+            WHERE type = ?
+            AND world = ?
+            AND x = ?
+            AND y = ?
+            AND z = ?
+        """.trimIndent()) { statement ->
+            statement.setTimestamp(1, Timestamp.from(Instant.now()))
+
+            statement.setString(2, entity.type.key.asString())
+            statement.setString(3, entity.location.world.name)
+            statement.setInt(4, entity.location.blockX)
+            statement.setInt(5, entity.location.blockY)
+            statement.setInt(6, entity.location.blockZ)
+        }
+    }
+
+    suspend fun find(type: EntityType, location: Location, range: Int, before: Instant): List<EntityOrigin> {
         require(range >= 0)
 
         val world = location.world
@@ -62,13 +83,14 @@ class EntityOriginRepository(
         val maxZ = location.blockZ + range
 
         return dataSource.query("""
-            SELECT x, y, z, facing, passengers, loot, detail
+            SELECT x, y, z, facing, passengers, loot, detail, timestamp
             FROM $tableName
             WHERE type = ?
             AND world = ?
             AND x BETWEEN ? AND ?
             AND y BETWEEN ? AND ?
             AND z BETWEEN ? AND ?
+            AND timestamp < ?
         """.trimIndent(), { statement ->
             statement.setString(1, type.key.asString())
             statement.setString(2, world.name)
@@ -78,6 +100,7 @@ class EntityOriginRepository(
             statement.setInt(6, maxY)
             statement.setInt(7, minZ)
             statement.setInt(8, maxZ)
+            statement.setTimestamp(9, Timestamp.from(before))
         }) { rs ->
             rs.map {
                 val x = it.getInt(1).toDouble() + 0.5
@@ -87,7 +110,8 @@ class EntityOriginRepository(
                 val passengers = null // it.getString(5)
                 val loot = it.getString(6)?.let { key -> NamespacedKey.fromString(key) }
                 val detail = it.getString(7)
-                EntityOrigin(type, Location(world, x, y, z), facing, passengers, loot, detail)
+                val timestamp = it.getTimestamp(8).toInstant()
+                EntityOrigin(type, Location(world, x, y, z), facing, passengers, loot, detail, timestamp)
             }
         }
     }

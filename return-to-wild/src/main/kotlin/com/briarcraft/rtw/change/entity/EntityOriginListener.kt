@@ -1,14 +1,10 @@
 package com.briarcraft.rtw.change.entity
 
+import com.briarcraft.rtw.util.forEntitiesInChunk
 import com.github.shynixn.mccoroutine.bukkit.ticks
 import kotlinx.coroutines.delay
-import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.GlowItemFrame
-import org.bukkit.entity.ItemFrame
-import org.bukkit.entity.Minecart
-import org.bukkit.entity.Player
-import org.bukkit.entity.Shulker
+import org.bukkit.Chunk
+import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -26,17 +22,8 @@ class EntityOriginListener(
     suspend fun on(event: ChunkLoadEvent) {
         if (event.isNewChunk) {
             val chunk = event.chunk
-            chunk.addPluginChunkTicket(plugin)
-
-            // /execute in minecraft:the_end run tp @s 1098 107 650
-            while (!chunk.isEntitiesLoaded) {
-                delay(delay.ticks)
-            }
-            chunk.entities
-                .asSequence()
-                .filterNot { it is Player }
-                .filter { !ignoreEntityTypes.contains(it.type) }
-                .map {
+            forEntitiesInChunk(plugin, chunk, delay.ticks, ignoreEntityTypes) { entities ->
+                entities.map {
                     val type = it.type
                     val location = it.origin ?: it.location
                     val facing = when (it) {
@@ -54,10 +41,8 @@ class EntityOriginListener(
                         else -> null
                     }
                     EntityOrigin(type, location, facing, passengers, loot, detail)
-                }
-                .forEach { repository.save(it) }
-
-            chunk.removePluginChunkTicket(plugin)
+                }.forEach { repository.save(it) }
+            }
         }
     }
 

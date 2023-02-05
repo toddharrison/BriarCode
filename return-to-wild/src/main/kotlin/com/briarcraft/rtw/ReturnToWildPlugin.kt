@@ -65,7 +65,7 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
         server.pluginManager.registerSuspendingEvents(EntityOriginListener(plugin, entityOriginRepo), plugin)
         server.pluginManager.registerSuspendingEvents(TileEntityOriginListener(tileEntityOriginRepo), plugin)
         server.pluginManager.registerSuspendingEvents(PlayerListener(plugin, playerLogoffRepo), plugin)
-        server.pluginManager.registerSuspendingEvents(StructureRestorer(entityOriginRepo), plugin)
+        server.pluginManager.registerSuspendingEvents(StructureRestorer(this, entityOriginRepo), plugin)
 
         try {
             ProtectionStones.getInstance()

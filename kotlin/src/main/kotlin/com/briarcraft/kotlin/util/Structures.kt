@@ -29,26 +29,27 @@ fun isStructureAt(structureKey: NamespacedKey, world: World, chunkX: Int, chunkZ
     }
 }
 
-fun getAllStartStructuresAt(world: World, chunkX: Int, chunkZ: Int): Set<NamespacedKey> {
+fun getAllStartStructuresAt(world: World, chunkX: Int, chunkZ: Int): Set<NamespacedKey>? {
     val structureManager = (world as CraftWorld).handle.structureManager()
     val chunkPos = ChunkPos(chunkX, chunkZ)
     return Registry.STRUCTURE.mapNotNull { structure ->
         val holder = Holder.direct(CraftStructure.bukkitToMinecraft(structure))
         when (structureManager.checkStructurePresence(chunkPos, holder.value(), false)) {
             StructureCheckResult.START_PRESENT -> structure.key
+            StructureCheckResult.CHUNK_LOAD_NEEDED -> return@getAllStartStructuresAt null
             else -> null
         }
     }.toSet()
 }
 
-fun getAllStartStructuresAt(structureKeys: Set<NamespacedKey>, world: World, chunkX: Int, chunkZ: Int): Set<NamespacedKey> {
+fun getAllStartStructuresAt(structureKeys: Set<NamespacedKey>, world: World, chunkX: Int, chunkZ: Int): Set<NamespacedKey>? {
     val structureManager = (world as CraftWorld).handle.structureManager()
     val chunkPos = ChunkPos(chunkX, chunkZ)
     return structureKeys.mapNotNull { structureByKey[it] }.mapNotNull { structure ->
         val holder = Holder.direct(CraftStructure.bukkitToMinecraft(structure))
         when (structureManager.checkStructurePresence(chunkPos, holder.value(), false)) {
             StructureCheckResult.START_PRESENT -> structure.key
-            StructureCheckResult.CHUNK_LOAD_NEEDED -> throw IllegalStateException("Indeterminate structure start: ${structure.key.asString()}")
+            StructureCheckResult.CHUNK_LOAD_NEEDED -> return@getAllStartStructuresAt null
             else -> null
         }
     }.toSet()
