@@ -10,10 +10,10 @@ publishing {
             from(components["java"])
         }
     }
-//    repositories {
-////        maven {
-////            url = uri("$buildDir/local-repository")
-////        }
+    repositories {
+        maven {
+            url = uri("$buildDir/local-repository")
+        }
 //        maven {
 //            name = "GitHubPackages"
 //            url = uri("https://maven.pkg.github.com/toddharrison/BriarCode")
@@ -22,5 +22,5 @@ publishing {
 //                password = System.getenv("GITHUB_TOKEN")
 //            }
 //        }
-//    }
+    }
 }
