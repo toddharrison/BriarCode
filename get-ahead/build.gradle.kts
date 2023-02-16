@@ -7,12 +7,19 @@ plugins {
 version = "1.0.0-SNAPSHOT"
 description = ""
 
+repositories {
+    maven("https://betonquest.org/nexus/repository/betonquest/")
+}
+
 dependencies {
     api(project(":kotlin"))
 
     // CommandAPI
     implementation("dev.jorel", "commandapi-annotations", "8.7.4")
     annotationProcessor("dev.jorel", "commandapi-annotations", "8.7.4")
+
+    // BetonQuest
+    implementation("org.betonquest", "betonquest", "2.0.0-SNAPSHOT")
 }
 
 pitest {
