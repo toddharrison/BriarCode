@@ -11,14 +11,14 @@ kotlin {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
+    library("org.jetbrains.kotlin:kotlin-stdlib")
+    library("org.jetbrains.kotlin:kotlin-reflect")
+    library("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    library("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    library("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
 
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.9.0")
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.9.0")
+    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.9.0")
+    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.9.0")
 }
 
 pitest {

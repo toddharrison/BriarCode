@@ -17,6 +17,7 @@ repositories {
     maven("https://repo.codemc.org/repository/maven-public/") // CommandAPI dependencies
     maven("https://repo.dmulloy2.net/repository/public/") // ProtocolLib
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PAPI
+    maven("https://betonquest.org/nexus/repository/betonquest/") // BetonQuest
 }
 
 dependencies {
