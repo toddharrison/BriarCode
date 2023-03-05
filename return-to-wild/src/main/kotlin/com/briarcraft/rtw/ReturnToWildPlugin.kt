@@ -87,7 +87,7 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
         HandlerList.unregisterAll(this)
 
         // Save all queued actions to the database
-        blockChangeRepo.executeAll()
+        blockChangeRepo.executeAll(logger)
     }
 
     private fun sendChangesToDatabaseAsync(blockChangeRepo: BlockChangeRepository, wait: Duration) {

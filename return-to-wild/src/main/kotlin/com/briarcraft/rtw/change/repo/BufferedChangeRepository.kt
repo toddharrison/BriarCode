@@ -1,6 +1,7 @@
 package com.briarcraft.rtw.change.repo
 
 import java.util.*
+import java.util.logging.Logger
 
 abstract class BufferedChangeRepository<T>: ChangeRepository<T> {
     private val actions: Queue<QueuedRepositoryAction<T>> = LinkedList()
@@ -24,7 +25,8 @@ abstract class BufferedChangeRepository<T>: ChangeRepository<T> {
         }
     }
 
-    suspend fun executeAll() {
+    suspend fun executeAll(log: Logger) {
+        log.info("Rows remaining: ${actions.size}")
         do {
             val action = actions.poll()
             when (action) {
@@ -39,6 +41,7 @@ abstract class BufferedChangeRepository<T>: ChangeRepository<T> {
                 is DeleteItems<T> -> deleteAll(action.items)
             }
         } while (action != null)
+        log.info("Completed saving")
     }
 
     fun saveQueued(item: T) = actions.add(SaveItem(item))
