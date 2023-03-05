@@ -1,8 +1,8 @@
 package com.briarcraft.datasource
 
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import dev.viesoft.paperkit.core.plugin.KotlinPlugin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bukkit.plugin.ServicePriority
@@ -10,57 +10,64 @@ import org.h2.tools.Server
 import java.io.File
 
 @Suppress("unused")
-class DataSourcePlugin: SuspendingJavaPlugin() {
+class DataSourcePlugin : KotlinPlugin() {
+
     private lateinit var dbConfigFile: File
     private lateinit var dataSource: HikariDataSource
     private var h2WebServer: Server? = null
     private var h2TcpServer: Server? = null
 
-    override suspend fun onLoadAsync() {
+    override suspend fun loadConfig() {
         saveDefaultConfig()
-        dbConfigFile = getDbConfigFile(config.getString("datasource-config") ?: "datasource.properties")
-        logger.info("Loaded DataSource config")
+        val dbConfigName = config.getString("datasource-config") ?: "datasource.properties"
+        dbConfigFile = findConfigFileAndSaveIfNotExists(dbConfigName)
     }
 
-    override suspend fun onEnableAsync() {
+    override suspend fun onEnabled() {
         withContext(Dispatchers.IO) {
-            if (config.getBoolean("enable-h2")) {
-                Class.forName("org.h2.Driver")
-                h2WebServer = Server.createWebServer().start() // Allow access through web client
-                h2TcpServer = Server.createTcpServer().start() // Allow access through DB client
-                logger.info("Enabled H2 Server")
+            val isH2Enabled = config.getBoolean("enable-h2")
+            if (isH2Enabled) {
+                startH2()
             }
 
             dataSource = createDataSource()
-            logger.info("Opened DataSource")
+            log.info { "Opened DataSource" }
         }
 
         server.servicesManager.register(
             DataSourceService::class.java,
-            DataSourceService(logger, dataSource),
+            DataSourceService(this, dataSource),
             this,
-            ServicePriority.Normal)
-        logger.info("Registered DataSourceService")
+            ServicePriority.Normal
+        )
+        log.info { "Registered DataSourceService" }
     }
 
-    override suspend fun onDisableAsync() {
+    private fun startH2() {
+        Class.forName("org.h2.Driver")
+        h2WebServer = Server.createWebServer().start() // Allow access through web client
+        h2TcpServer = Server.createTcpServer().start() // Allow access through DB client
+        log.info { "Enabled H2 Server" }
+    }
+
+    override suspend fun onDisabled() {
         server.servicesManager.unregisterAll(this)
-        logger.info("Unregistered services")
+        log.info { "Unregistered services" }
 
         withContext(Dispatchers.IO) {
             h2WebServer?.stop()
             h2TcpServer?.stop()
 
             dataSource.close()
-            logger.info("Closed data source")
+            log.info { "Closed data source" }
         }
     }
 
-    private fun getDbConfigFile(filename: String) =
-        File(dataFolder, filename).also {
-            if (!it.exists()) saveResource(filename, false)
+    private fun findConfigFileAndSaveIfNotExists(filename: String): File {
+        return dataFolder.resolve(filename).apply {
+            if (!exists()) saveResource(filename, false)
         }
+    }
 
-    private fun createDataSource() =
-        HikariDataSource(HikariConfig(dbConfigFile.absolutePath))
+    private fun createDataSource() = HikariDataSource(HikariConfig(dbConfigFile.absolutePath))
 }
