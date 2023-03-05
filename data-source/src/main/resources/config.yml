@@ -1,4 +1,15 @@
+# This is the default configuration, using a non-persistent in-memory database.
+# *** IT WILL NOT SAVE YOUR DATA ACROSS SERVER RESTARTS ***
 datasource-config: db-h2.properties
+
+# Configure a _real_ data source, either a persistent file H2 or external database
 #datasource-config: db-mysql.properties
 #datasource-config: db-test.properties
-enable-h2: true
+
+h2:
+  # Start the H2 local database
+  enable: true
+  # Allow local testing access through the web client
+  web.enable: false
+  # Allow local testing access through a DB client
+  tcp.enable: false

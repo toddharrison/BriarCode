@@ -6,6 +6,8 @@ plugins {
 dependencies {
     api(platform("org.jetbrains.kotlin:kotlin-bom"))
 
+//    implementation("io.github.microutils", "kotlin-logging-jvm", "3.0.5")
+
     testImplementation(kotlin("test"))
     testImplementation("org.mockito.kotlin", "mockito-kotlin", "4.0.0")
 }

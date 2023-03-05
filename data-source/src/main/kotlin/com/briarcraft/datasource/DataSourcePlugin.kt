@@ -1,8 +1,8 @@
 package com.briarcraft.datasource
 
+import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import dev.viesoft.paperkit.core.plugin.KotlinPlugin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bukkit.plugin.ServicePriority
@@ -10,56 +10,61 @@ import org.h2.tools.Server
 import java.io.File
 
 @Suppress("unused")
-class DataSourcePlugin : KotlinPlugin() {
-
+class DataSourcePlugin: SuspendingJavaPlugin() {
     private lateinit var dbConfigFile: File
     private lateinit var dataSource: HikariDataSource
     private var h2WebServer: Server? = null
     private var h2TcpServer: Server? = null
 
-    override suspend fun loadConfig() {
+    override suspend fun onLoadAsync() {
         saveDefaultConfig()
         val dbConfigName = config.getString("datasource-config") ?: "datasource.properties"
         dbConfigFile = findConfigFileAndSaveIfNotExists(dbConfigName)
+        logger.info { "Loaded DataSource config" }
     }
 
-    override suspend fun onEnabled() {
+    override suspend fun onEnableAsync() {
         withContext(Dispatchers.IO) {
-            val isH2Enabled = config.getBoolean("enable-h2")
+            val isH2Enabled = config.getBoolean("h2.enable")
             if (isH2Enabled) {
-                startH2()
+                Class.forName("org.h2.Driver")
+                logger.info { "Enabled H2 local database" }
+
+                val isH2WebEnabled = config.getBoolean("h2.web.enable")
+                if (isH2WebEnabled) {
+                    h2WebServer = Server.createWebServer().start() // Allow access through web client
+                    logger.warning { "Enabled H2 web Server, allowing external web access!" }
+                }
+
+                val isH2TcpEnabled = config.getBoolean("h2.tcp.enable")
+                if (isH2TcpEnabled) {
+                    h2TcpServer = Server.createTcpServer().start() // Allow access through DB client
+                    logger.warning { "Enabled H2 TCP Server, allowing external client access!" }
+                }
             }
 
             dataSource = createDataSource()
-            log.info { "Opened DataSource" }
+            logger.info { "Opened DataSource" }
         }
 
         server.servicesManager.register(
             DataSourceService::class.java,
-            DataSourceService(this, dataSource),
+            DataSourceService(logger, dataSource),
             this,
-            ServicePriority.Normal
-        )
-        log.info { "Registered DataSourceService" }
+            ServicePriority.Normal)
+        logger.info { "Registered DataSourceService" }
     }
 
-    private fun startH2() {
-        Class.forName("org.h2.Driver")
-        h2WebServer = Server.createWebServer().start() // Allow access through web client
-        h2TcpServer = Server.createTcpServer().start() // Allow access through DB client
-        log.info { "Enabled H2 Server" }
-    }
-
-    override suspend fun onDisabled() {
+    override suspend fun onDisableAsync() {
         server.servicesManager.unregisterAll(this)
-        log.info { "Unregistered services" }
+        logger.info("Unregistered services")
 
         withContext(Dispatchers.IO) {
             h2WebServer?.stop()
             h2TcpServer?.stop()
 
             dataSource.close()
-            log.info { "Closed data source" }
+            logger.info { "Closed data source" }
         }
     }
 

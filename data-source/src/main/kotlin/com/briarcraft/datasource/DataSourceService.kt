@@ -1,6 +1,5 @@
 package com.briarcraft.datasource
 
-import dev.viesoft.paperkit.core.plugin.IKotlinPlugin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.intellij.lang.annotations.Language
@@ -8,13 +7,12 @@ import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Statement
+import java.util.logging.Logger
 import javax.sql.DataSource
 import kotlin.coroutines.CoroutineContext
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class DataSourceService(private val plugin: IKotlinPlugin, private val dataSource: DataSource) {
-
-    val log get() = plugin.log
+class DataSourceService(val logger: Logger, private val dataSource: DataSource) {
     val connection: Connection get() = dataSource.connection
 
     fun connection(): Connection = dataSource.connection
@@ -33,9 +31,7 @@ class DataSourceService(private val plugin: IKotlinPlugin, private val dataSourc
         crossinline block: suspend (Connection) -> T
     ): Result<T> {
         return runCatching {
-            withContext(context) {
-                connection.use { block(it) }
-            }
+            useConnection(context, block)
         }
     }
 
@@ -48,11 +44,11 @@ class DataSourceService(private val plugin: IKotlinPlugin, private val dataSourc
                 statement.executeQuery(sql).use { transform(it) }
             }
         }.onFailure {
-            log.error(it) { "Executing a statement failed: $sql" }
+            logger.severe { "Executing a statement failed: $sql" }
         }.getOrThrow()
     }
 
-    suspend fun execute(@Language("MySQL") sql: String) = execute(sql) {}
+    suspend inline fun execute(@Language("MySQL") sql: String) = execute(sql) {}
 
     suspend inline fun execute(
         @Language("MySQL") sql: String,
@@ -64,7 +60,7 @@ class DataSourceService(private val plugin: IKotlinPlugin, private val dataSourc
                 statement.execute()
             }
         }.onFailure {
-            log.error(it) { "Executing a statement failed: $sql" }
+            logger.severe { "Execution failed: $sql" }
         }.getOrThrow()
     }
 
@@ -84,11 +80,11 @@ class DataSourceService(private val plugin: IKotlinPlugin, private val dataSourc
                 statement.executeQuery().use { transform(it) }
             }
         }.onFailure {
-            log.error(it) { "Executing a statement failed: $sql" }
+            logger.severe { "Query failed: $sql" }
         }.getOrThrow()
     }
 
-    suspend fun update(@Language("MySQL") sql: String): Int = update(sql) {}
+    suspend inline fun update(@Language("MySQL") sql: String): Int = update(sql) {}
 
     suspend inline fun update(
         @Language("MySQL") sql: String,
@@ -100,7 +96,7 @@ class DataSourceService(private val plugin: IKotlinPlugin, private val dataSourc
                 statement.executeUpdate()
             }
         }.onFailure {
-            log.error(it) { "Executing a statement failed: $sql" }
+            logger.severe { "Update failed: $sql" }
         }.getOrThrow()
     }
 
@@ -124,15 +120,15 @@ class DataSourceService(private val plugin: IKotlinPlugin, private val dataSourc
                 }
             }
         }.onFailure {
-            log.error(it) { "Executing a statement failed: $sql" }
+            logger.severe { "Update with generated keys failed: $sql" }
         }.getOrThrow()
     }
 
-    suspend fun <T> batch(
+    suspend inline fun <T> batch(
         @Language("MySQL") sql: String,
         items: Iterable<T>,
         autoCommit: Boolean = true,
-        setParams: suspend (PreparedStatement, T) -> Unit
+        crossinline setParams: suspend (PreparedStatement, T) -> Unit
     ): IntArray {
         return batch(sql, items.asSequence(), autoCommit, setParams)
     }
@@ -158,7 +154,7 @@ class DataSourceService(private val plugin: IKotlinPlugin, private val dataSourc
                 }
             }
         }.onFailure {
-            log.error(it) { "Executing a statement failed: $sql" }
+            logger.severe { "Batch failed: $sql" }
         }.getOrThrow()
     }
 }
