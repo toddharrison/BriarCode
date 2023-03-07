@@ -3,6 +3,12 @@ This Spigot plugin allows the creation of groups of client-only blocks that can 
 They prevent players from walking through them or breaking them.
 
 Currently tested on:
+* Paper 17.1
+  * ProtocolLib-608
+  * WorldEdit-7-2.14
+* Paper 18.2
+  * ProtocolLib-608
+  * WorldEdit-7-2.14
 * Paper 19.2
   * ProtocolLib-600
   * WorldEdit-7.2.12

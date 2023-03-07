@@ -6,7 +6,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-version = "2.0.2"
+version = "2.0.3"
 description = ""
 
 dependencies {
@@ -46,6 +46,7 @@ pitest {
 }
 
 bukkit {
+    apiVersion = "1.17"
     prefix = "fake-block"
     description = "FakeBlock plugin"
     load = PluginLoadOrder.POSTWORLD
