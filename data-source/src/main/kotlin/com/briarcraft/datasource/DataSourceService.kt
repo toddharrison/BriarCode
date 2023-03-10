@@ -157,4 +157,20 @@ class DataSourceService(val logger: Logger, private val dataSource: DataSource) 
             logger.severe { "Batch failed: $sql" }
         }.getOrThrow()
     }
+
+    suspend inline fun batch(
+        sqlStatements: Sequence<String>
+    ) {
+        return useConnectionSafely { connection ->
+            connection.autoCommit = false
+            connection.createStatement().use { statement ->
+                sqlStatements.forEach(statement::addBatch)
+                statement.executeBatch()
+            }
+            connection.commit()
+            connection.autoCommit = true
+        }.onFailure {
+            logger.severe { "Batch failed" }
+        }.getOrThrow()
+    }
 }

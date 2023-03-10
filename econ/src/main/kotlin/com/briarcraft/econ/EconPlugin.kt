@@ -13,6 +13,7 @@ import com.briarcraft.econ.market.saveMarketService
 import com.briarcraft.econ.material.loadMaterialService
 import com.briarcraft.econ.recipe.loadRecipeService
 import com.briarcraft.econ.vault.VaultService
+import com.briarcraft.gui.api.GuiService
 import com.briarcraft.kotlin.util.runTaskTimerAsynchronously
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +68,9 @@ class EconPlugin: SuspendingJavaPlugin() {
         currencyConfig = YamlConfiguration().also { it.load(currencyConfigFile) }
         marketConfig = YamlConfiguration().also { it.load(File(dataFolder, "markets.yml")) }
 
+        val guiService = server.servicesManager.getRegistration(GuiService::class.java)?.provider
+        require(guiService != null)
+
         // Load econ services
         currencyService = loadCurrencyService(plugin, currencyConfig)
             .also { it.registerService() }
@@ -76,7 +80,7 @@ class EconPlugin: SuspendingJavaPlugin() {
         materialService = loadMaterialService(plugin, recipeService, YamlConfiguration()
             .also { it.load(File(dataFolder, "materials.yml")) })
             .also { it.registerService() }
-        marketService = loadMarketService(plugin, currencyService, recipeService, materialService, marketConfig)
+        marketService = loadMarketService(plugin, currencyService, recipeService, materialService, guiService, marketConfig)
             .also { it.registerService() }
         server.pluginManager.getPlugin("Vault")?.let {
             VaultService(plugin, currencyService).registerService()

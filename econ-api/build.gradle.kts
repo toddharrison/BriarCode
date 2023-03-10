@@ -7,5 +7,5 @@ description = ""
 
 dependencies {
     api(project(":kotlin"))
-    api(project(":gui"))
+    api(project(":gui-api"))
 }

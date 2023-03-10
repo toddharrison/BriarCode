@@ -14,6 +14,7 @@ import com.briarcraft.econ.api.stock.StockAmount
 import com.briarcraft.econ.market.view.MarketBuyView
 import com.briarcraft.econ.market.view.MarketSellView
 import com.briarcraft.econ.recipe.getReduceMappings
+import com.briarcraft.gui.api.GuiService
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.configuration.Configuration
@@ -36,6 +37,7 @@ fun loadMarketService(
     currencyService: CurrencyService,
     recipeService: RecipeService,
     materialService: MaterialService,
+    guiService: GuiService,
     config: Configuration
 ): MarketService {
     val defaultMarketName = config.getString("$CONFIG_DEFAULT.market") ?: CONFIG_DEFAULT
@@ -43,7 +45,7 @@ fun loadMarketService(
     val viewNames = config.getStringList("views").toSet()
     val markets = configMarkets(plugin, currencyService, recipeService, materialService, marketNames)
     val groups = configGroups(plugin)
-    val views = configViews(plugin, currencyService, markets, groups, viewNames)
+    val views = configViews(plugin, currencyService, guiService, markets, groups, viewNames)
 
     val defaultMarket: Market = markets.getOrPut(defaultMarketName) {
         FreeMarket(defaultMarketName, currencyService, currencyService.defaultCurrency, mapOf())
@@ -231,6 +233,7 @@ private fun configGroups(
 private fun configViews(
     plugin: Plugin,
     currencyService: CurrencyService,
+    guiService: GuiService,
     markets: Map<String, Market>,
     groups: Map<String, MarketViewGroup>,
     viewNames: Set<String>
@@ -250,13 +253,13 @@ private fun configViews(
         when (typeName?.lowercase()) {
             VIEW_TYPE_BUY -> {
                 val priceAdjustment = PriceAdjustment(priceMultiplier, feePercentage, feeMinimum)
-                configBuyView(title, market, priceAdjustment, currencyService, groups, viewGroups)
+                configBuyView(plugin, guiService, title, market, priceAdjustment, currencyService, groups, viewGroups)
             }
             VIEW_TYPE_SELL -> {
                 val priceAdjustment = PriceAdjustment(priceMultiplier, feePercentage, feeMinimum) {
                         value, adjustment -> value - adjustment
                 }
-                configSellView(title, market, priceAdjustment, currencyService, groups, viewGroups)
+                configSellView(plugin, guiService, title, market, priceAdjustment, currencyService, groups, viewGroups)
             }
             else -> throw IllegalStateException("View type '$typeName' not recognized")
         }
@@ -264,6 +267,8 @@ private fun configViews(
 }
 
 private fun configBuyView(
+    plugin: Plugin,
+    guiService: GuiService,
     title: String,
     market: Market,
     priceAdjustment: PriceAdjustment,
@@ -278,10 +283,12 @@ private fun configBuyView(
     // Validate
     check(!rootGroup.subGroups.isNullOrEmpty())
 
-    return MarketBuyView(titleDisplay, market, currencyService, groups, rootGroup, priceAdjustment)
+    return MarketBuyView(plugin, guiService, titleDisplay, market, currencyService, groups, rootGroup, priceAdjustment)
 }
 
 private fun configSellView(
+    plugin: Plugin,
+    guiService: GuiService,
     title: String,
     market: Market,
     priceAdjustment: PriceAdjustment,
@@ -296,5 +303,5 @@ private fun configSellView(
     // Validate
     check(allowedItems.isNotEmpty())
 
-    return MarketSellView(titleDisplay, market, currencyService, allowedItems, priceAdjustment)
+    return MarketSellView(plugin, guiService, titleDisplay, market, currencyService, allowedItems, priceAdjustment)
 }

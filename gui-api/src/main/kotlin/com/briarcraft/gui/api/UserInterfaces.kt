@@ -1,4 +1,4 @@
-package com.briarcraft.gui.util
+package com.briarcraft.gui.api
 
 import com.briarcraft.gui.api.UserInterfaceView
 import org.bukkit.entity.Player
