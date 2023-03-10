@@ -1,5 +1,6 @@
 package com.briarcraft.gui
 
+import com.briarcraft.gui.api.GuiService
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
@@ -17,7 +18,7 @@ class GuiPlugin : JavaPlugin() {
     }
 
     override fun onEnable() {
-        val guiService = GuiService()
+        val guiService = GuiServiceImpl()
         server.servicesManager.register(GuiService::class.java, guiService, Plugin, ServicePriority.Normal)
         logger.info("Registered GUI Service")
 

@@ -14,6 +14,7 @@ import com.briarcraft.econ.material.MATERIALS_INVALID
 import com.briarcraft.econ.material.MATERIALS_UNAVAILABLE
 import com.briarcraft.econ.material.loadMaterialService
 import com.briarcraft.econ.recipe.*
+import com.briarcraft.gui.api.GuiService
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.Material
 import org.bukkit.configuration.file.YamlConfiguration
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.mockito.Mock
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.io.File
@@ -35,6 +37,8 @@ import kotlin.test.*
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class PluginIntegrationTest {
+    private val guiService = mock<GuiService>()
+
     @Nested
     inner class ServiceTest {
         private val plugin = mock<Plugin>()
@@ -62,7 +66,7 @@ class PluginIntegrationTest {
             materialService = loadMaterialService(plugin, recipeService, materialConfig)
 
             val marketConfig = YamlConfiguration().also { it.load("src/main/resources/markets.yml") }
-            marketService = loadMarketService(plugin, currencyService, recipeService, materialService, marketConfig)
+            marketService = loadMarketService(plugin, currencyService, recipeService, materialService, guiService, marketConfig)
         }
 
         @Nested

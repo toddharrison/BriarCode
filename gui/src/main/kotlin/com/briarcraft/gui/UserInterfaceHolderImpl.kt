@@ -1,4 +1,4 @@
-package com.briarcraft.gui.impl
+package com.briarcraft.gui
 
 import com.briarcraft.gui.api.UserInterfaceHolder
 import org.bukkit.Bukkit

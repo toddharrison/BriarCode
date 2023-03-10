@@ -9,7 +9,10 @@ datasource-config: db-h2.properties
 h2:
   # Start the H2 local database
   enable: true
-  # Allow local testing access through the web client
+  # Allow access through the web client
+  # http://localhost:8082/
   web.enable: false
-  # Allow local testing access through a DB client
+  # Allow access through a DB client
+  # jdbc:h2:tcp://localhost/mem:test
+  # jdbc:h2:mem:test;MODE=MYSQL
   tcp.enable: false

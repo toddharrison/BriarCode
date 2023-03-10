@@ -5,13 +5,7 @@ import com.briarcraft.econ.api.market.Market
 import com.briarcraft.econ.api.market.view.MarketView
 import com.briarcraft.econ.api.market.view.MarketViewGroup
 import com.briarcraft.econ.api.price.PriceAdjustment
-import com.briarcraft.gui.api.PanelUpdateEvent
-import com.briarcraft.gui.api.UserInterface
-import com.briarcraft.gui.api.UserInterfacePanel
-import com.briarcraft.gui.api.ViewUpdateEvent
-import com.briarcraft.gui.impl.UserInterfaceImpl
-import com.briarcraft.gui.impl.UserInterfaceViewHandlerImpl
-import com.briarcraft.gui.util.openUI
+import com.briarcraft.gui.api.*
 import com.briarcraft.kotlin.util.itemStackOf
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
@@ -20,12 +14,15 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
 import java.text.DecimalFormat
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
 class MarketBuyView(
+    override val plugin: Plugin,
+    private val guiService: GuiService,
     override val title: Component,
     override val market: Market,
     private val currencyService: CurrencyService,
@@ -37,7 +34,7 @@ class MarketBuyView(
         val groupStack = LinkedList<MarketViewGroup>()
         groupStack.push(rootGroup)
 
-        val buyUserInterface: UserInterface = UserInterfaceImpl(title, UserInterfaceViewHandlerImpl(
+        val buyUserInterface: UserInterface = guiService.createUserInterface(title, guiService.createUserInterfaceViewHandler(
             onCreate = { view ->
                 renderExitButton(view.navPanel, 8, player)
             },
@@ -75,7 +72,7 @@ class MarketBuyView(
             }
         ), InventoryType.CHEST, 6)
 
-        player.openUI(buyUserInterface)
+        player.openUI(plugin, buyUserInterface)
     }
 
     private fun renderGroupContents(panel: UserInterfacePanel, group: MarketViewGroup, slots: Set<Int>? = null, onClick: (MarketViewGroup) -> Unit) {
