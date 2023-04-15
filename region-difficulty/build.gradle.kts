@@ -5,13 +5,13 @@ plugins {
     id("io.papermc.paperweight.userdev")
 }
 
-version = "1.0.0"
+version = "1.1.0"
 description = ""
 
 dependencies {
     api(project(":kotlin"))
 
-    paperDevBundle("1.19.3-R0.1-SNAPSHOT")
+    paperDevBundle("1.19.4-R0.1-SNAPSHOT")
 
     compileOnly("xyz.jpenilla:reflection-remapper:0.1.0-SNAPSHOT")
 

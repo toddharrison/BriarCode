@@ -1,7 +1,7 @@
 package com.briarcraft.kotlin.util
 
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
-import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftInventoryPlayer
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventoryPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
