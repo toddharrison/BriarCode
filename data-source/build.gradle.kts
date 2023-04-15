@@ -4,7 +4,7 @@ plugins {
     id("briarcode.kotlin-plugin")
 }
 
-version = "1.0.1"
+version = "1.1.0"
 description = ""
 
 dependencies {

@@ -141,7 +141,7 @@ class PluginIntegrationTest {
         inner class MaterialServiceTest {
             @Test
             fun `verify all items set`() {
-                assertEquals(1155, materialService.allItems.types.size)
+                assertEquals(1197, materialService.allItems.types.size)
             }
 
             @Test
@@ -161,7 +161,7 @@ class PluginIntegrationTest {
 
             @Test
             fun `verify base item set`() {
-                assertEquals(283, materialService.baseItems.types.size)
+                assertEquals(325, materialService.baseItems.types.size)
             }
 
             @Test

@@ -35,7 +35,7 @@ class MaterialSetTest {
             val response = materials.types
 
             // Assert
-            Assertions.assertEquals(283, response.size)
+            Assertions.assertEquals(325, response.size)
         }
     }
 }
