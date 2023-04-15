@@ -4,6 +4,7 @@ import com.briarcraft.datasource.DataSourceService
 import com.briarcraft.rtw.change.block.BlockChangeConfig
 import com.briarcraft.rtw.change.block.BlockChangeListener
 import com.briarcraft.rtw.change.block.BlockChangeRepository
+import com.briarcraft.rtw.change.block.BlockChangeRepository2
 import com.briarcraft.rtw.change.claim.ClaimChangeListener
 import com.briarcraft.rtw.change.entity.EntityOriginListener
 import com.briarcraft.rtw.change.entity.EntityOriginRepository
@@ -31,7 +32,8 @@ import kotlin.time.Duration.Companion.seconds
 
 @Suppress("unused")
 class ReturnToWildPlugin: SuspendingJavaPlugin() {
-    private lateinit var blockChangeRepo: BlockChangeRepository
+//    private lateinit var blockChangeRepo: BlockChangeRepository
+    private lateinit var blockChangeRepo: BlockChangeRepository2
     private lateinit var commandService: CommandService
     private lateinit var permService: PermissionService
 
@@ -56,7 +58,8 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
 
         permService.enable()
 
-        blockChangeRepo = BlockChangeRepository(server, dataSource).also { it.createTable() }
+//        blockChangeRepo = BlockChangeRepository(server, dataSource).also { it.createTable() }
+        blockChangeRepo = BlockChangeRepository2(server, dataSource).also { it.createTable() }
         val entityOriginRepo = EntityOriginRepository(server, dataSource).also { it.createTable() }
         val tileEntityOriginRepo = TileEntityOriginRepository(server, dataSource).also { it.createTable() }
         val playerLogoffRepo = PlayerLogoffRepository(server, dataSource).also { it.createTable() }
@@ -90,13 +93,13 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
         blockChangeRepo.executeAll(logger)
     }
 
-    private fun sendChangesToDatabaseAsync(blockChangeRepo: BlockChangeRepository, wait: Duration) {
+    private fun sendChangesToDatabaseAsync(blockChangeRepo: BlockChangeRepository2, wait: Duration) {
         launch {
             withContext(asyncDispatcher) {
                 while (true) {
                     // Save actions to the database, in order
                     delay(wait)
-                    blockChangeRepo.executeNext(50)
+                    blockChangeRepo.executeNext(logger, 500)
                 }
             }
         }

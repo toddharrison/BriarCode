@@ -3,6 +3,7 @@ package com.briarcraft.regiondifficulty
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent
 import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.entity.EntityPotionEffectEvent
@@ -14,7 +15,7 @@ class RegionDifficultyListener(private val plugin: RegionDifficultyPlugin, priva
         monster.entitySpawnReason != CreatureSpawnEvent.SpawnReason.SPAWNER
             && config.worldsToNerf.contains(monster.world.name)
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onEntitySpawn(event: EntityAddToWorldEvent) {
         val entity = event.entity
         if (entity is Monster && shouldNerf(entity)) {
@@ -22,7 +23,7 @@ class RegionDifficultyListener(private val plugin: RegionDifficultyPlugin, priva
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onEntityShootBow(event: EntityShootBowEvent) {
         val entity = event.entity
         if (entity is Monster && shouldNerf(entity)) {
@@ -59,7 +60,7 @@ class RegionDifficultyListener(private val plugin: RegionDifficultyPlugin, priva
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onEntityPotionEffect(event: EntityPotionEffectEvent) {
         if (event.action == EntityPotionEffectEvent.Action.ADDED) {
             when (event.cause) {

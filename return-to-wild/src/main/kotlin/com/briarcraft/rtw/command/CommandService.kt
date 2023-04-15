@@ -1,6 +1,7 @@
 package com.briarcraft.rtw.command
 
 import com.briarcraft.rtw.change.block.BlockChangeRepository
+import com.briarcraft.rtw.change.block.BlockChangeRepository2
 import com.briarcraft.rtw.change.entity.EntityOrigin
 import com.briarcraft.rtw.change.entity.EntityOriginRepository
 import com.briarcraft.rtw.perm.PermissionService
@@ -21,7 +22,7 @@ import org.bukkit.loot.LootTables
 class CommandService(
     private val plugin: SuspendingJavaPlugin,
     private val permService: PermissionService,
-    private val blockChangeRepo: BlockChangeRepository,
+    private val blockChangeRepo: BlockChangeRepository2,
     private val entityOriginRepo: EntityOriginRepository,
     private val pauseFlag: AtomicToggle
 ) {

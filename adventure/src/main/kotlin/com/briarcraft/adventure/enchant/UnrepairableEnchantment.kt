@@ -14,7 +14,7 @@ import kotlin.math.max
 class UnrepairableEnchantment(plugin: Plugin): ListenerCurseEnchantment(
     NamespacedKey(plugin, "unrepairable"), 1, "Unrepairable", breakableEnchantmentUsage, setOf(MENDING)
 ) {
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun on(event: PrepareResultEvent) {
         val result = event.result
         val items = when (val inventory = event.inventory) {

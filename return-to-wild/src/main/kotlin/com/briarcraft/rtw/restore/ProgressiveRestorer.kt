@@ -1,10 +1,7 @@
 package com.briarcraft.rtw.restore
 
 import com.briarcraft.rtw.category.*
-import com.briarcraft.rtw.change.block.BlockChange
-import com.briarcraft.rtw.change.block.BlockChangeRepository
-import com.briarcraft.rtw.change.block.UPDATE_NEW_CATEGORY
-import com.briarcraft.rtw.change.block.UPDATE_NEW_MATERIAL
+import com.briarcraft.rtw.change.block.*
 import com.briarcraft.rtw.perm.PermissionService
 import com.briarcraft.rtw.util.AtomicToggle
 import com.briarcraft.rtw.util.CONTEXT_ORIGINAL
@@ -25,7 +22,7 @@ import kotlin.time.toJavaDuration
 
 class ProgressiveRestorer(
     override val plugin: SuspendingJavaPlugin,
-    override val blockChangeRepo: BlockChangeRepository,
+    override val blockChangeRepo: BlockChangeRepository2,
     override val permService: PermissionService,
     override val pauseFlag: AtomicToggle
 ): Restorer {

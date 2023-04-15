@@ -1,6 +1,7 @@
 package com.briarcraft.rtw.change.claim
 
 import com.briarcraft.rtw.change.block.BlockChangeRepository
+import com.briarcraft.rtw.change.block.BlockChangeRepository2
 import com.briarcraft.rtw.change.block.UPDATE_TIMESTAMP
 import com.briarcraft.rtw.util.CONTEXT_ORIGINAL
 import dev.espi.protectionstones.event.PSCreateEvent
@@ -11,13 +12,13 @@ import org.bukkit.event.Listener
 import java.time.Instant
 import java.util.logging.Logger
 
-class ClaimChangeListener(private val logger: Logger, private val blockChangeRepo: BlockChangeRepository): Listener {
-    @EventHandler(priority = EventPriority.MONITOR)
+class ClaimChangeListener(private val logger: Logger, private val blockChangeRepo: BlockChangeRepository2): Listener {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun on(event: PSCreateEvent) {
         logger.info("Player ${event.player.name} placed claim")
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     suspend fun on(event: PSRemoveEvent) {
         logger.info("Player ${event.player.name} removed claim")
         val wgRegion = event.region.wgRegion

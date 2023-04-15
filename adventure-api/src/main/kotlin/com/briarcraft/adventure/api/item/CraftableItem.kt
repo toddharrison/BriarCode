@@ -16,7 +16,7 @@ interface CraftableItem: ListenerItem {
     val usePermission: String
     val prepareTrueCheck: (event: PrepareItemCraftEvent) -> Unit
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     fun on(event: PrepareItemCraftEvent) {
         val recipe = event.recipe
         val recipeKey = if (recipe is Keyed) {

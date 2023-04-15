@@ -110,10 +110,10 @@ class BlockChangeRepository(
         val latestChange = findLatestChange(change)
         if (latestChange != null) {
             dataSource.execute("""
-                INSERT INTO $tableName
-                (context, type, world, blockKey, cause, causeName, x, y, z, material, blockData, category, newMaterial, newCategory, timestamp)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE newMaterial = VALUES(newMaterial), newCategory = VALUES(newCategory), timestamp = VALUES(timestamp)
+            INSERT INTO $tableName
+            (context, type, world, blockKey, cause, causeName, x, y, z, material, blockData, category, newMaterial, newCategory, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE newMaterial = VALUES(newMaterial), newCategory = VALUES(newCategory), timestamp = VALUES(timestamp)
             """.trimIndent()) { statement ->
                 statement.setString(1, latestChange.context)
                 statement.setString(2, item.type)
@@ -143,10 +143,10 @@ class BlockChangeRepository(
         val latestChange = findLatestChange(change)
         if (latestChange != null) {
             dataSource.batch("""
-                INSERT INTO $tableName
-                (context, type, world, blockKey, cause, causeName, x, y, z, material, blockData, category, newMaterial, newCategory, timestamp)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE newMaterial = VALUES(newMaterial), newCategory = VALUES(newCategory), timestamp = VALUES(timestamp)
+            INSERT INTO $tableName
+            (context, type, world, blockKey, cause, causeName, x, y, z, material, blockData, category, newMaterial, newCategory, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE newMaterial = VALUES(newMaterial), newCategory = VALUES(newCategory), timestamp = VALUES(timestamp)
             """.trimIndent(), items, false) { statement, item ->
                 statement.setString(1, latestChange.context)
                 statement.setString(2, item.type)
@@ -176,10 +176,10 @@ class BlockChangeRepository(
         val latestChange = findLatestChange(changes)
         if (latestChange != null) {
             dataSource.execute("""
-                INSERT INTO $tableName
-                (context, type, world, blockKey, cause, causeName, x, y, z, material, blockData, category, newMaterial, newCategory, timestamp)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE newMaterial = VALUES(newMaterial), newCategory = VALUES(newCategory), timestamp = VALUES(timestamp)
+            INSERT INTO $tableName
+            (context, type, world, blockKey, cause, causeName, x, y, z, material, blockData, category, newMaterial, newCategory, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE newMaterial = VALUES(newMaterial), newCategory = VALUES(newCategory), timestamp = VALUES(timestamp)
             """.trimIndent()) { statement ->
                 statement.setString(1, latestChange.context)
                 statement.setString(2, item.type)
@@ -209,10 +209,10 @@ class BlockChangeRepository(
         val latestChange = findLatestChange(changes)
         if (latestChange != null) {
             dataSource.batch("""
-                INSERT INTO $tableName
-                (context, type, world, blockKey, cause, causeName, x, y, z, material, blockData, category, newMaterial, newCategory, timestamp)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE newMaterial = VALUES(newMaterial), newCategory = VALUES(newCategory), timestamp = VALUES(timestamp)
+            INSERT INTO $tableName
+            (context, type, world, blockKey, cause, causeName, x, y, z, material, blockData, category, newMaterial, newCategory, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE newMaterial = VALUES(newMaterial), newCategory = VALUES(newCategory), timestamp = VALUES(timestamp)
             """.trimIndent(), items, false) { statement, item ->
                 statement.setString(1, latestChange.context)
                 statement.setString(2, item.type)
