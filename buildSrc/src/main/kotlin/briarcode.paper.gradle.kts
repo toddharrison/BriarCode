@@ -29,7 +29,7 @@ dependencies {
 
 tasks {
     compileJava {
-        options.release.set(19)
+        options.release.set(17)
     }
     test {
         useJUnitPlatform()

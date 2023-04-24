@@ -4,7 +4,7 @@ plugins {
     id("briarcode.kotlin-plugin")
 }
 
-version = "1.1.0"
+version = "1.2.0"
 description = ""
 
 dependencies {
@@ -16,12 +16,7 @@ dependencies {
     library("com.h2database", "h2", "2.1.214")
 
     testImplementation("com.zaxxer", "HikariCP", "5.0.1")
-    testImplementation("mysql", "mysql-connector-java", "8.0.32")
-
-//    library("com.github.viesoft-dev", "paper-kit", "0.1.0-M1") {
-//        exclude("org.jetbrains.kotlin", "stdlib")
-//        exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
-//    }
+    testImplementation("com.h2database", "h2", "2.1.214")
 }
 
 pitest {
