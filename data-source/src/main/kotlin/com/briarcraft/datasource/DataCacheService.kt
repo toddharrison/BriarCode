@@ -37,7 +37,7 @@ class DataCacheService<T>(
             cacheFilename = "$cachePrefix-${System.currentTimeMillis()}.$cacheFileExtension"
             val file = File(rootDir, cacheFilename!!)
             cacheFile = file
-            cacheWriter = FileOutputStream(file).bufferedWriter()
+            cacheWriter = FileOutputStream(file, true).bufferedWriter()
             file
         }
     }
@@ -65,6 +65,12 @@ class DataCacheService<T>(
                 }
                 true
             } ?: false
+        }
+    }
+
+    suspend fun flushCache() {
+        return withContext(context) {
+            cacheWriter?.flush()
         }
     }
 
