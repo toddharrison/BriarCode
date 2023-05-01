@@ -11,7 +11,7 @@ import java.util.UUID
 class PlayerLogoffRepository(
     override val server: Server,
     override val dataSource: DataSourceService,
-    override val tableName: String = "rtw_player_logoff_2"
+    override val tableName: String = "rtw_player_logoff"
 ): Repository {
     override suspend fun createTable() {
         dataSource.execute("""

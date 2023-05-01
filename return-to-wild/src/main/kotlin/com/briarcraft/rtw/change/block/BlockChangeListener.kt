@@ -38,7 +38,7 @@ class BlockChangeListener(
     // TODO Prevent vine growth while doing a restore
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockBreakEvent) {
+    suspend fun on(event: BlockBreakEvent) {
         if (!permService.isRecordable(event.block.location)) return
 
         val context = event.player.getContext()
@@ -62,7 +62,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockIgniteEvent) {
+    suspend fun on(event: BlockIgniteEvent) {
         if (!permService.isRecordable(event.block.location)) return
 
         val context = event.player?.getContext() ?: CONTEXT_ORIGINAL
@@ -90,7 +90,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockBurnEvent) {
+    suspend fun on(event: BlockBurnEvent) {
         if (!permService.isRecordable(event.block.location)) return
 
         val ignitingState = event.ignitingBlock?.state
@@ -103,7 +103,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockGrowEvent) {
+    suspend fun on(event: BlockGrowEvent) {
         if (!permService.isRecordable(event.block.location)) return
 
         val state = event.block.state
@@ -134,7 +134,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockSpreadEvent) {
+    suspend fun on(event: BlockSpreadEvent) {
         if (!permService.isRecordable(event.block.location)) return
 
         val state = event.block.state
@@ -212,7 +212,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockFormEvent) {
+    suspend fun on(event: BlockFormEvent) {
         if (!permService.isRecordable(event.block.location)) return
 
         val state = event.block.state
@@ -260,7 +260,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockFadeEvent) {
+    suspend fun on(event: BlockFadeEvent) {
         if (!permService.isRecordable(event.block.location)) return
 
         val state = event.block.state
@@ -315,7 +315,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockExplodeEvent) {
+    suspend fun on(event: BlockExplodeEvent) {
         event.blockList()
             .filter { permService.isRecordable(it.location) }
             .map { block -> block.state }
@@ -326,7 +326,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: EntityExplodeEvent) {
+    suspend fun on(event: EntityExplodeEvent) {
         event.blockList()
             .filter { permService.isRecordable(it.location) }
             .map { block -> block.state }
@@ -351,7 +351,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockFromToEvent) {
+    suspend fun on(event: BlockFromToEvent) {
         if (!permService.isRecordable(event.toBlock.location)) return
 
         val state = event.block.state
@@ -372,7 +372,7 @@ class BlockChangeListener(
 
     // TODO Test Piston movement recording
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockPistonExtendEvent) {
+    suspend fun on(event: BlockPistonExtendEvent) {
         val direction = event.direction
         event.blocks
             .flatMap { listOf(it.state, it.getRelative(direction).state) }
@@ -386,7 +386,7 @@ class BlockChangeListener(
 
     // TODO Test Piston movement recording
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockPistonRetractEvent) {
+    suspend fun on(event: BlockPistonRetractEvent) {
         val direction = event.direction
         event.blocks
             .flatMap { listOf(it.state, it.getRelative(direction).state) }
@@ -399,7 +399,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockPlaceEvent) {
+    suspend fun on(event: BlockPlaceEvent) {
         val context = event.player.getContext()
         if (event is BlockMultiPlaceEvent) {
             val changes = event.replacedBlockStates
@@ -415,7 +415,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: SpongeAbsorbEvent) {
+    suspend fun on(event: SpongeAbsorbEvent) {
         event.blocks
             .filter { permService.isRecordable(it.location) }
             .map { it.location.block.state to it.type }
@@ -426,7 +426,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: EntityChangeBlockEvent) {
+    suspend fun on(event: EntityChangeBlockEvent) {
         if (!permService.isRecordable(event.block.location)) return
 
         val state = event.block.state
@@ -509,7 +509,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: EntitySpawnEvent) {
+    suspend fun on(event: EntitySpawnEvent) {
         val entity = event.entity
         if (event.entityType == EntityType.PRIMED_TNT) {
             if (!permService.isRecordable(event.entity.location)) return
@@ -519,7 +519,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: PlayerBucketEmptyEvent) {
+    suspend fun on(event: PlayerBucketEmptyEvent) {
         if (!permService.isRecordable(event.block.location)) return
 
         val context = event.player.getContext()
@@ -543,7 +543,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: PlayerBucketFillEvent) {
+    suspend fun on(event: PlayerBucketFillEvent) {
         if (!permService.isRecordable(event.blockClicked.location)) return
 
         val context = event.player.getContext()
@@ -562,7 +562,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: PortalCreateEvent) {
+    suspend fun on(event: PortalCreateEvent) {
         event.blocks
             .filter { permService.isRecordable(it.location) }
             .forEach { state ->
@@ -591,7 +591,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: StructureGrowEvent) {
+    suspend fun on(event: StructureGrowEvent) {
         event.blocks
             .filter { permService.isRecordable(it.location) }
             .map { it.location.block.state to it }
@@ -610,7 +610,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: BlockFertilizeEvent) {
+    suspend fun on(event: BlockFertilizeEvent) {
         val context = event.player?.getContext() ?: CONTEXT_ORIGINAL
         event.blocks
             .filter { permService.isRecordable(it.location) }
@@ -629,7 +629,7 @@ class BlockChangeListener(
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun on(event: FluidLevelChangeEvent) {
+    suspend fun on(event: FluidLevelChangeEvent) {
         if (!permService.isRecordable(event.block.location)) return
 
         val state = event.block.state

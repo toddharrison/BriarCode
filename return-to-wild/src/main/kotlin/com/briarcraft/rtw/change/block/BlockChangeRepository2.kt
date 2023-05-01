@@ -1,6 +1,8 @@
 package com.briarcraft.rtw.change.block
 
+import com.briarcraft.datasource.DataCacheService
 import com.briarcraft.datasource.DataSourceService
+import com.briarcraft.datasource.DataSynchronizationService
 import com.briarcraft.rtw.change.repo.DependencyChange
 import com.briarcraft.rtw.change.repo.DependencyChanges
 import com.briarcraft.rtw.repo.Repository
@@ -8,19 +10,92 @@ import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Server
 import org.bukkit.World
+import java.io.File
 import java.sql.Timestamp
 import java.sql.Types
 import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
 import kotlin.math.min
+import kotlin.time.Duration
 
 class BlockChangeRepository2(
     override val server: Server,
     override val dataSource: DataSourceService,
-    override val tableName: String = "rtw_block_change_2"
+    cacheDir: File,
+    maxFileCacheCount: Int,
+    checkDelay: Duration,
+    staleDelay: Duration,
+    syncDelay: Duration,
+    doLog: Boolean,
+    override val tableName: String = "rtw_block_change",
 ): Repository {
-    private val actions: Queue<ChangeEntity> = LinkedList()
+    private val timestampFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+        .withZone(ZoneOffset.UTC)
+
+    private val dataCacheService = DataCacheService<ChangeEntity>(dataSource,
+        "CALL ${tableName}_change(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        cacheDir,
+        "block_change",
+        "tsv",
+        { sequenceOf(
+            it.context,
+            it.type,
+            it.world,
+            it.blockKey,
+            it.cause,
+            it.causeName,
+            it.x,
+            it.y,
+            it.z,
+            it.material,
+            it.blockData,
+            it.category,
+            it.newMaterial,
+            it.newCategory,
+            if (it.timestamp == null) null else timestampFormat.format(it.timestamp),
+            it.blockKey1,
+            it.blockKey2,
+            it.blockKey3,
+            it.blockKey4,
+            it.blockKey5,
+            it.blockKey6,
+            it.blockKey7,
+            it.blockKey8,
+            it.blockKey9,
+            it.blockKey10,
+        ) }
+    ) { statement, data ->
+        statement.setObject(1, data[0], Types.VARCHAR)
+        statement.setObject(2, data[1], Types.VARCHAR)
+        statement.setObject(3, data[2], Types.VARCHAR)
+        statement.setObject(4, data[3], Types.BIGINT)
+        statement.setObject(5, data[4], Types.VARCHAR)
+        statement.setObject(6, data[5], Types.VARCHAR)
+        statement.setObject(7, data[6], Types.INTEGER)
+        statement.setObject(8, data[7], Types.SMALLINT)
+        statement.setObject(9, data[8], Types.INTEGER)
+        statement.setObject(10, data[9], Types.VARCHAR)
+        statement.setObject(11, data[10], Types.VARCHAR)
+        statement.setObject(12, data[11], Types.INTEGER)
+        statement.setObject(13, data[12], Types.VARCHAR)
+        statement.setObject(14, data[13], Types.INTEGER)
+        statement.setObject(15, data[14], Types.TIMESTAMP)
+        statement.setObject(16, data[15], Types.BIGINT)
+        statement.setObject(17, data[16], Types.BIGINT)
+        statement.setObject(18, data[17], Types.BIGINT)
+        statement.setObject(19, data[18], Types.BIGINT)
+        statement.setObject(20, data[19], Types.BIGINT)
+        statement.setObject(21, data[20], Types.BIGINT)
+        statement.setObject(22, data[21], Types.BIGINT)
+        statement.setObject(23, data[22], Types.BIGINT)
+        statement.setObject(24, data[23], Types.BIGINT)
+        statement.setObject(25, data[24], Types.BIGINT)
+    }
+    private val dataSyncService = DataSynchronizationService(server.logger, dataCacheService, maxFileCacheCount, checkDelay, staleDelay.inWholeSeconds.toInt(), syncDelay, doLog)
 
     override suspend fun createTable() {
         dataSource.execute("""
@@ -108,34 +183,32 @@ class BlockChangeRepository2(
     }
 
     // ReturnToWildPlugin
-    suspend fun executeNext(log: Logger, count: Int) {
-        if (count > 0 && actions.size > 0) {
-            val size = actions.size
-            saveAll(generateSequence { actions.poll() }.take(count))
-            log.info("Saved changes: ${min(count, size)} / $size")
-        }
+    suspend fun start() {
+        dataSyncService.start()
     }
-    suspend fun executeAll(log: Logger) {
-        val size = actions.size
-        saveAll(generateSequence { actions.poll() })
-        log.info("Saved changes: $size")
+    suspend fun stop() {
+        dataSyncService.stop()
     }
 
     // BlockChangeListener
-    fun saveQueued(change: BlockChange) = actions.add(SaveEntity(
+    suspend fun saveQueued(change: BlockChange) = dataSyncService.write(SaveEntity(
         change.context, change.type, change.location.world.name, change.location.toBlockKey(),
         change.cause?.asString() ?: "minecraft:unknown", change.causeName ?: "unknown",
         change.location.blockX, change.location.blockY, change.location.blockZ, change.blockData.material.key.asString(),
         change.blockData.asString, change.category, change.newMaterial.key.asString(), change.newCategory, change.timestamp
     ))
-    fun saveAllQueued(changes: List<BlockChange>) = changes.forEach(::saveQueued)
-    fun saveWherePresentQueued(change: BlockChange, dependencyChange: DependencyChange) = actions.add(SaveConditionalEntity(
+    suspend fun saveAllQueued(changes: List<BlockChange>) {
+        for (change in changes) {
+            saveQueued(change)
+        }
+    }
+    suspend fun saveWherePresentQueued(change: BlockChange, dependencyChange: DependencyChange) = dataSyncService.write(SaveConditionalEntity(
         change.type, change.location.world.name, change.location.toBlockKey(), change.location.blockX, change.location.blockY,
         change.location.blockZ, change.blockData.material.key.asString(), change.blockData.asString, change.category,
         change.newMaterial.key.asString(), change.newCategory, change.timestamp, dependencyChange.location.toBlockKey(),
         null, null, null, null, null, null, null, null, null
     ))
-    fun saveWhereOnePresentQueued(change: BlockChange, dependencyChanges: DependencyChanges) = actions.add(SaveConditionalEntity(
+    suspend fun saveWhereOnePresentQueued(change: BlockChange, dependencyChanges: DependencyChanges) = dataSyncService.write(SaveConditionalEntity(
         change.type, change.location.world.name, change.location.toBlockKey(), change.location.blockX, change.location.blockY,
         change.location.blockZ, change.blockData.material.key.asString(), change.blockData.asString, change.category,
         change.newMaterial.key.asString(), change.newCategory, change.timestamp, dependencyChanges.locations[0].toBlockKey(),
@@ -145,104 +218,64 @@ class BlockChangeRepository2(
         dependencyChanges.locations.getOrNull(7)?.toBlockKey(), dependencyChanges.locations.getOrNull(8)?.toBlockKey(),
         dependencyChanges.locations.getOrNull(9)?.toBlockKey()
     ))
-    fun saveAllWherePresentQueued(changes: List<BlockChange>, dependencyChange: DependencyChange) = changes
+    suspend fun saveAllWherePresentQueued(changes: List<BlockChange>, dependencyChange: DependencyChange) = changes
         .forEach { change-> saveWherePresentQueued(change, dependencyChange) }
 
     // ProgressiveRestorer, ClaimChangeListener
-    fun updateQueued(change: BlockChange, data: Map<String, Any>): Boolean {
+    suspend fun updateQueued(change: BlockChange, data: Map<String, Any>): Boolean {
         require(data.isNotEmpty())
 
         val newMaterial = data[UPDATE_NEW_MATERIAL] as Material? ?: change.newMaterial
         val newCategory = data[UPDATE_NEW_CATEGORY] as Int? ?: change.newCategory
         val timestamp = data[UPDATE_TIMESTAMP] as Instant? ?: change.timestamp
 
-        return actions.add(UpdateEntity(
+        return dataSyncService.write(UpdateEntity(
             change.context, change.location.world.name, change.location.toBlockKey(), newMaterial.key.asString(), newCategory, timestamp
         ))
     }
 
     // ProgressiveRestorer
-    fun deleteQueued(change: BlockChange) = actions.add(DeleteEntity(
-        change.context, change.location.world.name, change.location.toBlockKey()
-    ))
+    suspend fun deleteQueued(change: BlockChange): Boolean {
+        // TODO
+        return dataSyncService.write(DeleteEntity(
+            change.context, change.location.world.name, change.location.toBlockKey()
+        ))
+    }
     suspend fun findChanges(context: String, cause: NamespacedKey, since: Instant): List<BlockChange> {
-        check(actions.isEmpty())
         // TODO
         return listOf()
     }
     suspend fun findByNewCategory(context: String, newCategory: Int, since: Instant): List<BlockChange> {
-        check(actions.isEmpty())
         // TODO
         return listOf()
     }
     suspend fun findByCategories(context: String, category: Int, newCategory: Int, since: Instant): List<BlockChange> {
-        check(actions.isEmpty())
         // TODO
         return listOf()
     }
 
     // ClaimChangeListener
     suspend fun findByRegion(context: String, world: World, minX: Int, minY: Int, minZ: Int, maxX: Int, maxY: Int, maxZ: Int): List<BlockChange> {
-        check(actions.isEmpty())
         // TODO
         return listOf()
     }
 
     // CommandService
     suspend fun findChanges(): List<BlockChange> {
-        check(actions.isEmpty())
         // TODO
         return listOf()
     }
     suspend fun findChanges(context: String): List<BlockChange> {
-        check(actions.isEmpty())
         // TODO
         return listOf()
     }
     suspend fun delete(blockChange: BlockChange) {
-        check(actions.isEmpty())
         // TODO
     }
     suspend fun delete(context: String) {
-        check(actions.isEmpty())
         // TODO
     }
     suspend fun deleteAll() {
-        check(actions.isEmpty())
         // TODO
-    }
-
-
-
-    private suspend fun saveAll(entities: Sequence<ChangeEntity>) {
-        dataSource.batchCall("""
-            CALL ${tableName}_change(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """.trimIndent(), entities) { statement, entity ->
-            statement.setString(1, entity.context)
-            statement.setString(2, entity.type)
-            statement.setString(3, entity.world)
-            statement.setLong(4, entity.blockKey)
-            statement.setString(5, entity.cause)
-            statement.setString(6, entity.causeName)
-            statement.setObject(7, entity.x, Types.INTEGER)
-            statement.setObject(8, entity.y, Types.SMALLINT)
-            statement.setObject(9, entity.z, Types.INTEGER)
-            statement.setString(10, entity.material)
-            statement.setString(11, entity.blockData)
-            statement.setObject(12, entity.category, Types.INTEGER)
-            statement.setString(13, entity.newMaterial)
-            statement.setObject(14, entity.newCategory, Types.INTEGER)
-            statement.setTimestamp(15, Timestamp.from(entity.timestamp))
-            statement.setObject(16, entity.blockKey1, Types.BIGINT)
-            statement.setObject(17, entity.blockKey2, Types.BIGINT)
-            statement.setObject(18, entity.blockKey3, Types.BIGINT)
-            statement.setObject(19, entity.blockKey4, Types.BIGINT)
-            statement.setObject(20, entity.blockKey5, Types.BIGINT)
-            statement.setObject(21, entity.blockKey6, Types.BIGINT)
-            statement.setObject(22, entity.blockKey7, Types.BIGINT)
-            statement.setObject(23, entity.blockKey8, Types.BIGINT)
-            statement.setObject(24, entity.blockKey9, Types.BIGINT)
-            statement.setObject(25, entity.blockKey10, Types.BIGINT)
-        }
     }
 }

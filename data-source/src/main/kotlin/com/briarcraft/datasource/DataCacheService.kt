@@ -16,9 +16,9 @@ class DataCacheService<T>(
     private val rootDir: File,
     private val cachePrefix: String,
     private val cacheFileExtension: String,
-    private val serializer: (T) -> Sequence<Any>,
+    private val serializer: (T) -> Sequence<Any?>,
     private val context: CoroutineContext = Dispatchers.IO,
-    private val setParams: suspend (PreparedStatement, List<String>) -> Unit
+    private val setParams: suspend (PreparedStatement, List<String?>) -> Unit
 ) {
     init {
         if (rootDir.exists()) require(rootDir.isDirectory) else rootDir.mkdirs()
@@ -34,7 +34,7 @@ class DataCacheService<T>(
     suspend fun openCache(): File {
         return withContext(context) {
             cacheWriter?.close()
-            cacheFilename = "$cachePrefix-${System.currentTimeMillis()}.$cacheFileExtension"
+            cacheFilename = "${cachePrefix}_${System.currentTimeMillis()}.$cacheFileExtension"
             val file = File(rootDir, cacheFilename!!)
             cacheFile = file
             cacheWriter = FileOutputStream(file, true).bufferedWriter()
@@ -97,16 +97,21 @@ class DataCacheService<T>(
                 val file = File(rootDir, nextCacheFilename)
                 dataSourceService.useConnectionSafely { connection ->
                     connection.autoCommit = false
-                    connection.prepareCall(sql).use { statement ->
-                        FileInputStream(file).bufferedReader().use { reader ->
-                            reader.lineSequence().forEach { line ->
-                                setParams(statement, line.split("\t"))
-                                statement.addBatch()
+                    try {
+                        connection.prepareCall(sql).use { statement ->
+                            FileInputStream(file).bufferedReader().use { reader ->
+                                reader.lineSequence().forEach { line ->
+                                    setParams(statement, line.split("\t").map { if (it == "null") null else it })
+                                    statement.addBatch()
+                                }
                             }
+                            statement.executeBatch()
                         }
-                        statement.executeBatch()
-                    }.also {
                         connection.commit()
+                    } catch (e: Exception) {
+                        connection.rollback()
+                        throw e
+                    } finally {
                         connection.autoCommit = true
                     }
                 }.onSuccess {

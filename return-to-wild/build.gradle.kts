@@ -4,7 +4,7 @@ plugins {
     id("briarcode.kotlin-plugin")
 }
 
-version = "1.6.0"
+version = "1.7.0"
 description = ""
 
 dependencies {
@@ -18,8 +18,8 @@ dependencies {
     implementation("dev.espi", "protectionstones", "2.10.2") // 2.10.3
 
     // CommandAPI
-    implementation("dev.jorel", "commandapi-annotations", "8.7.4")
-    annotationProcessor("dev.jorel", "commandapi-annotations", "8.7.4")
+    implementation("dev.jorel", "commandapi-annotations", "9.0.0")
+    annotationProcessor("dev.jorel", "commandapi-annotations", "9.0.0")
 
     api(project(":data-source"))
 }

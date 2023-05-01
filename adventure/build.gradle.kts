@@ -12,8 +12,8 @@ dependencies {
     api(project(":adventure-api"))
 
     // CommandAPI
-    implementation("dev.jorel", "commandapi-annotations", "8.7.4")
-    annotationProcessor("dev.jorel", "commandapi-annotations", "8.7.4")
+    implementation("dev.jorel", "commandapi-annotations", "9.0.0")
+    annotationProcessor("dev.jorel", "commandapi-annotations", "9.0.0")
 }
 
 tasks {

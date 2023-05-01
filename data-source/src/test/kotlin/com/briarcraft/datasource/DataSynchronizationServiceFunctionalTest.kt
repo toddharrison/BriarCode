@@ -43,7 +43,8 @@ class DataSynchronizationServiceFunctionalTest {
         }
 
         @BeforeEach
-        fun createDataCacheService() {
+        fun createDataCacheService() = runBlocking {
+            dataSourceService.execute("DELETE FROM TEST")
             dataCacheService = DataCacheService(dataSourceService,
                 "INSERT INTO TEST (a) VALUES (?)",
                 cacheDir,
@@ -69,6 +70,7 @@ class DataSynchronizationServiceFunctionalTest {
                     TestData("6"),
                     TestData("7"),
                     TestData("8"),
+                    TestData(null),
                 )
 
                 // Act
@@ -85,6 +87,6 @@ class DataSynchronizationServiceFunctionalTest {
     }
 
     data class TestData(
-        val a: String,
+        val a: String?,
     )
 }

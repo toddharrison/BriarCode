@@ -39,11 +39,12 @@ class DataSourceFunctionalTest {
 
         @BeforeTest
         fun createTestTable(): Unit = runBlocking {
-            dataSourceService.execute("CREATE TABLE IF NOT EXISTS TEST (a VARCHAR(32), b INT, c BIGINT, d BOOLEAN)")
+            dataSourceService.execute("CREATE TABLE IF NOT EXISTS TEST (a VARCHAR(32) NULL, b INT NULL, c BIGINT NULL, d BOOLEAN NULL)")
         }
 
         @BeforeEach
-        fun createDataCacheService() {
+        fun createDataCacheService() = runBlocking {
+            dataSourceService.execute("DELETE FROM TEST")
             dataCacheService = DataCacheService(dataSourceService,
                 "INSERT INTO TEST (a, b, c, d) VALUES (?, ?, ?, ?)",
                 cacheDir,
@@ -77,6 +78,30 @@ class DataSourceFunctionalTest {
                 assertEquals(0, dataCacheService.getItemsInCache())
                 assertTrue { openCacheFile == closeCacheFile }
                 assertTrue { closeCacheFile?.exists() ?: false }
+
+                // Cleanup
+                closeCacheFile?.delete()
+            }
+
+            @Test
+            fun `cache data records with null values to file`() = runTest {
+                // Arrange
+                val data = TestData(null, null, null, null)
+
+                // Act
+                val openCacheFile = dataCacheService.openCache()
+                val write = dataCacheService.writeToCache(data)
+                val itemCount = dataCacheService.getItemsInCache()
+                val closeCacheFile = dataCacheService.closeCache()
+
+                // Assert
+                assertTrue { write }
+                assertEquals(1, itemCount)
+                assertEquals(0, dataCacheService.getItemsInCache())
+                assertTrue { openCacheFile == closeCacheFile }
+                assertTrue { closeCacheFile?.exists() ?: false }
+
+                closeCacheFile?.forEachLine { println(it) }
 
                 // Cleanup
                 closeCacheFile?.delete()
@@ -146,18 +171,67 @@ class DataSourceFunctionalTest {
                 dataSourceService.query("SELECT a, b, c, d FROM TEST") { rs ->
                     assertTrue(rs.next())
                     assertEquals(
-                        TestData(rs.getString(1), rs.getInt(2), rs.getLong(3), rs.getBoolean(4)),
-                        data1)
+                        data1,
+                        TestData(rs.getString(1), rs.getInt(2), rs.getLong(3), rs.getBoolean(4)))
 
                     assertTrue(rs.next())
                     assertEquals(
-                        TestData(rs.getString(1), rs.getInt(2), rs.getLong(3), rs.getBoolean(4)),
-                        data2)
+                        data2,
+                        TestData(rs.getString(1), rs.getInt(2), rs.getLong(3), rs.getBoolean(4)))
 
                     assertTrue(rs.next())
                     assertEquals(
-                        TestData(rs.getString(1), rs.getInt(2), rs.getLong(3), rs.getBoolean(4)),
-                        data3)
+                        data3,
+                        TestData(rs.getString(1), rs.getInt(2), rs.getLong(3), rs.getBoolean(4)))
+
+                    assertFalse(rs.next())
+                }
+            }
+
+            @Test
+            fun `call with null values in data`() = runTest {
+                // Arrange
+                val data1 = TestData(null, 2, 3L, true)
+                val data2 = TestData("2", null, 4L, false)
+                val data3 = TestData("3", 4, null, true)
+                val data4 = TestData("4", 5, 6L, null)
+
+                // Act
+                val openCacheFile = dataCacheService.openCache()
+                val write = dataCacheService.writeToCache(listOf(data1, data2, data3, data4))
+                val itemCount = dataCacheService.getItemsInCache()
+                val closeCacheFile = dataCacheService.closeCache()
+
+                val writtenCacheFile = dataCacheService.writeCacheToDatabase()
+
+                // Assert
+                assertTrue { write }
+                assertEquals(4, itemCount)
+                assertEquals(0, dataCacheService.getItemsInCache())
+                assertEquals(openCacheFile, closeCacheFile)
+                assertEquals(openCacheFile, writtenCacheFile)
+                assertFalse { writtenCacheFile?.exists() ?: false }
+
+                dataSourceService.query("SELECT a, b, c, d FROM TEST") { rs ->
+                    assertTrue(rs.next())
+                    assertEquals(
+                        data1,
+                        TestData(rs.getString(1), rs.getNullableInt(2), rs.getNullableLong(3), rs.getNullableBoolean(4)))
+
+                    assertTrue(rs.next())
+                    assertEquals(
+                        data2,
+                        TestData(rs.getString(1), rs.getNullableInt(2), rs.getNullableLong(3), rs.getNullableBoolean(4)))
+
+                    assertTrue(rs.next())
+                    assertEquals(
+                        data3,
+                        TestData(rs.getString(1), rs.getNullableInt(2), rs.getNullableLong(3), rs.getNullableBoolean(4)))
+
+                    assertTrue(rs.next())
+                    assertEquals(
+                        data4,
+                        TestData(rs.getString(1), rs.getNullableInt(2), rs.getNullableLong(3), rs.getNullableBoolean(4)))
 
                     assertFalse(rs.next())
                 }
@@ -166,9 +240,9 @@ class DataSourceFunctionalTest {
     }
 
     data class TestData(
-        val a: String,
-        val b: Int,
-        val c: Long,
-        val d: Boolean
+        val a: String?,
+        val b: Int?,
+        val c: Long?,
+        val d: Boolean?
     )
 }

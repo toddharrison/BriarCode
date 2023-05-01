@@ -10,7 +10,7 @@ import java.sql.Timestamp
 class TileEntityOriginRepository(
     override val server: Server,
     override val dataSource: DataSourceService,
-    override val tableName: String = "rtw_tile_entity_origin_2"
+    override val tableName: String = "rtw_tile_entity_origin"
 ): Repository {
     override suspend fun createTable() {
         dataSource.execute("""

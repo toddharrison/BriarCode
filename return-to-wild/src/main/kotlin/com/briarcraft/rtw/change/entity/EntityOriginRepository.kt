@@ -14,7 +14,7 @@ import java.time.Instant
 class EntityOriginRepository(
     override val server: Server,
     override val dataSource: DataSourceService,
-    override val tableName: String = "rtw_entity_origin_2"
+    override val tableName: String = "rtw_entity_origin"
 ): Repository {
     override suspend fun createTable() {
         dataSource.execute("""

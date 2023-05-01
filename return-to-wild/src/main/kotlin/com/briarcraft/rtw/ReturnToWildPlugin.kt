@@ -59,7 +59,12 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
         permService.enable()
 
 //        blockChangeRepo = BlockChangeRepository(server, dataSource).also { it.createTable() }
-        blockChangeRepo = BlockChangeRepository2(server, dataSource).also { it.createTable() }
+        val maxFileCacheCount = 500
+        val checkDelay = 10.seconds
+        val staleDelay = 60.seconds
+        val syncDelay = 60.seconds
+        val doLog = true
+        blockChangeRepo = BlockChangeRepository2(server, dataSource, plugin.dataFolder, maxFileCacheCount, checkDelay, staleDelay, syncDelay, doLog).also { it.createTable() }
         val entityOriginRepo = EntityOriginRepository(server, dataSource).also { it.createTable() }
         val tileEntityOriginRepo = TileEntityOriginRepository(server, dataSource).also { it.createTable() }
         val playerLogoffRepo = PlayerLogoffRepository(server, dataSource).also { it.createTable() }
@@ -80,7 +85,8 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
         commandService = CommandService(plugin, permService, blockChangeRepo, entityOriginRepo, pauseFlag)
         commandService.registerCommands()
 
-        sendChangesToDatabaseAsync(blockChangeRepo, 1.seconds)
+        blockChangeRepo.start()
+//        sendChangesToDatabaseAsync(blockChangeRepo, 1.seconds)
         ProgressiveRestorer(this, blockChangeRepo, permService, pauseFlag).start()
     }
 
@@ -89,19 +95,20 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
 
         HandlerList.unregisterAll(this)
 
-        // Save all queued actions to the database
-        blockChangeRepo.executeAll(logger)
+        blockChangeRepo.stop()
+//        // Save all queued actions to the database
+//        blockChangeRepo.executeAll(logger)
     }
 
-    private fun sendChangesToDatabaseAsync(blockChangeRepo: BlockChangeRepository2, wait: Duration) {
-        launch {
-            withContext(asyncDispatcher) {
-                while (true) {
-                    // Save actions to the database, in order
-                    delay(wait)
-                    blockChangeRepo.executeNext(logger, 500)
-                }
-            }
-        }
-    }
+//    private fun sendChangesToDatabaseAsync(blockChangeRepo: BlockChangeRepository2, wait: Duration) {
+//        launch {
+//            withContext(asyncDispatcher) {
+//                while (true) {
+//                    // Save actions to the database, in order
+//                    delay(wait)
+//                    blockChangeRepo.executeNext(logger, 500)
+//                }
+//            }
+//        }
+//    }
 }
