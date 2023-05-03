@@ -222,22 +222,22 @@ class BlockChangeRepository2(
         .forEach { change-> saveWherePresentQueued(change, dependencyChange) }
 
     // ProgressiveRestorer, ClaimChangeListener
-    suspend fun updateQueued(change: BlockChange, data: Map<String, Any>): Boolean {
+    suspend fun updateQueued(change: BlockChange, data: Map<String, Any>) {
         require(data.isNotEmpty())
 
         val newMaterial = data[UPDATE_NEW_MATERIAL] as Material? ?: change.newMaterial
         val newCategory = data[UPDATE_NEW_CATEGORY] as Int? ?: change.newCategory
         val timestamp = data[UPDATE_TIMESTAMP] as Instant? ?: change.timestamp
 
-        return dataSyncService.write(UpdateEntity(
+        dataSyncService.write(UpdateEntity(
             change.context, change.location.world.name, change.location.toBlockKey(), newMaterial.key.asString(), newCategory, timestamp
         ))
     }
 
     // ProgressiveRestorer
-    suspend fun deleteQueued(change: BlockChange): Boolean {
+    suspend fun deleteQueued(change: BlockChange) {
         // TODO
-        return dataSyncService.write(DeleteEntity(
+        dataSyncService.write(DeleteEntity(
             change.context, change.location.world.name, change.location.toBlockKey()
         ))
     }
