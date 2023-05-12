@@ -5,36 +5,27 @@ import com.briarcraft.datasource.DataSourceService
 import com.briarcraft.datasource.DataSynchronizationService
 import com.briarcraft.rtw.change.repo.DependencyChange
 import com.briarcraft.rtw.change.repo.DependencyChanges
+import com.briarcraft.rtw.config.DataSynchronizationConfig
 import com.briarcraft.rtw.repo.Repository
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
-import org.bukkit.Server
-import org.bukkit.World
+import com.briarcraft.rtw.util.map
+import org.bukkit.*
 import java.io.File
 import java.sql.Timestamp
 import java.sql.Types
 import java.time.Instant
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.*
-import java.util.logging.Logger
-import kotlin.math.min
-import kotlin.time.Duration
 
+@Suppress("DEPRECATION")
 class BlockChangeRepository2(
     override val server: Server,
     override val dataSource: DataSourceService,
     cacheDir: File,
-    maxFileCacheCount: Int,
-    checkDelay: Duration,
-    staleDelay: Duration,
-    syncDelay: Duration,
-    doLog: Boolean,
+    dataSynchronizationConfig: DataSynchronizationConfig,
     override val tableName: String = "rtw_block_change",
 ): Repository {
     private val timestampFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
-        .withZone(ZoneOffset.UTC)
+        .withZone(ZoneId.systemDefault())
 
     private val dataCacheService = DataCacheService<ChangeEntity>(dataSource,
         "CALL ${tableName}_change(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -95,7 +86,15 @@ class BlockChangeRepository2(
         statement.setObject(24, data[23], Types.BIGINT)
         statement.setObject(25, data[24], Types.BIGINT)
     }
-    private val dataSyncService = DataSynchronizationService(server.logger, dataCacheService, maxFileCacheCount, checkDelay, staleDelay.inWholeSeconds.toInt(), syncDelay, doLog)
+    private val dataSyncService = DataSynchronizationService(
+        server.logger,
+        dataCacheService,
+        dataSynchronizationConfig.maxFileCacheCount,
+        dataSynchronizationConfig.checkDelay,
+        dataSynchronizationConfig.staleDelay.inWholeSeconds.toInt(),
+        dataSynchronizationConfig.syncDelay,
+        dataSynchronizationConfig.doLog
+    )
 
     override suspend fun createTable() {
         dataSource.execute("""
@@ -236,46 +235,259 @@ class BlockChangeRepository2(
 
     // ProgressiveRestorer
     suspend fun deleteQueued(change: BlockChange) {
-        // TODO
         dataSyncService.write(DeleteEntity(
             change.context, change.location.world.name, change.location.toBlockKey()
         ))
     }
     suspend fun findChanges(context: String, cause: NamespacedKey, since: Instant): List<BlockChange> {
-        // TODO
-        return listOf()
+        return dataSource.query("""
+            SELECT a.context, a.type, a.cause, a.causeName, a.world, a.x, a.y, a.z, a.blockData, a.category, a.newMaterial, a.newCategory, a.timestamp
+            FROM (
+                SELECT t.context, t.type, t.cause, t.causeName, t.world, t.x, t.y, t.z, t.blockData, t.category, t.newMaterial, t.newCategory, t.timestamp,
+                    MAX(t.timestamp) OVER (PARTITION BY t.world, t.blockKey) AS maxTimestamp
+                FROM $tableName AS t
+            ) AS a
+            WHERE a.maxTimestamp = a.timestamp
+            AND a.context = ?
+            AND a.cause = ?
+            AND a.timestamp < ?
+            AND a.world IN (${server.worlds.joinToString("','", "'", "'") { it.name }})
+        """.trimIndent(), { statement ->
+            statement.setString(1, context)
+            statement.setString(2, cause.asString())
+            statement.setTimestamp(3, Timestamp.from(since))
+        }) { rs ->
+            rs.map {
+                val type = it.getString(2)
+                val causeName = it.getString(4)
+                val world = server.getWorld(it.getString(5))
+                if (world == null) {
+                    null
+                } else {
+                    val x = it.getInt(6)
+                    val y = it.getInt(7)
+                    val z = it.getInt(8)
+                    val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
+                    val blockData = server.createBlockData(it.getString(9))
+                    val category = it.getInt(10)
+                    val newMaterial = Material.matchMaterial(it.getString(11))!!
+                    val newCategory = it.getInt(12)
+                    val timestamp = it.getTimestamp(13).toInstant()
+                    BlockChange(context, type, cause, causeName, location, blockData, category, newMaterial, newCategory, timestamp)
+                }
+            }
+        }.filterNotNull()
     }
     suspend fun findByNewCategory(context: String, newCategory: Int, since: Instant): List<BlockChange> {
-        // TODO
-        return listOf()
+        return dataSource.query("""
+            SELECT a.context, a.type, a.cause, a.causeName, a.world, a.x, a.y, a.z, a.blockData, a.category, a.newMaterial, a.newCategory, a.timestamp
+            FROM (
+                SELECT t.context, t.type, t.cause, t.causeName, t.world, t.x, t.y, t.z, t.blockData, t.category, t.newMaterial, t.newCategory, t.timestamp,
+                    MAX(t.timestamp) OVER (PARTITION BY t.world, t.blockKey) AS maxTimestamp
+                FROM $tableName AS t
+            ) AS a
+            WHERE a.maxTimestamp = a.timestamp
+            AND a.context = ?
+            AND a.newCategory = ?
+            AND a.timestamp < ?
+            AND a.world IN (${server.worlds.joinToString("','", "'", "'") { it.name }})
+        """.trimIndent(), { statement ->
+            statement.setString(1, context)
+            statement.setInt(2, newCategory)
+            statement.setTimestamp(3, Timestamp.from(since))
+        }) { rs ->
+            rs.map {
+                val type = it.getString(2)
+                val cause = it.getString(3)?.let { key -> NamespacedKey.fromString(key) }
+                val causeName = it.getString(4)
+                val world = server.getWorld(it.getString(5))
+                if (world == null) {
+                    null
+                } else {
+                    val x = it.getInt(6)
+                    val y = it.getInt(7)
+                    val z = it.getInt(8)
+                    val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
+                    val blockData = server.createBlockData(it.getString(9))
+                    val category = it.getInt(10)
+                    val newMaterial = Material.matchMaterial(it.getString(11))!!
+                    val timestamp = it.getTimestamp(13).toInstant()
+                    BlockChange(context, type, cause, causeName, location, blockData, category, newMaterial, newCategory, timestamp)
+                }
+            }
+        }.filterNotNull()
     }
     suspend fun findByCategories(context: String, category: Int, newCategory: Int, since: Instant): List<BlockChange> {
-        // TODO
-        return listOf()
+        return dataSource.query("""
+            SELECT a.context, a.type, a.cause, a.causeName, a.world, a.x, a.y, a.z, a.blockData, a.category, a.newMaterial, a.newCategory, a.timestamp
+            FROM (
+                SELECT t.context, t.type, t.cause, t.causeName, t.world, t.x, t.y, t.z, t.blockData, t.category, t.newMaterial, t.newCategory, t.timestamp,
+                    MAX(t.timestamp) OVER (PARTITION BY t.world, t.blockKey) AS maxTimestamp
+                FROM $tableName AS t
+            ) AS a
+            WHERE a.maxTimestamp = a.timestamp
+            AND a.context = ?
+            AND a.category = ?
+            AND a.newCategory = ?
+            AND a.timestamp < ?
+            AND a.world IN (${server.worlds.joinToString("','", "'", "'") { it.name }})
+        """.trimIndent(), { statement ->
+            statement.setString(1, context)
+            statement.setInt(2, category)
+            statement.setInt(3, newCategory)
+            statement.setTimestamp(4, Timestamp.from(since))
+        }) { rs ->
+            rs.map {
+                val type = it.getString(2)
+                val cause = it.getString(3)?.let { key -> NamespacedKey.fromString(key) }
+                val causeName = it.getString(4)
+                val world = server.getWorld(it.getString(5))
+                if (world == null) {
+                    null
+                } else {
+                    val x = it.getInt(6)
+                    val y = it.getInt(7)
+                    val z = it.getInt(8)
+                    val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
+                    val blockData = server.createBlockData(it.getString(9))
+                    val newMaterial = Material.matchMaterial(it.getString(11))!!
+                    val timestamp = it.getTimestamp(13).toInstant()
+                    BlockChange(context, type, cause, causeName, location, blockData, category, newMaterial, newCategory, timestamp)
+                }
+            }
+        }.filterNotNull()
     }
 
     // ClaimChangeListener
     suspend fun findByRegion(context: String, world: World, minX: Int, minY: Int, minZ: Int, maxX: Int, maxY: Int, maxZ: Int): List<BlockChange> {
-        // TODO
-        return listOf()
+        return dataSource.query("""
+            SELECT context, type, cause, causeName, world, x, y, z, blockData, category, newMaterial, newCategory, timestamp
+            FROM $tableName
+            WHERE context = ?
+            AND world = ?
+            AND x BETWEEN ? AND ?
+            AND y BETWEEN ? AND ?
+            AND z BETWEEN ? AND ?
+            AND world IN (${server.worlds.joinToString("','", "'", "'") { it.name }})
+        """.trimIndent(), { statement ->
+            statement.setString(1, context)
+            statement.setString(2, world.name)
+            statement.setInt(3, minX)
+            statement.setInt(4, maxX)
+            statement.setInt(5, minY)
+            statement.setInt(6, maxY)
+            statement.setInt(7, minZ)
+            statement.setInt(8, maxZ)
+        }) { rs ->
+            rs.map {
+                val type = it.getString(2)
+                val cause = it.getString(3)?.let { key -> NamespacedKey.fromString(key) }
+                val causeName = it.getString(4)
+                val x = it.getInt(6)
+                val y = it.getInt(7)
+                val z = it.getInt(8)
+                val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
+                val blockData = server.createBlockData(it.getString(9))
+                val category = it.getInt(10)
+                val newMaterial = Material.matchMaterial(it.getString(11))!!
+                val newCategory = it.getInt(12)
+                val timestamp = it.getTimestamp(13).toInstant()
+                BlockChange(context, type, cause, causeName, location, blockData, category, newMaterial, newCategory, timestamp)
+            }
+        }
     }
 
     // CommandService
     suspend fun findChanges(): List<BlockChange> {
-        // TODO
-        return listOf()
+        return dataSource.query("""
+            SELECT context, type, cause, causeName, world, x, y, z, blockData, category, newMaterial, newCategory, timestamp
+            FROM $tableName
+        """.trimIndent()) { rs ->
+            rs.map {
+                val context = it.getString(1)
+                val type = it.getString(2)
+                val cause = it.getString(3)?.let { key -> NamespacedKey.fromString(key) }
+                val causeName = it.getString(4)
+                val world = server.getWorld(it.getString(5))
+                if (world == null) {
+                    null
+                } else {
+                    val x = it.getInt(6)
+                    val y = it.getInt(7)
+                    val z = it.getInt(8)
+                    val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
+                    val blockData = server.createBlockData(it.getString(9))
+                    val category = it.getInt(10)
+                    val newMaterial = Material.matchMaterial(it.getString(11))!!
+                    val newCategory = it.getInt(12)
+                    val timestamp = it.getTimestamp(13).toInstant()
+                    BlockChange(context, type, cause, causeName, location, blockData, category, newMaterial, newCategory, timestamp)
+                }
+            }
+        }.filterNotNull()
     }
     suspend fun findChanges(context: String): List<BlockChange> {
-        // TODO
-        return listOf()
+        return dataSource.query("""
+            SELECT a.context, a.type, a.cause, a.causeName, a.world, a.x, a.y, a.z, a.blockData, a.category, a.newMaterial, a.newCategory, a.timestamp
+            FROM (
+                SELECT t.context, t.type, t.cause, t.causeName, t.world, t.x, t.y, t.z, t.blockData, t.category, t.newMaterial, t.newCategory, t.timestamp,
+                    MAX(t.timestamp) OVER (PARTITION BY t.world, t.blockKey) AS maxTimestamp
+                FROM $tableName AS t
+            ) AS a
+            WHERE a.maxTimestamp = a.timestamp
+            AND a.context = ?
+            AND a.world IN (${server.worlds.joinToString("','", "'", "'") { it.name }})
+        """.trimIndent(), { statement ->
+            statement.setString(1, context)
+        }) { rs ->
+            rs.map {
+                val type = it.getString(2)
+                val cause = it.getString(3)?.let { key -> NamespacedKey.fromString(key) }
+                val causeName = it.getString(4)
+                val world = server.getWorld(it.getString(5))
+                if (world == null) {
+                    null
+                } else {
+                    val x = it.getInt(6)
+                    val y = it.getInt(7)
+                    val z = it.getInt(8)
+                    val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
+                    val blockData = server.createBlockData(it.getString(9))
+                    val category = it.getInt(10)
+                    val newMaterial = Material.matchMaterial(it.getString(11))!!
+                    val newCategory = it.getInt(12)
+                    val timestamp = it.getTimestamp(13).toInstant()
+                    BlockChange(context, type, cause, causeName, location, blockData, category, newMaterial, newCategory, timestamp)
+                }
+            }
+        }.filterNotNull()
     }
-    suspend fun delete(blockChange: BlockChange) {
-        // TODO
+    suspend fun delete(blockChange: BlockChange): Boolean {
+        val blockKey = blockChange.location.toBlockKey()
+        return dataSource.update("""
+            DELETE FROM $tableName
+            WHERE context = ?
+            AND world = ?
+            AND blockKey = ?
+        """.trimIndent()) { statement ->
+            statement.setString(1, blockChange.context)
+            statement.setString(2, blockChange.location.world.name)
+            statement.setLong(3, blockKey)
+        } == 1
     }
-    suspend fun delete(context: String) {
-        // TODO
+    suspend fun delete(context: String): Int {
+        return dataSource.update("""
+            DELETE FROM $tableName
+            WHERE context = ?
+            AND world IN (${server.worlds.joinToString("','", "'", "'") { it.name }})
+        """.trimIndent()) { statement ->
+            statement.setString(1, context)
+        }
     }
-    suspend fun deleteAll() {
-        // TODO
+    suspend fun deleteAll(): Int {
+        return dataSource.update("""
+            DELETE FROM $tableName
+            WHERE world IN (${server.worlds.joinToString("','", "'", "'") { it.name }})
+        """.trimIndent())
     }
 }

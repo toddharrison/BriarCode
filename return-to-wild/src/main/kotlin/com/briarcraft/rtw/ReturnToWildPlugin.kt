@@ -3,7 +3,6 @@ package com.briarcraft.rtw
 import com.briarcraft.datasource.DataSourceService
 import com.briarcraft.rtw.change.block.BlockChangeConfig
 import com.briarcraft.rtw.change.block.BlockChangeListener
-import com.briarcraft.rtw.change.block.BlockChangeRepository
 import com.briarcraft.rtw.change.block.BlockChangeRepository2
 import com.briarcraft.rtw.change.claim.ClaimChangeListener
 import com.briarcraft.rtw.change.entity.EntityOriginListener
@@ -13,6 +12,8 @@ import com.briarcraft.rtw.change.player.PlayerLogoffRepository
 import com.briarcraft.rtw.change.tile.TileEntityOriginListener
 import com.briarcraft.rtw.change.tile.TileEntityOriginRepository
 import com.briarcraft.rtw.command.CommandService
+import com.briarcraft.rtw.config.loadDataSynchronizationConfig
+import com.briarcraft.rtw.config.loadRestorerConfig
 import com.briarcraft.rtw.perm.AllPermissionService
 import com.briarcraft.rtw.perm.PermissionService
 import com.briarcraft.rtw.perm.WorldGuardService
@@ -20,19 +21,12 @@ import com.briarcraft.rtw.restore.ProgressiveRestorer
 import com.briarcraft.rtw.restore.StructureRestorer
 import com.briarcraft.rtw.util.AtomicToggle
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
-import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
-import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import dev.espi.protectionstones.ProtectionStones
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import org.bukkit.event.HandlerList
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 @Suppress("unused")
 class ReturnToWildPlugin: SuspendingJavaPlugin() {
-//    private lateinit var blockChangeRepo: BlockChangeRepository
     private lateinit var blockChangeRepo: BlockChangeRepository2
     private lateinit var commandService: CommandService
     private lateinit var permService: PermissionService
@@ -58,13 +52,8 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
 
         permService.enable()
 
-//        blockChangeRepo = BlockChangeRepository(server, dataSource).also { it.createTable() }
-        val maxFileCacheCount = 500
-        val checkDelay = 10.seconds
-        val staleDelay = 60.seconds
-        val syncDelay = 60.seconds
-        val doLog = true
-        blockChangeRepo = BlockChangeRepository2(server, dataSource, plugin.dataFolder, maxFileCacheCount, checkDelay, staleDelay, syncDelay, doLog).also { it.createTable() }
+        val dataSynchronizationConfig = loadDataSynchronizationConfig(config)
+        blockChangeRepo = BlockChangeRepository2(server, dataSource, plugin.dataFolder, dataSynchronizationConfig).also { it.createTable() }
         val entityOriginRepo = EntityOriginRepository(server, dataSource).also { it.createTable() }
         val tileEntityOriginRepo = TileEntityOriginRepository(server, dataSource).also { it.createTable() }
         val playerLogoffRepo = PlayerLogoffRepository(server, dataSource).also { it.createTable() }
@@ -86,8 +75,9 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
         commandService.registerCommands()
 
         blockChangeRepo.start()
-//        sendChangesToDatabaseAsync(blockChangeRepo, 1.seconds)
-        ProgressiveRestorer(this, blockChangeRepo, permService, pauseFlag).start()
+
+        val restorerConfig = loadRestorerConfig(config)
+        ProgressiveRestorer(this, blockChangeRepo, permService, pauseFlag, restorerConfig).start()
     }
 
     override suspend fun onDisableAsync() {
@@ -96,19 +86,5 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
         HandlerList.unregisterAll(this)
 
         blockChangeRepo.stop()
-//        // Save all queued actions to the database
-//        blockChangeRepo.executeAll(logger)
     }
-
-//    private fun sendChangesToDatabaseAsync(blockChangeRepo: BlockChangeRepository2, wait: Duration) {
-//        launch {
-//            withContext(asyncDispatcher) {
-//                while (true) {
-//                    // Save actions to the database, in order
-//                    delay(wait)
-//                    blockChangeRepo.executeNext(logger, 500)
-//                }
-//            }
-//        }
-//    }
 }

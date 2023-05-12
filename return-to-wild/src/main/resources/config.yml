@@ -1,3 +1,57 @@
+
+synchronization:
+  max-cache-size: 500
+  max-unchanged-cache-age-in-seconds: 5
+  frequency-to-check-max-age-in-seconds: 1
+  frequency-to-write-cache-to-database-in-seconds: 10
+  log-cache-synchronization: true
+
+restorer:
+  frequency-to-check-mob-grief-in-seconds: 300
+  frequency-to-check-player-changes-in-seconds: 300
+  mob-grief-restore-time-in-seconds: 10800
+  restore:
+    units: days
+    to-air:
+      illegal: 0
+      perishable: 1
+      liquid: 2
+      plant: 3
+      soil: 4
+      spongy: 5
+      fiber: 6
+      wood: 7
+      log: 9
+      glass: 11
+      soft-stone: 13
+      stone: 15
+      hard-stone: 17
+      ore: 20
+      metal: 23
+      magic: 26
+      gem: 29
+      container: 30
+    to-material:
+      soil: 3
+      log: 5
+      wood: 7
+      fiber: 9
+      spongy: 11
+      plant: 13
+      soft-stone: 15
+      stone: 17
+      hard-stone: 19
+      glass: 21
+      liquid: 23
+      ore: 25
+      metal: 27
+      gem: 29
+      container: 31
+      magic: 33
+      perishable: 35
+
+
+
 #worldguard.flag:
 #  do-not-record: return-to-wild-exclude
 #  do-not-restore: return-to-wild

@@ -1,6 +1,5 @@
 package com.briarcraft.rtw.change.claim
 
-import com.briarcraft.rtw.change.block.BlockChangeRepository
 import com.briarcraft.rtw.change.block.BlockChangeRepository2
 import com.briarcraft.rtw.change.block.UPDATE_TIMESTAMP
 import com.briarcraft.rtw.util.CONTEXT_ORIGINAL
