@@ -138,6 +138,7 @@ class BlockChangeListener(
         if (!permService.isRecordable(event.block.location)) return
 
         val state = event.block.state
+        val newState = event.newState
         val source = event.source.state
         when (source.type) {
             // Don't track grass spread
@@ -156,7 +157,7 @@ class BlockChangeListener(
 
             Material.FIRE -> {
                 repository.saveWherePresentQueued(
-                    BlockChange(CONTEXT_INHERIT, TYPE_IGNITE, source.type.key, null, state.location, state.blockData, newMaterial = Material.AIR),
+                    BlockChange(CONTEXT_INHERIT, TYPE_IGNITE, source.type.key, null, state.location, state.blockData, newMaterial = newState.type),
                     DependencyChange(source.location)
                 )
             }
@@ -164,7 +165,7 @@ class BlockChangeListener(
             Material.RED_MUSHROOM,
             Material.BROWN_MUSHROOM -> {
                 repository.saveWherePresentQueued(
-                    BlockChange(CONTEXT_INHERIT, TYPE_IGNITE, source.type.key, null, state.location, state.blockData, newMaterial = Material.AIR),
+                    BlockChange(CONTEXT_INHERIT, TYPE_IGNITE, source.type.key, null, state.location, state.blockData, newMaterial = newState.type),
                     DependencyChange(source.location)
                 )
             }
@@ -179,12 +180,12 @@ class BlockChangeListener(
             Material.BAMBOO_SAPLING -> {}
 
             // Record all sculk spread for restore
-            Material.SCULK_CATALYST -> repository.saveQueued(BlockChange(CONTEXT_INHERIT, TYPE_SPREAD, source.type.key, null, state.location, state.blockData, newMaterial = Material.AIR))
+            Material.SCULK_CATALYST -> repository.saveQueued(BlockChange(CONTEXT_INHERIT, TYPE_SPREAD, source.type.key, null, state.location, state.blockData, newMaterial = newState.type))
 
             // Vines can attach to other things, need to track all of them
             Material.VINE -> {
                 repository.saveWherePresentQueued(
-                    BlockChange(CONTEXT_INHERIT, TYPE_SPREAD, source.type.key, null, state.location, state.blockData, newMaterial = Material.AIR),
+                    BlockChange(CONTEXT_INHERIT, TYPE_SPREAD, source.type.key, null, state.location, state.blockData, newMaterial = newState.type),
                     DependencyChange(source.location)
                 )
             }
@@ -192,7 +193,7 @@ class BlockChangeListener(
             // Pointed dripstone growing
             Material.POINTED_DRIPSTONE -> {
                 repository.saveWherePresentQueued(
-                    BlockChange(CONTEXT_INHERIT, TYPE_SPREAD, source.type.key, null, state.location, state.blockData, newMaterial = Material.AIR),
+                    BlockChange(CONTEXT_INHERIT, TYPE_SPREAD, source.type.key, null, state.location, state.blockData, newMaterial = newState.type),
                     DependencyChange(source.location)
                 )
             }
@@ -201,11 +202,11 @@ class BlockChangeListener(
                 when (event.newState.type) {
                     Material.POINTED_DRIPSTONE -> { // Pointed dripstone forming on the floor
                         repository.saveWherePresentQueued(
-                            BlockChange(CONTEXT_INHERIT, TYPE_SPREAD, source.type.key, null, state.location, state.blockData, newMaterial = Material.AIR),
+                            BlockChange(CONTEXT_INHERIT, TYPE_SPREAD, source.type.key, null, state.location, state.blockData, newMaterial = newState.type),
                             DependencyChange(findBlockAbove(source.location, Material.POINTED_DRIPSTONE, 12))
                         )
                     }
-                    else -> println("*** UNHANDLED SPREAD *** " + event.newState.type)
+                    else -> println("*** UNHANDLED SPREAD *** " + state.type)
                 }
             }
         }

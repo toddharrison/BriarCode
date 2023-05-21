@@ -68,7 +68,6 @@ class ProgressiveRestorer(
                 try {
                     if (pauseFlag.get()) { logger.info("RTW player restore paused") }
 
-                    println("WAITING")
                     delay(checkDelay)
 
                     // New materials go to air

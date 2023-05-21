@@ -11,6 +11,7 @@ restorer:
   frequency-to-check-player-changes-in-seconds: 300
   mob-grief-restore-time-in-seconds: 10800
   restore:
+    # seconds, minutes, or days
     units: days
     to-air:
       illegal: 0
