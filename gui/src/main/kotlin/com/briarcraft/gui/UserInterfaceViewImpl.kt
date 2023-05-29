@@ -1,4 +1,4 @@
-package com.briarcraft.gui.impl
+package com.briarcraft.gui
 
 import com.briarcraft.gui.api.UserInterfaceHolder
 import com.briarcraft.gui.api.UserInterfacePanel
@@ -9,6 +9,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
+import kotlin.UnsupportedOperationException
 
 class UserInterfaceViewImpl(
     private val topHolder: UserInterfaceHolder,
@@ -29,6 +30,12 @@ class UserInterfaceViewImpl(
     override fun title(title: Component) {
         this.title = title
         player.openInventory(this)
+    }
+    override fun setTitle(title: String) {
+        throw UnsupportedOperationException("UserInterfaceView requires Component to set title")
+    }
+    override fun getOriginalTitle(): String {
+        throw UnsupportedOperationException("UserInterfaceView does not support an original title String")
     }
 
     override fun getHandler() = handler

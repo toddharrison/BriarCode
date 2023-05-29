@@ -6,9 +6,13 @@ convenience.
 ## Releases
 Download the latest plugin and library releases below, or use the [releases](../../releases) link at right to download
 specific versions. If there isn't a release of a module, it's still in beta!
-* [kotlin-1.7.21.1](../../releases/download/kotlin-1.7.21.1/kotlin-1.7.21.1.jar)
-* [fake-block-2.0.3](../../releases/download/fake-block-2.0.3/fake-block-2.0.3.jar)
-* [fake-block-api-2.0](../../releases/download/fake-block-2.0.0/fake-block-api-2.0.jar)
+* [kotlin-1.8.0.3](../../releases/download/kotlin-1.8.0.3/kotlin-1.8.0.3.jar)
+* [fake-block-2.1.1](../../releases/download/fake-block-2.1.1/fake-block-2.1.1.jar)
+* [fake-block-api-2.1](../../releases/download/fake-block-2.1.1/fake-block-api-2.1.jar)
+* [gui-1.2.0](../../releases/download/gui-1.2.0/gui-1.2.0.jar)
+* [gui-api-1.2](../../releases/download/gui-1.2.0/gui-api-1.2.jar)
+* [econ-1.5.0](../../releases/download/econ-1.5.0/econ-1.5.0.jar)
+* [econ-api-1.5](../../releases/download/econ-api-1.5/econ-api-1.5.jar)
 
 ## Plugin APIs
 BriarCode offers both Java and Kotlin APIs that may be used to integrate the functionality provided by BriarCode plugins
@@ -21,6 +25,8 @@ into independent plugins.
 ### Kotlin APIs
 * [adventure-api](adventure-api):
   API for integrating with [adventure](adventure)
+* [gui-api](gui-api):
+  API for integrating with [gui](gui)
 * [econ-api](econ-api):
   API for integrating with [econ](econ)
 

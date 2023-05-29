@@ -12,6 +12,8 @@ import com.briarcraft.rtw.change.player.PlayerLogoffRepository
 import com.briarcraft.rtw.change.tile.TileEntityOriginListener
 import com.briarcraft.rtw.change.tile.TileEntityOriginRepository
 import com.briarcraft.rtw.command.CommandService
+import com.briarcraft.rtw.config.loadDataSynchronizationConfig
+import com.briarcraft.rtw.config.loadRestorerConfig
 import com.briarcraft.rtw.perm.AllPermissionService
 import com.briarcraft.rtw.perm.PermissionService
 import com.briarcraft.rtw.perm.WorldGuardService
@@ -19,15 +21,9 @@ import com.briarcraft.rtw.restore.ProgressiveRestorer
 import com.briarcraft.rtw.restore.StructureRestorer
 import com.briarcraft.rtw.util.AtomicToggle
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
-import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
-import com.github.shynixn.mccoroutine.bukkit.launch
 import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import dev.espi.protectionstones.ProtectionStones
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import org.bukkit.event.HandlerList
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 @Suppress("unused")
 class ReturnToWildPlugin: SuspendingJavaPlugin() {
@@ -56,7 +52,8 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
 
         permService.enable()
 
-        blockChangeRepo = BlockChangeRepository(server, dataSource).also { it.createTable() }
+        val dataSynchronizationConfig = loadDataSynchronizationConfig(config)
+        blockChangeRepo = BlockChangeRepository(server, dataSource, plugin.dataFolder, dataSynchronizationConfig).also { it.createTable() }
         val entityOriginRepo = EntityOriginRepository(server, dataSource).also { it.createTable() }
         val tileEntityOriginRepo = TileEntityOriginRepository(server, dataSource).also { it.createTable() }
         val playerLogoffRepo = PlayerLogoffRepository(server, dataSource).also { it.createTable() }
@@ -77,8 +74,10 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
         commandService = CommandService(plugin, permService, blockChangeRepo, entityOriginRepo, pauseFlag)
         commandService.registerCommands()
 
-        sendChangesToDatabaseAsync(blockChangeRepo, 1.seconds)
-        ProgressiveRestorer(this, blockChangeRepo, permService, pauseFlag).start()
+        blockChangeRepo.start()
+
+        val restorerConfig = loadRestorerConfig(config)
+        ProgressiveRestorer(this, blockChangeRepo, permService, pauseFlag, restorerConfig).start()
     }
 
     override suspend fun onDisableAsync() {
@@ -86,19 +85,6 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
 
         HandlerList.unregisterAll(this)
 
-        // Save all queued actions to the database
-        blockChangeRepo.executeAll(logger)
-    }
-
-    private fun sendChangesToDatabaseAsync(blockChangeRepo: BlockChangeRepository, wait: Duration) {
-        launch {
-            withContext(asyncDispatcher) {
-                while (true) {
-                    // Save actions to the database, in order
-                    delay(wait)
-                    blockChangeRepo.executeNext(50)
-                }
-            }
-        }
+        blockChangeRepo.stop()
     }
 }

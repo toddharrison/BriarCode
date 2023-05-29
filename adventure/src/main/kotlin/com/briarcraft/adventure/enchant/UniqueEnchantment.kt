@@ -16,7 +16,7 @@ import org.bukkit.plugin.Plugin
 class UniqueEnchantment(plugin: Plugin): ListenerNameEnchantment(
     NamespacedKey(plugin, "unique"), "Unique"
 ) {
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun on(event: PrepareResultEvent) {
         val result = event.result
         if (result != null) {

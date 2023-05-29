@@ -2,13 +2,26 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder
 
 plugins {
     id("briarcode.kotlin-plugin")
+    id("com.github.johnrengelman.shadow")
 }
 
-version = "1.1.0"
+version = "1.2.0"
 description = ""
 
 dependencies {
-    api(project(":kotlin"))
+    api(project(":gui-api"))
+}
+
+tasks {
+    shadowJar {
+        archiveClassifier.set("")
+        dependencies {
+            include(project(":gui-api"))
+        }
+    }
+    build {
+        dependsOn(shadowJar)
+    }
 }
 
 pitest {

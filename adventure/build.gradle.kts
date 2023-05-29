@@ -5,15 +5,15 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-version = "1.2.0"
+version = "1.3.0"
 description = ""
 
 dependencies {
     api(project(":adventure-api"))
 
     // CommandAPI
-    implementation("dev.jorel", "commandapi-annotations", "8.7.4")
-    annotationProcessor("dev.jorel", "commandapi-annotations", "8.7.4")
+    implementation("dev.jorel", "commandapi-annotations", "9.0.0")
+    annotationProcessor("dev.jorel", "commandapi-annotations", "9.0.0")
 }
 
 tasks {

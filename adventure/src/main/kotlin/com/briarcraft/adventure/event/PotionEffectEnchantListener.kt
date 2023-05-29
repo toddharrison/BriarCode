@@ -11,7 +11,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
 class PotionEffectEnchantListener: Listener {
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     fun on(event: PlayerArmorChangeEvent) {
         val player = event.player
         player.activePotionEffects.forEach { effect -> player.removePotionEffect(effect.type) }

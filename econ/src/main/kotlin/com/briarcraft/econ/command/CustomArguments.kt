@@ -87,7 +87,8 @@ fun marketItemArgument(items: Set<Material>, nodeName: String = "marketitem"): A
             throw CustomArgument.CustomArgumentException(CustomArgument.MessageBuilder("That item does not exist"))
         }
     }.replaceSuggestions(ArgumentSuggestions.strings { info ->
-        val market = info.previousArgs.first { it is Market } as Market
+        // TODO
+        val market = info.previousArgs.args().first { it is Market } as Market
         market.stock.getItems()
             .map(Material::name)
             .toTypedArray()
@@ -98,7 +99,8 @@ fun marketItemArgument(nodeName: String = "marketitem"): Argument<Material> =
         val material = Material.getMaterial(nameArg.input)
         material ?: throw CustomArgument.CustomArgumentException(CustomArgument.MessageBuilder("That item does not exist"))
     }.replaceSuggestions(ArgumentSuggestions.strings { info ->
-        val market = info.previousArgs.first { it is Market } as Market
+        // TODO
+        val market = info.previousArgs.args().first { it is Market } as Market
         market.stock.getItems()
             .map(Material::name)
             .toTypedArray()

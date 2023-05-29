@@ -6,7 +6,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-version = "2.1.0"
+version = "2.1.1"
 description = ""
 
 dependencies {
@@ -52,6 +52,7 @@ bukkit {
     load = PluginLoadOrder.POSTWORLD
     main = "com.briarcraft.fakeblock.FakeBlockPlugin"
     depend = listOf("WorldEdit", "ProtocolLib")
+    softDepend = listOf("My_Worlds", "Multiverse-Core")
     commands {
         register("fakeblock") {
             description = "Execute fakeblock commands"

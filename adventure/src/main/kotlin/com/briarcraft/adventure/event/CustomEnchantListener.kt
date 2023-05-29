@@ -11,7 +11,7 @@ import org.bukkit.inventory.GrindstoneInventory
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 
 class CustomEnchantListener: Listener {
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     fun on(event: PrepareResultEvent) {
         when (val inventory = event.inventory) {
             is AnvilInventory -> {

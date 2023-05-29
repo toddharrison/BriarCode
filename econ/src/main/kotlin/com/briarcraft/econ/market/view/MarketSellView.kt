@@ -4,13 +4,8 @@ import com.briarcraft.econ.api.currency.CurrencyService
 import com.briarcraft.econ.api.market.Market
 import com.briarcraft.econ.api.market.view.MarketView
 import com.briarcraft.econ.api.price.PriceAdjustment
-import com.briarcraft.gui.api.PanelUpdateEvent
-import com.briarcraft.gui.api.UserInterface
-import com.briarcraft.gui.api.UserInterfacePanel
-import com.briarcraft.gui.api.ViewUpdateEvent
-import com.briarcraft.gui.impl.UserInterfaceImpl
-import com.briarcraft.gui.impl.UserInterfaceViewHandlerImpl
-import com.briarcraft.gui.util.openUI
+import com.briarcraft.gui.api.*
+import com.briarcraft.gui.api.openUI
 import com.briarcraft.kotlin.util.itemStackOf
 import com.briarcraft.kotlin.util.removeItemsAtomic
 import net.kyori.adventure.text.Component
@@ -20,10 +15,13 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
 import java.text.DecimalFormat
 import kotlin.math.max
 
 class MarketSellView(
+    override val plugin: Plugin,
+    private val guiService: GuiService,
     override val title: Component,
     override val market: Market,
     private val currencyService: CurrencyService,
@@ -33,7 +31,7 @@ class MarketSellView(
     private val itemSet = allowedItems.intersect(market.stock.getItems())
 
     override fun open(player: Player) {
-        val sellUserInterface: UserInterface = UserInterfaceImpl(title, UserInterfaceViewHandlerImpl(
+        val sellUserInterface: UserInterface = guiService.createUserInterface(title, guiService.createUserInterfaceViewHandler(
             onCreate = { view ->
                 renderExitButton(view.navPanel, 8, player)
             },
@@ -64,7 +62,7 @@ class MarketSellView(
             }
         ), InventoryType.CHEST, 3)
 
-        player.openUI(sellUserInterface)
+        player.openUI(plugin, sellUserInterface)
     }
 
     // Common

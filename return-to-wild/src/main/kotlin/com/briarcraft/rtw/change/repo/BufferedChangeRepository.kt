@@ -12,15 +12,15 @@ abstract class BufferedChangeRepository<T>: ChangeRepository<T> {
         repeat(count) {
             when (val action = actions.poll()) {
                 null -> return
-                is SaveItem<T> -> save(action.item)
-                is SaveItems<T> -> saveAll(action.items)
-                is SaveWherePresent<T> -> saveWherePresent(action.item, action.change)
-                is SaveAllWherePresent<T> -> saveAllWherePresent(action.items, action.change)
-                is SaveWhereOnePresent<T> -> saveWhereOnePresent(action.item, action.changes)
-                is SaveAllWhereOnePresent<T> -> saveAllWhereOnePresent(action.items, action.changes)
-                is UpdateItem<T> -> update(action.item, action.data)
-                is DeleteItem<T> -> delete(action.item)
-                is DeleteItems<T> -> deleteAll(action.items)
+                is SaveItem<T> -> save(action.item) // 29
+                is SaveItems<T> -> saveAll(action.items) // 2
+                is SaveWherePresent<T> -> saveWherePresent(action.item, action.change) // 16
+                is SaveAllWherePresent<T> -> saveAllWherePresent(action.items, action.change) // 4
+                is SaveWhereOnePresent<T> -> saveWhereOnePresent(action.item, action.changes) // 3
+                is SaveAllWhereOnePresent<T> -> saveAllWhereOnePresent(action.items, action.changes) // 0
+                is UpdateItem<T> -> update(action.item, action.data) // 2
+                is DeleteItem<T> -> delete(action.item) // 3
+                is DeleteItems<T> -> deleteAll(action.items) // 0
             }
         }
     }

@@ -60,11 +60,11 @@ class DataSourcePlugin: SuspendingJavaPlugin() {
         logger.info("Unregistered services")
 
         withContext(Dispatchers.IO) {
-            h2WebServer?.stop()
-            h2TcpServer?.stop()
-
             dataSource.close()
             logger.info { "Closed data source" }
+
+            h2WebServer?.stop()
+            h2TcpServer?.stop()
         }
     }
 

@@ -44,7 +44,7 @@ class DataSourceService(val logger: Logger, private val dataSource: DataSource) 
                 statement.executeQuery(sql).use { transform(it) }
             }
         }.onFailure {
-            logger.severe { "Executing a statement failed: $sql" }
+            logger.severe { "Executing a statement failed: ${it.message}" }
         }.getOrThrow()
     }
 
@@ -60,7 +60,7 @@ class DataSourceService(val logger: Logger, private val dataSource: DataSource) 
                 statement.execute()
             }
         }.onFailure {
-            logger.severe { "Execution failed: $sql" }
+            logger.severe { "Execution failed: ${it.message}" }
         }.getOrThrow()
     }
 
@@ -80,7 +80,7 @@ class DataSourceService(val logger: Logger, private val dataSource: DataSource) 
                 statement.executeQuery().use { transform(it) }
             }
         }.onFailure {
-            logger.severe { "Query failed: $sql" }
+            logger.severe { "Query failed: ${it.message}" }
         }.getOrThrow()
     }
 
@@ -96,7 +96,7 @@ class DataSourceService(val logger: Logger, private val dataSource: DataSource) 
                 statement.executeUpdate()
             }
         }.onFailure {
-            logger.severe { "Update failed: $sql" }
+            logger.severe { "Update failed: ${it.message}" }
         }.getOrThrow()
     }
 
@@ -120,14 +120,14 @@ class DataSourceService(val logger: Logger, private val dataSource: DataSource) 
                 }
             }
         }.onFailure {
-            logger.severe { "Update with generated keys failed: $sql" }
+            logger.severe { "Update with generated keys failed: ${it.message}" }
         }.getOrThrow()
     }
 
     suspend inline fun <T> batch(
         @Language("MySQL") sql: String,
         items: Iterable<T>,
-        autoCommit: Boolean = true,
+        autoCommit: Boolean = false,
         crossinline setParams: suspend (PreparedStatement, T) -> Unit
     ): IntArray {
         return batch(sql, items.asSequence(), autoCommit, setParams)
@@ -136,7 +136,7 @@ class DataSourceService(val logger: Logger, private val dataSource: DataSource) 
     suspend inline fun <T> batch(
         @Language("MySQL") sql: String,
         items: Sequence<T>,
-        autoCommit: Boolean = true,
+        autoCommit: Boolean = false,
         crossinline setParams: suspend (PreparedStatement, T) -> Unit
     ): IntArray {
         return useConnectionSafely { connection ->
@@ -154,7 +154,62 @@ class DataSourceService(val logger: Logger, private val dataSource: DataSource) 
                 }
             }
         }.onFailure {
-            logger.severe { "Batch failed: $sql" }
+            logger.severe { "Batch failed: ${it.message}" }
+        }.getOrThrow()
+    }
+
+    suspend inline fun batch(
+        sqlStatements: Sequence<String>
+    ) {
+        return useConnectionSafely { connection ->
+            connection.autoCommit = false
+            connection.createStatement().use { statement ->
+                sqlStatements.forEach(statement::addBatch)
+                statement.executeBatch()
+            }
+            connection.commit()
+            connection.autoCommit = true
+        }.onFailure {
+            logger.severe { "Batch failed: ${it.message}" }
+        }.getOrThrow()
+    }
+
+    suspend inline fun call(
+        @Language("MySQL") sql: String, // "{call procedureName(?, ?, ?)}}"
+        crossinline setParams: suspend (PreparedStatement) -> Unit
+    ): Boolean {
+        return useConnectionSafely { connection ->
+            connection.prepareCall(sql).use { statement ->
+                setParams(statement)
+                statement.execute()
+            }
+        }.onFailure {
+            logger.severe { "Call failed: ${it.message}" }
+        }.getOrThrow()
+    }
+
+    suspend inline fun <T> batchCall(
+        @Language("MySQL") sql: String, // "{call procedureName(?, ?, ?)}}"
+        items: Sequence<T>,
+        autoCommit: Boolean = false,
+        crossinline setParams: suspend (PreparedStatement, T) -> Unit
+    ): IntArray {
+        return useConnectionSafely { connection ->
+            if (!autoCommit) connection.autoCommit = false
+            connection.prepareCall(sql).use { statement ->
+                items.forEach {
+                    setParams(statement, it)
+                    statement.addBatch()
+                }
+                statement.executeBatch()
+            }.also {
+                if (!autoCommit) {
+                    connection.commit()
+                    connection.autoCommit = true
+                }
+            }
+        }.onFailure {
+            logger.severe { "Batch call failed: ${it.message}" }
         }.getOrThrow()
     }
 }

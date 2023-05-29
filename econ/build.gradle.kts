@@ -5,7 +5,7 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-version = "1.4.0"
+version = "1.5.0"
 description = ""
 
 dependencies {
@@ -16,8 +16,8 @@ dependencies {
     implementation("com.github.milkbowl:vault:1.7.3")
 
     // CommandAPI
-    implementation("dev.jorel", "commandapi-annotations", "8.7.4")
-    annotationProcessor("dev.jorel", "commandapi-annotations", "8.7.4")
+    implementation("dev.jorel", "commandapi-annotations", "9.0.0")
+    annotationProcessor("dev.jorel", "commandapi-annotations", "9.0.0")
 }
 
 tasks {

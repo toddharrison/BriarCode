@@ -69,7 +69,7 @@ class UserInterfaceListener: Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.MONITOR)
     fun closeUserInterface(event: InventoryCloseEvent) {
         val view = event.view
         if (view is UserInterfaceView) {
