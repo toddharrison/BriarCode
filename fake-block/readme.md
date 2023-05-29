@@ -15,6 +15,14 @@ Currently tested on:
 * Paper 19.3
   * ProtocolLib-608
   * WorldEdit-7-2.13
+* purpur-1.19.3-1933 
+  * ProtocolLib-5.0.0
+  * MyWorlds-1.19.3-v3-213
+  * FastAsyncWorldEdit-Bukkit-2.6.2-SNAPSHOT-439
+  * BKCommonLib-1.19.3-v3-1512
+* purpur-1.19.4-1979
+  * FastAsyncWorldEdit-Bukkit-2.6.2-SNAPSHOT-439
+  * ProtocolLib-5.0.0
 
 ***NOTE: Still in beta! Test before using on a production server.***
 
