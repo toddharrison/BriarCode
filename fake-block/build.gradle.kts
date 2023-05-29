@@ -52,6 +52,7 @@ bukkit {
     load = PluginLoadOrder.POSTWORLD
     main = "com.briarcraft.fakeblock.FakeBlockPlugin"
     depend = listOf("WorldEdit", "ProtocolLib")
+    softDepend = listOf("My_Worlds", "Multiverse-Core")
     commands {
         register("fakeblock") {
             description = "Execute fakeblock commands"
