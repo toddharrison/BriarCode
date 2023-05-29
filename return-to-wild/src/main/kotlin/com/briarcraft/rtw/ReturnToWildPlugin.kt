@@ -3,7 +3,7 @@ package com.briarcraft.rtw
 import com.briarcraft.datasource.DataSourceService
 import com.briarcraft.rtw.change.block.BlockChangeConfig
 import com.briarcraft.rtw.change.block.BlockChangeListener
-import com.briarcraft.rtw.change.block.BlockChangeRepository2
+import com.briarcraft.rtw.change.block.BlockChangeRepository
 import com.briarcraft.rtw.change.claim.ClaimChangeListener
 import com.briarcraft.rtw.change.entity.EntityOriginListener
 import com.briarcraft.rtw.change.entity.EntityOriginRepository
@@ -27,7 +27,7 @@ import org.bukkit.event.HandlerList
 
 @Suppress("unused")
 class ReturnToWildPlugin: SuspendingJavaPlugin() {
-    private lateinit var blockChangeRepo: BlockChangeRepository2
+    private lateinit var blockChangeRepo: BlockChangeRepository
     private lateinit var commandService: CommandService
     private lateinit var permService: PermissionService
 
@@ -53,7 +53,7 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
         permService.enable()
 
         val dataSynchronizationConfig = loadDataSynchronizationConfig(config)
-        blockChangeRepo = BlockChangeRepository2(server, dataSource, plugin.dataFolder, dataSynchronizationConfig).also { it.createTable() }
+        blockChangeRepo = BlockChangeRepository(server, dataSource, plugin.dataFolder, dataSynchronizationConfig).also { it.createTable() }
         val entityOriginRepo = EntityOriginRepository(server, dataSource).also { it.createTable() }
         val tileEntityOriginRepo = TileEntityOriginRepository(server, dataSource).also { it.createTable() }
         val playerLogoffRepo = PlayerLogoffRepository(server, dataSource).also { it.createTable() }

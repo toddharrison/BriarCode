@@ -20,7 +20,7 @@ import kotlin.time.toJavaDuration
 
 class ProgressiveRestorer(
     override val plugin: SuspendingJavaPlugin,
-    override val blockChangeRepo: BlockChangeRepository2,
+    override val blockChangeRepo: BlockChangeRepository,
     override val permService: PermissionService,
     override val pauseFlag: AtomicToggle,
     private val restorerConfig: RestorerConfig,

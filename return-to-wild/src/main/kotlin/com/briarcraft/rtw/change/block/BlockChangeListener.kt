@@ -32,7 +32,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class BlockChangeListener(
     private val permService: PermissionService,
-    private val repository: BlockChangeRepository2,
+    private val repository: BlockChangeRepository,
     private val config: BlockChangeConfig
 ): Listener {
     // TODO Prevent vine growth while doing a restore
