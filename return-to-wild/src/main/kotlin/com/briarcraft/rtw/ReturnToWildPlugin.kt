@@ -17,6 +17,9 @@ import com.briarcraft.rtw.config.loadRestorerConfig
 import com.briarcraft.rtw.perm.AllPermissionService
 import com.briarcraft.rtw.perm.PermissionService
 import com.briarcraft.rtw.perm.WorldGuardService
+import com.briarcraft.rtw.publicbuild.PublicBuildCommandService
+import com.briarcraft.rtw.publicbuild.PublicBuildListener
+import com.briarcraft.rtw.publicbuild.PublicBuildService
 import com.briarcraft.rtw.restore.ProgressiveRestorer
 import com.briarcraft.rtw.restore.StructureRestorer
 import com.briarcraft.rtw.util.AtomicToggle
@@ -29,6 +32,7 @@ import org.bukkit.event.HandlerList
 class ReturnToWildPlugin: SuspendingJavaPlugin() {
     private lateinit var blockChangeRepo: BlockChangeRepository
     private lateinit var commandService: CommandService
+    private lateinit var publicBuildCommandService: PublicBuildCommandService
     private lateinit var permService: PermissionService
 
     override suspend fun onLoadAsync() {
@@ -52,17 +56,21 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
 
         permService.enable()
 
+        val publicBuildService = PublicBuildService()
+
         val dataSynchronizationConfig = loadDataSynchronizationConfig(config)
         blockChangeRepo = BlockChangeRepository(server, dataSource, plugin.dataFolder, dataSynchronizationConfig).also { it.createTable() }
         val entityOriginRepo = EntityOriginRepository(server, dataSource).also { it.createTable() }
         val tileEntityOriginRepo = TileEntityOriginRepository(server, dataSource).also { it.createTable() }
         val playerLogoffRepo = PlayerLogoffRepository(server, dataSource).also { it.createTable() }
+        val publicBuildListener = PublicBuildListener(publicBuildService)
 
         server.pluginManager.registerSuspendingEvents(BlockChangeListener(permService, blockChangeRepo, BlockChangeConfig()), plugin)
         server.pluginManager.registerSuspendingEvents(EntityOriginListener(plugin, entityOriginRepo), plugin)
         server.pluginManager.registerSuspendingEvents(TileEntityOriginListener(tileEntityOriginRepo), plugin)
         server.pluginManager.registerSuspendingEvents(PlayerListener(plugin, playerLogoffRepo), plugin)
         server.pluginManager.registerSuspendingEvents(StructureRestorer(this, entityOriginRepo), plugin)
+        server.pluginManager.registerEvents(publicBuildListener, plugin)
 
         try {
             ProtectionStones.getInstance()
@@ -73,6 +81,8 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
 
         commandService = CommandService(plugin, permService, blockChangeRepo, entityOriginRepo, pauseFlag)
         commandService.registerCommands()
+        publicBuildCommandService = PublicBuildCommandService(publicBuildService)
+        publicBuildCommandService.registerCommands()
 
         blockChangeRepo.start()
 
@@ -82,6 +92,7 @@ class ReturnToWildPlugin: SuspendingJavaPlugin() {
 
     override suspend fun onDisableAsync() {
         commandService.unregisterCommands()
+        publicBuildCommandService.unregisterCommands()
 
         HandlerList.unregisterAll(this)
 

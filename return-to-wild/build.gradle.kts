@@ -48,4 +48,24 @@ bukkit {
     main = "com.briarcraft.rtw.ReturnToWildPlugin"
     depend = listOf("kotlin", "data-source", "CommandAPI")
     softDepend = listOf("WorldGuard", "ProtectionStones")
+//    permissions {
+//        register("return_to_wild.cmd.publicbuild.*") {
+//            description = "Gives the user full access to the publicbuild commands"
+//            children = listOf(
+//                "return_to_wild.cmd.publicbuild.on",
+//                "return_to_wild.cmd.publicbuild.off",
+//                "return_to_wild.cmd.publicbuild.info",
+//                "return_to_wild.cmd.publicbuild.usage"
+//            )
+//        }
+//        register("return_to_wild.cmd.admin.publicbuild.*") {
+//            description = "Gives the user full access to the publicbuild admin commands"
+//            children = listOf(
+//                "return_to_wild.cmd.admin.publicbuild.on",
+//                "return_to_wild.cmd.admin.publicbuild.off",
+//                "return_to_wild.cmd.admin.publicbuild.info",
+//                "return_to_wild.cmd.admin.publicbuild.set"
+//            )
+//        }
+//    }
 }

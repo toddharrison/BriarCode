@@ -8,6 +8,7 @@ const val CONTEXT_ORIGINAL = "ORIGINAL"
 const val CONTEXT_INHERIT = "INHERIT"
 
 val playerContextKey = NamespacedKey("rtw", "context")
+val maxAllowanceKey = NamespacedKey("rtw", "max-allowance")
 
 fun Player.getContext(default: String = CONTEXT_ORIGINAL) =
     persistentDataContainer.getOrDefault(playerContextKey, PersistentDataType.STRING, default)
@@ -15,3 +16,15 @@ fun Player.getContext(default: String = CONTEXT_ORIGINAL) =
 fun Player.setContext(context: String) = persistentDataContainer.set(playerContextKey, PersistentDataType.STRING, context)
 
 fun Player.clearContext() = persistentDataContainer.remove(playerContextKey)
+
+fun Player.getMaxAllowance() = persistentDataContainer.get(maxAllowanceKey, PersistentDataType.INTEGER)
+
+fun Player.setMaxAllowance(maxAllowance: Int?): Int? {
+    val curMaxAllowance = persistentDataContainer.get(maxAllowanceKey, PersistentDataType.INTEGER)
+    if (maxAllowance == null) {
+        persistentDataContainer.remove(maxAllowanceKey)
+    } else {
+        persistentDataContainer.set(maxAllowanceKey, PersistentDataType.INTEGER, maxAllowance)
+    }
+    return curMaxAllowance
+}
