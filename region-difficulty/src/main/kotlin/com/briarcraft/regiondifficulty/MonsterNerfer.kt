@@ -12,7 +12,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
-import org.bukkit.craftbukkit.v1_19_R3.entity.*
+import org.bukkit.craftbukkit.v1_20_R1.entity.*
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType

@@ -12,13 +12,13 @@ dependencies {
 
 tasks {
     runServer {
-        minecraftVersion("1.19.4")
+        minecraftVersion("1.20")
     }
 }
 
 bukkit {
     main = "com.briarcraft"
-    apiVersion = "1.19"
+    apiVersion = "1.20"
     prefix = project.name
     authors = listOf("toddharrison")
 }

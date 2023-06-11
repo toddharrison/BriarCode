@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
+    implementation("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.0.0")
