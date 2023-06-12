@@ -24,7 +24,6 @@ class DataSourceFunctionalTest {
     private val dataSourceService: DataSourceService
 
     init {
-        Class.forName("org.h2.Driver")
         val resourceUrl = DataSourceFunctionalTest::class.java.getResource("/test.properties")!!
         val resourcePath = File(resourceUrl.toURI()).absolutePath
         dataSource = HikariDataSource(HikariConfig(resourcePath))
@@ -101,10 +100,10 @@ class DataSourceFunctionalTest {
                 assertTrue { openCacheFile == closeCacheFile }
                 assertTrue { closeCacheFile?.exists() ?: false }
 
-                closeCacheFile?.forEachLine { println(it) }
+                closeCacheFile?.forEachLine { assertEquals("null\tnull\tnull\tnull", it) }
 
                 // Cleanup
-                closeCacheFile?.delete()
+                assertTrue { closeCacheFile?.delete() ?: false }
             }
         }
 

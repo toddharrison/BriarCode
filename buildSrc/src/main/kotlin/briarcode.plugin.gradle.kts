@@ -18,7 +18,7 @@ tasks {
 
 bukkit {
     main = "com.briarcraft"
-    apiVersion = "1.20"
+    apiVersion = "1.19"
     prefix = project.name
     authors = listOf("toddharrison")
 }

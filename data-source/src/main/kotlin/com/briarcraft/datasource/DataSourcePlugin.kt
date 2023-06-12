@@ -27,9 +27,6 @@ class DataSourcePlugin: SuspendingJavaPlugin() {
         withContext(Dispatchers.IO) {
             val isH2Enabled = config.getBoolean("h2.enable")
             if (isH2Enabled) {
-                Class.forName("org.h2.Driver")
-                logger.info { "Enabled H2 local database" }
-
                 val isH2WebEnabled = config.getBoolean("h2.web.enable")
                 if (isH2WebEnabled) {
                     h2WebServer = Server.createWebServer().start() // Allow access through web client

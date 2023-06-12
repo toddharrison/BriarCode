@@ -23,7 +23,6 @@ class DataSynchronizationServiceFunctionalTest {
     private val dataSourceService: DataSourceService
 
     init {
-        Class.forName("org.h2.Driver")
         val resourceUrl = DataSourceFunctionalTest::class.java.getResource("/test.properties")!!
         val resourcePath = File(resourceUrl.toURI()).absolutePath
         dataSource = HikariDataSource(HikariConfig(resourcePath))
