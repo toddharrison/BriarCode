@@ -2,29 +2,20 @@
 This Spigot plugin allows the creation of groups of client-only blocks that can be shown or hidden to specific players.
 They prevent players from walking through them or breaking them.
 
-Currently tested on:
-* Paper 17.1
-  * ProtocolLib-608
-  * WorldEdit-7-2.14
-* Paper 18.2
-  * ProtocolLib-608
-  * WorldEdit-7-2.14
-* Paper 19.2
-  * ProtocolLib-600
-  * WorldEdit-7.2.12
-* Paper 19.3
-  * ProtocolLib-608
-  * WorldEdit-7-2.13
-* purpur-1.19.3-1933 
-  * ProtocolLib-5.0.0
-  * MyWorlds-1.19.3-v3-213
-  * FastAsyncWorldEdit-Bukkit-2.6.2-SNAPSHOT-439
-  * BKCommonLib-1.19.3-v3-1512
-* purpur-1.19.4-1979
-  * FastAsyncWorldEdit-Bukkit-2.6.2-SNAPSHOT-439
-  * ProtocolLib-5.0.0
+Currently tested with (will likely work on most combos):
 
-***NOTE: Still in beta! Test before using on a production server.***
+| Server | Versions    | Dependencies |                         |
+| ------ | ----------- | ------------ | ----------------------- |
+|        |             | ProtocolLib  | WorldEdit               |
+| Paper  | 1.20.1      | 654          | 7.2.15-SNAPSHOT         |
+| Paper  | 1.19.3      | 608          | 7-2.13                  |
+| Paper  | 1.18.2      | 600          | 7.2.12                  |
+| Paper  | 1.17.1      | 608          | 7-2.14                  |
+|        |             |              |                         |
+| Purpur | 1.19.4-1979 | 5.0.0        | FAWE-2.6.2-SNAPSHOT-439 |
+| Purpur | 1.19.3-1933 | 5.0.0        | FAWE-2.6.2-SNAPSHOT-439 |
+| Also tested with:    || MyWorlds    | 1.19.3-v3-213           |
+|                      || BKCommonLib | 1.19.3-v3-1512          |
 
 ## Table of Contents
 * [Installation](#installation)
