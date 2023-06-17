@@ -4,18 +4,18 @@ They prevent players from walking through them or breaking them.
 
 Currently tested with (will likely work on most combos):
 
-| **Server** | Versions | Dependencies | |
-|  |  | ProtocolLib | WorldEdit |
-| Paper | 1.20.1 | 654 | 7.2.15-SNAPSHOT |
-| Paper | 1.19.3 | 608 | 7-2.13 |
-| Paper | 1.18.2 | 600 | 7.2.12 |
-| Paper | 1.17.1 | 608 | 7-2.14 |
-| | | | |
-| Purpur | 1.19.4-1979 | 5.0.0 | FastAsyncWorldEdit-Bukkit-2.6.2-SNAPSHOT-439 |
-| Purpur | 1.19.3-1933 | 5.0.0 | FastAsyncWorldEdit-Bukkit-2.6.2-SNAPSHOT-439 |
-| Also tested with: | | | |
-| | MyWorlds-1.19.3-v3-213 | | |
-| | BKCommonLib-1.19.3-v3-1512 | | |
+| Server | Versions    | Dependencies |                         |
+| ------ | ----------- | ------------ | ----------------------- |
+|        |             | ProtocolLib  | WorldEdit               |
+| Paper  | 1.20.1      | 654          | 7.2.15-SNAPSHOT         |
+| Paper  | 1.19.3      | 608          | 7-2.13                  |
+| Paper  | 1.18.2      | 600          | 7.2.12                  |
+| Paper  | 1.17.1      | 608          | 7-2.14                  |
+|        |             |              |                         |
+| Purpur | 1.19.4-1979 | 5.0.0        | FAWE-2.6.2-SNAPSHOT-439 |
+| Purpur | 1.19.3-1933 | 5.0.0        | FAWE-2.6.2-SNAPSHOT-439 |
+| Also tested with:    || MyWorlds    | 1.19.3-v3-213           |
+|                      || BKCommonLib | 1.19.3-v3-1512          |
 
 ## Table of Contents
 * [Installation](#installation)
