@@ -217,14 +217,14 @@ class AdventureCommand(customItems: CustomItems) {
 
     private fun enchantmentsArgument(nodeName: String = "enchantment"): Argument<Enchantment> =
         CustomArgument(StringArgument(nodeName)) { nameArg ->
-            allEnchants[nameArg.input] ?: throw CustomArgument.CustomArgumentException(CustomArgument.MessageBuilder("That enchant does not exist"))
+            allEnchants[nameArg.input] ?: throw CustomArgument.CustomArgumentException.fromMessageBuilder(CustomArgument.MessageBuilder("That enchant does not exist"))
         }.replaceSuggestions(ArgumentSuggestions.strings {
             allEnchants.keys.toTypedArray()
         })
 
     private fun customItemArgument(nodeName: String = "custom-item"): Argument<CustomItem> =
         CustomArgument(StringArgument(nodeName)) { nameArg ->
-            allItems[nameArg.input] ?: throw CustomArgument.CustomArgumentException(CustomArgument.MessageBuilder("That item does not exist"))
+            allItems[nameArg.input] ?: throw CustomArgument.CustomArgumentException.fromMessageBuilder(CustomArgument.MessageBuilder("That item does not exist"))
         }.replaceSuggestions(ArgumentSuggestions.strings {
             allItems.keys.toTypedArray()
         })

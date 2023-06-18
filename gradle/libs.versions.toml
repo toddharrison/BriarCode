@@ -1,13 +1,19 @@
 [versions]
 
-kotlin             = "1.8.0"
+kotlin             = "1.8.22"
 java               = "17"
-kotlincoroutines   = "1.6.4"
+kotlincoroutines   = "1.7.1"
 minecraft          = "1.20.1"
 paper              = "1.20.1-R0.1-SNAPSHOT"
 bukkit-api         = "1.19"
-commandapi         = "9.0.0"
-pitest-junitplugin = "1.1.0"
+commandapi         = "9.0.3"
+pitest-junitplugin = "1.2.0"
+
+kover              = "0.6.1"
+gradlepitestplugin = "1.9.11"
+pluginyml          = "0.5.3"
+runtask            = "2.1.0"
+paperweightuserdev = "1.5.5"
 
 
 
@@ -15,29 +21,29 @@ pitest-junitplugin = "1.1.0"
 
 kotlin-stdlib          = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlin-reflect         = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
-kotlin-serialization   = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.4.1" }
+kotlin-serialization   = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.5.1" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlincoroutines" }
 kotlin-coroutines-jdk8 = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-jdk8", version.ref = "kotlincoroutines" }
 kotlin-logging         = { group = "io.github.microutils", name = "kotlin-logging-jvm", version = "3.0.5" }
 
-lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.24" }
+lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.28" }
 
-junit-jupiter          = { group = "org.junit.jupiter", name = "junit-jupiter", version = "5.9.1" }
-junit-jupiter-params   = { group = "org.junit.jupiter", name = "junit-jupiter-params", version = "5.0.0" }
-kotlin-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version = "1.6.4" }
-mockito-java           = { group = "org.mockito", name = "mockito-junit-jupiter", version = "4.6.1" }
-mockito-kotlin         = { group = "org.mockito.kotlin", name = "mockito-kotlin", version = "4.0.0" }
+junit-jupiter          = { group = "org.junit.jupiter", name = "junit-jupiter", version = "5.9.3" }
+junit-jupiter-params   = { group = "org.junit.jupiter", name = "junit-jupiter-params", version = "5.9.3" }
+kotlin-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version = "1.7.1" }
+mockito-java           = { group = "org.mockito", name = "mockito-junit-jupiter", version = "5.3.1" }
+mockito-kotlin         = { group = "org.mockito.kotlin", name = "mockito-kotlin", version = "5.0.0" }
 
 paper            = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
 commandapi       = { group = "dev.jorel", name = "commandapi-annotations", version.ref = "commandapi" }
 luckperms        = { group = "net.luckperms", name = "api", version = "5.4" }
 vault            = { group = "com.github.milkbowl", name = "vault", version = "1.7.3" }
 protocollib      = { group = "com.comphenix.protocol", name = "ProtocolLib", version = "5.0.0-SNAPSHOT" }
-worldedit        = { group = "com.sk89q.worldedit", name = "worldedit-bukkit", version = "7.2.10" }
-worldguard       = { group = "com.sk89q.worldguard", name = "worldguard-bukkit", version = "7.0.7" }
-mccoroutine-api  = { group = "com.github.shynixn.mccoroutine", name = "mccoroutine-bukkit-api", version = "2.9.0" }
-mccoroutine-core = { group = "com.github.shynixn.mccoroutine", name = "mccoroutine-bukkit-core", version = "2.9.0" }
-placeholderapi   = { group = "me.clip", name = "placeholderapi", version = "2.10.9" }
+worldedit        = { group = "com.sk89q.worldedit", name = "worldedit-bukkit", version = "7.2.15" }
+worldguard       = { group = "com.sk89q.worldguard", name = "worldguard-bukkit", version = "7.0.8" }
+mccoroutine-api  = { group = "com.github.shynixn.mccoroutine", name = "mccoroutine-bukkit-api", version = "2.12.1" }
+mccoroutine-core = { group = "com.github.shynixn.mccoroutine", name = "mccoroutine-bukkit-core", version = "2.12.1" }
+placeholderapi   = { group = "me.clip", name = "placeholderapi", version = "2.11.3" }
 protectionstones = { group = "dev.espi", name = "protectionstones", version = "2.10.2" } # 2.10.3
 
 reflectionremapper = { group = "xyz.jpenilla", name = "reflection-remapper", version = "0.1.0-SNAPSHOT" }
@@ -47,20 +53,13 @@ mysql   = { group = "mysql", name = "mysql-connector-java", version = "8.0.33" }
 mariadb = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version = "3.1.4" }
 h2      = { group = "com.h2database", name = "h2", version = "2.1.214" }
 
-slf4j = { group = "org.slf4j", name = "slf4j-jdk14", version = "1.7.36" }
-log4j = { group = "org.apache.logging.log4j", name = "log4j-core", version = "2.17.2" }
+slf4j = { group = "org.slf4j", name = "slf4j-jdk14", version = "2.0.7" }
+log4j = { group = "org.apache.logging.log4j", name = "log4j-core", version = "2.20.0" }
 
 
 
 [plugins]
 
-kotlin        = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" } # Not working
-paper-userdev = { id = "io.papermc.paperweight.userdev", version = "1.5.5" } # Not working
+#kotlin        = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" } # Not working
+#paper-userdev = { id = "io.papermc.paperweight.userdev", version = "1.5.5" } # Not working
 shadow        = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
-
-#kotlin = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", version = "1.8.0" }
-#implementation("org.jetbrains.kotlinx:kover:0.6.1") // Kover
-#implementation("info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.9.11") // Pitest
-#implementation("net.minecrell:plugin-yml:0.5.3") // Generates plugin.xml during build
-#implementation("xyz.jpenilla:run-task:2.0.1") // Adds runServer and runMojangMappedServer tasks for testing
-#implementation("gradle.plugin.com.github.johnrengelman:shadow:7.1.2") // shadowJar
