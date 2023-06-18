@@ -1,4 +1,4 @@
-name: Publish adventure Plugin
+name: Publish all Plugins
 on: [workflow_dispatch]
 jobs:
   publish:
