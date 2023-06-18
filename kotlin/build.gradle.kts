@@ -4,27 +4,29 @@ import kotlinx.kover.api.VerificationValueType
 
 plugins {
     id("briarcode.kotlin-plugin")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.shadow)
+//    alias(libs.plugins.paper.userdev)
     id("io.papermc.paperweight.userdev")
 }
 
-version = "1.8.0.3"
+version = "1.0.0-${libs.versions.kotlin.get()}"
 description = ""
 
 dependencies {
-    paperDevBundle("1.20-R0.1-SNAPSHOT")
-    implementation("xyz.jpenilla:reflection-remapper:0.1.0-SNAPSHOT")
+    paperweight.paperDevBundle(libs.versions.paper.get())
 
-    library("org.jetbrains.kotlin:kotlin-stdlib")
-    library("org.jetbrains.kotlin:kotlin-reflect")
-    library("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
-    library("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    library("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
+    implementation(libs.reflectionremapper)
 
-//    library("io.github.microutils", "kotlin-logging-jvm", "3.0.5")
+    library(libs.kotlin.stdlib)
+    library(libs.kotlin.reflect)
+    library(libs.kotlin.serialization)
+    library(libs.kotlin.coroutines.core)
+    library(libs.kotlin.coroutines.jdk8)
 
-    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.9.0")
-    library("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.9.0")
+//    library(libs.kotlin.logging)
+
+    library(libs.mccoroutine.api)
+    library(libs.mccoroutine.core)
 }
 
 tasks {

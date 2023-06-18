@@ -2,7 +2,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder
 
 plugins {
     id("briarcode.kotlin-plugin")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.shadow)
 }
 
 version = "1.3.0"
@@ -12,8 +12,8 @@ dependencies {
     api(project(":adventure-api"))
 
     // CommandAPI
-    implementation("dev.jorel", "commandapi-annotations", "9.0.0")
-    annotationProcessor("dev.jorel", "commandapi-annotations", "9.0.0")
+    implementation(libs.commandapi)
+    annotationProcessor(libs.commandapi)
 }
 
 tasks {

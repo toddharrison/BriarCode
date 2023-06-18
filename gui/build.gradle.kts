@@ -2,7 +2,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder
 
 plugins {
     id("briarcode.kotlin-plugin")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.shadow)
 }
 
 version = "1.2.0"

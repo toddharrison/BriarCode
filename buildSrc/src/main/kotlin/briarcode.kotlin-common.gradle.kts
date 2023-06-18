@@ -1,4 +1,10 @@
+import org.gradle.accessors.dm.LibrariesForLibs
+
+// https://github.com/gradle/gradle/issues/15383
+val libs = the<LibrariesForLibs>()
+
 plugins {
+//    alias(libs.plugins.kotlin)
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlinx.kover")
 }
@@ -6,10 +12,10 @@ plugins {
 dependencies {
     api(platform("org.jetbrains.kotlin:kotlin-bom"))
 
-//    implementation("io.github.microutils", "kotlin-logging-jvm", "3.0.5")
+//    implementation(libs.kotlin.logging)
 
     testImplementation(kotlin("test"))
-    testImplementation("org.mockito.kotlin", "mockito-kotlin", "4.0.0")
+    testImplementation(libs.mockito.kotlin)
 }
 
 tasks {

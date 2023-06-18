@@ -1,3 +1,8 @@
+import org.gradle.accessors.dm.LibrariesForLibs
+
+// https://github.com/gradle/gradle/issues/15383
+val libs = the<LibrariesForLibs>()
+
 plugins {
     java
     id("info.solidsoft.pitest")
@@ -21,15 +26,15 @@ repositories {
 }
 
 dependencies {
-    implementation("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
+    implementation(libs.paper)
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.0.0")
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter.params)
 }
 
 tasks {
     compileJava {
-        options.release.set(17)
+        options.release.set(libs.versions.java.get().toInt())
     }
     test {
         useJUnitPlatform()
@@ -38,7 +43,7 @@ tasks {
 
 pitest {
     verbose.set(false)
-    junit5PluginVersion.set("1.1.0")
+    junit5PluginVersion.set(libs.versions.pitest.junitplugin)
 //    mutators.set(setOf("STRONGER"))
 //    avoidCallsTo.set(setOf("kotlin.jvm.internal"))
     threads.set(Runtime.getRuntime().availableProcessors())

@@ -64,7 +64,7 @@ class FeatureListener(private val plugin: RegionScanPlugin, private val action: 
         } else null
 
         val subKey = if (state is CreatureSpawner) {
-            state.spawnedType.key
+            state.spawnedType?.key
         } else null
 
         return FeatureData("TileEntity", state.type.key, subKey, state.location, facing)

@@ -1,3 +1,8 @@
+import org.gradle.accessors.dm.LibrariesForLibs
+
+// https://github.com/gradle/gradle/issues/15383
+val libs = the<LibrariesForLibs>()
+
 plugins {
     id("briarcode.kotlin-common")
     id("briarcode.plugin")
@@ -7,20 +12,20 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(libs.versions.java.get().toInt())
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.kotlin.serialization)
+    implementation(libs.kotlin.coroutines.core)
+    implementation(libs.kotlin.coroutines.jdk8)
 
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.9.0")
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.9.0")
+    implementation(libs.mccoroutine.api)
+    implementation(libs.mccoroutine.core)
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation(libs.kotlin.coroutines.test)
 }
 
 pitest {

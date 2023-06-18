@@ -2,6 +2,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder
 
 plugins {
     id("briarcode.kotlin-plugin")
+//    alias(libs.plugins.paper.userdev)
     id("io.papermc.paperweight.userdev")
 }
 
@@ -11,12 +12,12 @@ description = ""
 dependencies {
     api(project(":kotlin"))
 
-    paperDevBundle("1.20-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle(libs.versions.paper.get())
 
-    compileOnly("xyz.jpenilla:reflection-remapper:0.1.0-SNAPSHOT")
+    compileOnly(libs.reflectionremapper)
 
     // WorldGuard
-    compileOnly("com.sk89q.worldguard", "worldguard-bukkit", "7.0.7")
+    compileOnly(libs.worldguard)
 }
 
 tasks {

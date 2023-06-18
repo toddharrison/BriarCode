@@ -29,7 +29,7 @@ class TileEntityOriginListener(
                     val data = state.blockData.asString
                     val detail = when (state) {
                         is Lootable -> state.lootTable?.key?.asString()
-                        is CreatureSpawner -> state.spawnedType.key.asString()
+                        is CreatureSpawner -> state.spawnedType?.key?.asString()
                         is BrewingStand -> state.inventory.asSequence()
                             .filterNotNull()
                             .filter { it.type == Material.POTION }

@@ -11,15 +11,15 @@ dependencies {
     api(project(":kotlin"))
 
     // WorldGuard / WorldEdit
-    implementation("com.sk89q.worldguard", "worldguard-bukkit", "7.0.7")
-    implementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.10")
+    implementation(libs.worldguard)
+    implementation(libs.worldedit)
 
     // Protection Stones
-    implementation("dev.espi", "protectionstones", "2.10.2") // 2.10.3
+    implementation(libs.protectionstones)
 
     // CommandAPI
-    implementation("dev.jorel", "commandapi-annotations", "9.0.0")
-    annotationProcessor("dev.jorel", "commandapi-annotations", "9.0.0")
+    implementation(libs.commandapi)
+    annotationProcessor(libs.commandapi)
 
     api(project(":data-source"))
 }
