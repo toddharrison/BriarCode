@@ -6,7 +6,7 @@ plugins {
     id("io.papermc.paperweight.userdev")
 }
 
-version = "1.1.1"
+version = "2.0.0-SNAPSHOT"
 description = ""
 
 dependencies {
