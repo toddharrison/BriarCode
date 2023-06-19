@@ -4,19 +4,20 @@ plugins {
     id("briarcode.kotlin-plugin")
 }
 
-version = "1.2.0"
+version = "2.0.0-SNAPSHOT"
 description = ""
 
 dependencies {
     api(project(":kotlin"))
 
-    library("com.zaxxer", "HikariCP", "5.0.1")
-    library("org.slf4j", "slf4j-jdk14", "1.7.36")
-    library("mysql", "mysql-connector-java", "8.0.32")
-    library("com.h2database", "h2", "2.1.214")
+    library(libs.hikari)
+    library(libs.slf4j)
+    library(libs.mysql)
+    library(libs.mariadb)
+    library(libs.h2)
 
-    testImplementation("com.zaxxer", "HikariCP", "5.0.1")
-    testImplementation("com.h2database", "h2", "2.1.214")
+    testImplementation(libs.hikari)
+    testImplementation(libs.h2)
 }
 
 pitest {

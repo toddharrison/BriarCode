@@ -2,10 +2,10 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder
 
 plugins {
     id("briarcode.kotlin-plugin")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.shadow)
 }
 
-version = "1.5.0"
+version = "2.0.0-SNAPSHOT"
 description = ""
 
 dependencies {
@@ -13,11 +13,11 @@ dependencies {
     api(project(":econ-api"))
 
     // Vault
-    implementation("com.github.milkbowl:vault:1.7.3")
+    implementation(libs.vault)
 
     // CommandAPI
-    implementation("dev.jorel", "commandapi-annotations", "9.0.0")
-    annotationProcessor("dev.jorel", "commandapi-annotations", "9.0.0")
+    implementation(libs.commandapi)
+    annotationProcessor(libs.commandapi)
 }
 
 tasks {

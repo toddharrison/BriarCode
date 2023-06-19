@@ -4,8 +4,8 @@ import net.minecraft.core.Holder
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.levelgen.structure.StructureCheckResult
 import org.bukkit.*
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld
-import org.bukkit.craftbukkit.v1_19_R3.generator.strucutre.CraftStructure
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld
+import org.bukkit.craftbukkit.v1_20_R1.generator.structure.CraftStructure
 import org.bukkit.generator.structure.StructureType
 
 val structureByKey = Registry.STRUCTURE.associateBy { it.key }

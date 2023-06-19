@@ -132,7 +132,7 @@ class WarpCommand(
         CustomArgument(StringArgument(nodeName)) { nodeArg ->
             val name = nodeArg.input
             warps[name]
-                ?: throw CustomArgument.CustomArgumentException(CustomArgument.MessageBuilder("That warp does not exist"))
+                ?: throw CustomArgument.CustomArgumentException.fromMessageBuilder(CustomArgument.MessageBuilder("That warp does not exist"))
         }.replaceSuggestions(ArgumentSuggestions.strings { _ ->
             (warps.keys.map { it }.toSet())
                 .toTypedArray()

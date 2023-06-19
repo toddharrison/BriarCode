@@ -3,13 +3,14 @@ plugins {
     id("briarcode.paper")
 }
 
-version = "1.1.0"
+version = "2.0.0-SNAPSHOT"
 description = ""
 
 dependencies {
-    implementation("me.clip", "placeholderapi", "2.10.9") {
-        exclude("org.bstats", "bstats-bukkit")
-    }
+    implementation(libs.placeholderapi.get())
+//    {
+//        exclude("org.bstats", "bstats-bukkit")
+//    }
 }
 
 tasks {

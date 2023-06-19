@@ -3,18 +3,18 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission
 
 plugins {
     id("briarcode.java-plugin")
-    id("com.github.johnrengelman.shadow")
+    alias(libs.plugins.shadow)
 }
 
-version = "2.1.1"
+version = "3.0.0-SNAPSHOT"
 description = ""
 
 dependencies {
     api(project(":fake-block-api"))
 
-    implementation("org.apache.logging.log4j", "log4j-core", "2.17.2")
-    implementation("com.comphenix.protocol", "ProtocolLib", "5.0.0-SNAPSHOT")
-    implementation("com.sk89q.worldedit", "worldedit-bukkit", "7.2.10")
+    implementation(libs.log4j)
+    implementation(libs.protocollib)
+    implementation(libs.worldedit)
 }
 
 tasks {

@@ -4,18 +4,18 @@ plugins {
     id("briarcode.kotlin-plugin")
 }
 
-version = "1.3.0"
+version = "2.0.0-SNAPSHOT"
 description = ""
 
 dependencies {
     api(project(":kotlin"))
 
     // CommandAPI
-    implementation("dev.jorel", "commandapi-annotations", "9.0.0")
-    annotationProcessor("dev.jorel", "commandapi-annotations", "9.0.0")
+    implementation(libs.commandapi)
+    annotationProcessor(libs.commandapi)
 
     // LuckPerms
-    implementation("net.luckperms:api:5.4")
+    implementation(libs.luckperms)
 }
 
 pitest {

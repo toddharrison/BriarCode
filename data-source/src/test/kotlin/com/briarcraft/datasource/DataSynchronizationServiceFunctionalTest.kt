@@ -23,7 +23,6 @@ class DataSynchronizationServiceFunctionalTest {
     private val dataSourceService: DataSourceService
 
     init {
-        Class.forName("org.h2.Driver")
         val resourceUrl = DataSourceFunctionalTest::class.java.getResource("/test.properties")!!
         val resourcePath = File(resourceUrl.toURI()).absolutePath
         dataSource = HikariDataSource(HikariConfig(resourcePath))
@@ -60,7 +59,7 @@ class DataSynchronizationServiceFunctionalTest {
         @Nested
         inner class WriteStreamTest {
             @Test
-            fun `do something`() = runTest() {
+            fun `do something`() = runTest {
                 // Arrange
                 val data = sequenceOf(
                     TestData("2"),
@@ -77,7 +76,7 @@ class DataSynchronizationServiceFunctionalTest {
                 service.start()
                 service.write(TestData("1"))
                 service.write(data)
-                withContext(Dispatchers.Default) { delay(10.seconds) }
+                withContext(Dispatchers.Default) { delay(1.seconds) }
                 service.write(TestData("10"))
                 service.stop()
 

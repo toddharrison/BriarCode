@@ -1,3 +1,8 @@
+import org.gradle.accessors.dm.LibrariesForLibs
+
+// https://github.com/gradle/gradle/issues/15383
+val libs = the<LibrariesForLibs>()
+
 plugins {
     id("briarcode.paper")
     id("briarcode.publish")
@@ -12,13 +17,13 @@ dependencies {
 
 tasks {
     runServer {
-        minecraftVersion("1.19.4")
+        minecraftVersion(libs.versions.minecraft.get())
     }
 }
 
 bukkit {
     main = "com.briarcraft"
-    apiVersion = "1.19"
+    apiVersion = libs.versions.bukkit.api.get()
     prefix = project.name
     authors = listOf("toddharrison")
 }
