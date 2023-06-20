@@ -7,7 +7,7 @@ convenience.
 Download the latest plugin and library releases below, or use the [releases](../../releases) link at right to download
 specific versions. If there isn't a release of a module, it's still in beta!
 * [kotlin-1.8.0.3](../../releases/download/kotlin-1.8.0.3/kotlin-1.8.0.3.jar)
-* [fake-block-2.1.1](../../releases/download/fake-block-2.1.1/fake-block-2.1.1.jar)
+* [fake-block-3.0.0](../../releases/download/fake-block-3.0.0/fake-block-3.0.0.jar)
 * [fake-block-api-3.0](../../releases/download/fake-block-api-3.0/fake-block-api-3.0.jar)
 * [gui-1.2.0](../../releases/download/gui-1.2.0/gui-1.2.0.jar)
 * [gui-api-1.2](../../releases/download/gui-1.2.0/gui-api-1.2.jar)

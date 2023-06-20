@@ -3,8 +3,7 @@ This Java API is used by plugins that wish to integrate with fake-block services
 
 Currently tested on:
 * Paper 19.2
-
-***NOTE: Still in beta! Test before using on a production server.***
+* Paper 1.20.1
 
 ## Table of Contents
 * [Usage](#usage)
@@ -14,31 +13,38 @@ Currently tested on:
 
 ## Usage
 
-***FUTURE: The repo is not yet configured. Download and include manually for now.***
-
-First, add the repo to your build:
-
-***TBD***
-
-Next, include this library in your plugin using either the Gradle coordinate (kotlin):
-```kotlin
-implementation("com.briarcraft:fake-block-api:1.0")
+First, add the repo to your Gradle build:
+```gradle
+repositories {
+    maven { url 'https://jitpack.io' }
+}
 ```
-(groovy):
+or Maven build:
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+Next, include this library in your plugin using either the Gradle coordinate:
 ```groovy
-implementation 'com.briarcraft:fake-block-api:1.0'
+dependencies {
+    implementation 'com.github.toddharrison.BriarCode:fake-block-api:fake-block-api-3.0'
+}
 ```
 or the Maven coordinate:
 ```xml
 <dependency>
-  <groupId>com.briarcraft</groupId>
-  <artifactId>fake-block-api</artifactId>
-  <version>1.0</version>
+    <groupId>com.github.toddharrison.BriarCode</groupId>
+    <artifactId>fake-block-api</artifactId>
+    <version>fake-block-api-3.0</version>
 </dependency>
 ```
 
 Do not shadow the API into your plugin. The release of fake-block has the API included itself already and will be
-available at runtime.
+available at runtime, assuming a shared classloader environment provided by spigot plugins.
 
 ## Services
 Fake-block publishes several Bukkit services, detailed below.

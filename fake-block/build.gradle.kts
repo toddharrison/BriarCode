@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.shadow)
 }
 
-version = "3.0.0-SNAPSHOT"
+version = "3.0.0"
 description = ""
 
 dependencies {
