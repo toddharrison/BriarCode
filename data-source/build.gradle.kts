@@ -25,13 +25,13 @@ pitest {
     coverageThreshold.set(0)
 }
 
-kover {
+koverReport {
     verify {
         rule {
             bound {
                 minValue = 0
-                counter = kotlinx.kover.api.CounterType.INSTRUCTION
-                valueType = kotlinx.kover.api.VerificationValueType.COVERED_PERCENTAGE
+                metric = kotlinx.kover.gradle.plugin.dsl.MetricType.INSTRUCTION
+                aggregation = kotlinx.kover.gradle.plugin.dsl.AggregationType.COVERED_PERCENTAGE
             }
         }
     }

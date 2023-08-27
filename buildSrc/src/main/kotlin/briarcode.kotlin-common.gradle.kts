@@ -27,5 +27,5 @@ tasks {
     }
 }
 
-kover {
+koverReport {
 }

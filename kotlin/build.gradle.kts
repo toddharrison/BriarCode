@@ -1,6 +1,4 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder
-import kotlinx.kover.api.CounterType
-import kotlinx.kover.api.VerificationValueType
 
 plugins {
     id("briarcode.kotlin-plugin")
@@ -48,13 +46,13 @@ pitest {
     coverageThreshold.set(0)
 }
 
-kover {
+koverReport {
     verify {
         rule {
             bound {
                 minValue = 1
-                counter = CounterType.INSTRUCTION
-                valueType = VerificationValueType.COVERED_PERCENTAGE
+                metric = kotlinx.kover.gradle.plugin.dsl.MetricType.INSTRUCTION
+                aggregation = kotlinx.kover.gradle.plugin.dsl.AggregationType.COVERED_PERCENTAGE
             }
         }
     }
