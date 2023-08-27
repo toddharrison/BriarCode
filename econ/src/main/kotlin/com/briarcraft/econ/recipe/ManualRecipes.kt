@@ -4,6 +4,7 @@ import com.briarcraft.econ.api.recipe.ManualRecipe
 import com.briarcraft.econ.api.recipe.RecipeSet
 import org.bukkit.Material
 
+// TODO This is a duplicate of the configuration
 class ManualRecipes: RecipeSet {
     override val recipes = setOf(
         ManualRecipe(Material.WHITE_SHULKER_BOX, Material.SHULKER_BOX, Material.WHITE_DYE),
@@ -49,6 +50,8 @@ class ManualRecipes: RecipeSet {
         ManualRecipe(Material.STRIPPED_MANGROVE_LOG, Material.MANGROVE_LOG),
         ManualRecipe(Material.STRIPPED_CRIMSON_STEM, Material.CRIMSON_STEM),
         ManualRecipe(Material.STRIPPED_WARPED_STEM, Material.WARPED_STEM),
+        ManualRecipe(Material.STRIPPED_BAMBOO_BLOCK, Material.BAMBOO_BLOCK),
+        ManualRecipe(Material.STRIPPED_CHERRY_LOG, Material.CHERRY_LOG),
 
         ManualRecipe(Material.CARVED_PUMPKIN, Material.PUMPKIN),
 
@@ -94,5 +97,51 @@ class ManualRecipes: RecipeSet {
         ManualRecipe(Material.RAW_IRON, Material.IRON_ORE),
         ManualRecipe(Material.RAW_COPPER, Material.COPPER_ORE),
         ManualRecipe(Material.RAW_GOLD, Material.GOLD_ORE),
+
+        ManualRecipe(Material.BLACK_BED, Material.WHITE_BED, Material.BLACK_DYE),
+        ManualRecipe(Material.BLACK_CARPET, Material.WHITE_CARPET, Material.BLACK_DYE),
+        ManualRecipe(Material.BLACK_WOOL, Material.WHITE_WOOL, Material.BLACK_DYE),
+        ManualRecipe(Material.BLUE_BED, Material.WHITE_BED, Material.BLUE_DYE),
+        ManualRecipe(Material.BLUE_CARPET, Material.WHITE_CARPET, Material.BLUE_DYE),
+        ManualRecipe(Material.BLUE_WOOL, Material.WHITE_WOOL, Material.BLUE_DYE),
+        ManualRecipe(Material.BROWN_BED, Material.WHITE_BED, Material.BROWN_DYE),
+        ManualRecipe(Material.BROWN_CARPET, Material.WHITE_CARPET, Material.BROWN_DYE),
+        ManualRecipe(Material.BROWN_WOOL, Material.WHITE_WOOL, Material.BROWN_DYE),
+        ManualRecipe(Material.CYAN_BED, Material.WHITE_BED, Material.CYAN_DYE),
+        ManualRecipe(Material.CYAN_CARPET, Material.WHITE_CARPET, Material.CYAN_DYE),
+        ManualRecipe(Material.CYAN_WOOL, Material.WHITE_WOOL, Material.CYAN_DYE),
+        ManualRecipe(Material.GRAY_BED, Material.WHITE_BED, Material.GRAY_DYE),
+        ManualRecipe(Material.GRAY_CARPET, Material.WHITE_CARPET, Material.GRAY_DYE),
+        ManualRecipe(Material.GRAY_WOOL, Material.WHITE_WOOL, Material.GRAY_DYE),
+        ManualRecipe(Material.GREEN_BED, Material.WHITE_BED, Material.GREEN_DYE),
+        ManualRecipe(Material.GREEN_CARPET, Material.WHITE_CARPET, Material.GREEN_DYE),
+        ManualRecipe(Material.GREEN_WOOL, Material.WHITE_WOOL, Material.GREEN_DYE),
+        ManualRecipe(Material.LIGHT_BLUE_BED, Material.WHITE_BED, Material.LIGHT_BLUE_DYE),
+        ManualRecipe(Material.LIGHT_BLUE_CARPET, Material.WHITE_CARPET, Material.LIGHT_BLUE_DYE),
+        ManualRecipe(Material.LIGHT_BLUE_WOOL, Material.WHITE_WOOL, Material.LIGHT_BLUE_DYE),
+        ManualRecipe(Material.LIGHT_GRAY_BED, Material.WHITE_BED, Material.LIGHT_GRAY_DYE),
+        ManualRecipe(Material.LIGHT_GRAY_CARPET, Material.WHITE_CARPET, Material.LIGHT_GRAY_DYE),
+        ManualRecipe(Material.LIGHT_GRAY_WOOL, Material.WHITE_WOOL, Material.LIGHT_GRAY_DYE),
+        ManualRecipe(Material.LIME_BED, Material.WHITE_BED, Material.LIME_DYE),
+        ManualRecipe(Material.LIME_CARPET, Material.WHITE_CARPET, Material.LIME_DYE),
+        ManualRecipe(Material.LIME_WOOL, Material.WHITE_WOOL, Material.LIME_DYE),
+        ManualRecipe(Material.MAGENTA_BED, Material.WHITE_BED, Material.MAGENTA_DYE),
+        ManualRecipe(Material.MAGENTA_CARPET, Material.WHITE_CARPET, Material.MAGENTA_DYE),
+        ManualRecipe(Material.MAGENTA_WOOL, Material.WHITE_WOOL, Material.MAGENTA_DYE),
+        ManualRecipe(Material.ORANGE_BED, Material.WHITE_BED, Material.ORANGE_DYE),
+        ManualRecipe(Material.ORANGE_CARPET, Material.WHITE_CARPET, Material.ORANGE_DYE),
+        ManualRecipe(Material.ORANGE_WOOL, Material.WHITE_WOOL, Material.ORANGE_DYE),
+        ManualRecipe(Material.PINK_BED, Material.WHITE_BED, Material.PINK_DYE),
+        ManualRecipe(Material.PINK_CARPET, Material.WHITE_CARPET, Material.PINK_DYE),
+        ManualRecipe(Material.PINK_WOOL, Material.WHITE_WOOL, Material.PINK_DYE),
+        ManualRecipe(Material.PURPLE_BED, Material.WHITE_BED, Material.PURPLE_DYE),
+        ManualRecipe(Material.PURPLE_CARPET, Material.WHITE_CARPET, Material.PURPLE_DYE),
+        ManualRecipe(Material.PURPLE_WOOL, Material.WHITE_WOOL, Material.PURPLE_DYE),
+        ManualRecipe(Material.RED_BED, Material.WHITE_BED, Material.RED_DYE),
+        ManualRecipe(Material.RED_CARPET, Material.WHITE_CARPET, Material.RED_DYE),
+        ManualRecipe(Material.RED_WOOL, Material.WHITE_WOOL, Material.RED_DYE),
+        ManualRecipe(Material.YELLOW_BED, Material.WHITE_BED, Material.YELLOW_DYE),
+        ManualRecipe(Material.YELLOW_CARPET, Material.WHITE_CARPET, Material.YELLOW_DYE),
+        ManualRecipe(Material.YELLOW_WOOL, Material.WHITE_WOOL, Material.YELLOW_DYE),
     )
 }

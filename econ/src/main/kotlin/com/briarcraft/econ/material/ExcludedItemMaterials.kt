@@ -76,6 +76,12 @@ class ExcludedItemMaterials: MaterialSet {
         Material.ZOMBIE_HORSE_SPAWN_EGG,
         Material.ZOMBIE_VILLAGER_SPAWN_EGG,
         Material.ZOMBIFIED_PIGLIN_SPAWN_EGG,
+        Material.CAMEL_SPAWN_EGG,
+        Material.ENDER_DRAGON_SPAWN_EGG,
+        Material.IRON_GOLEM_SPAWN_EGG,
+        Material.SNIFFER_SPAWN_EGG,
+        Material.SNOW_GOLEM_SPAWN_EGG,
+        Material.WITHER_SPAWN_EGG,
 
         Material.POTION,
         Material.ENCHANTED_BOOK,

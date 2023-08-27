@@ -41,6 +41,91 @@ removed.recipes:
   - "minecraft:mossy_cobblestone_from_moss_block"
   - "minecraft:mossy_stone_bricks_from_moss_block"
 
+  - "minecraft:dye_black_bed"
+  - "minecraft:dye_black_carpet"
+  - "minecraft:dye_black_wool"
+  - "minecraft:dye_blue_bed"
+  - "minecraft:dye_blue_carpet"
+  - "minecraft:dye_blue_wool"
+  - "minecraft:dye_brown_bed"
+  - "minecraft:dye_brown_carpet"
+  - "minecraft:dye_brown_wool"
+  - "minecraft:dye_cyan_bed"
+  - "minecraft:dye_cyan_carpet"
+  - "minecraft:dye_cyan_wool"
+  - "minecraft:dye_gray_bed"
+  - "minecraft:dye_gray_carpet"
+  - "minecraft:dye_gray_wool"
+  - "minecraft:dye_green_bed"
+  - "minecraft:dye_green_carpet"
+  - "minecraft:dye_green_wool"
+  - "minecraft:dye_light_blue_bed"
+  - "minecraft:dye_light_blue_carpet"
+  - "minecraft:dye_light_blue_wool"
+  - "minecraft:dye_light_gray_bed"
+  - "minecraft:dye_light_gray_carpet"
+  - "minecraft:dye_light_gray_wool"
+  - "minecraft:dye_lime_bed"
+  - "minecraft:dye_lime_carpet"
+  - "minecraft:dye_lime_wool"
+  - "minecraft:dye_magenta_bed"
+  - "minecraft:dye_magenta_carpet"
+  - "minecraft:dye_magenta_wool"
+  - "minecraft:dye_orange_bed"
+  - "minecraft:dye_orange_carpet"
+  - "minecraft:dye_orange_wool"
+  - "minecraft:dye_pink_bed"
+  - "minecraft:dye_pink_carpet"
+  - "minecraft:dye_pink_wool"
+  - "minecraft:dye_purple_bed"
+  - "minecraft:dye_purple_carpet"
+  - "minecraft:dye_purple_wool"
+  - "minecraft:dye_red_bed"
+  - "minecraft:dye_red_carpet"
+  - "minecraft:dye_red_wool"
+  - "minecraft:dye_white_bed"
+  - "minecraft:dye_white_carpet"
+  - "minecraft:dye_white_wool"
+  - "minecraft:dye_yellow_bed"
+  - "minecraft:dye_yellow_carpet"
+  - "minecraft:dye_yellow_wool"
+
+  - "minecraft:coast_armor_trim_smithing_template"
+  - "minecraft:dune_armor_trim_smithing_template"
+  - "minecraft:eye_armor_trim_smithing_template"
+  - "minecraft:host_armor_trim_smithing_template"
+  - "minecraft:netherite_upgrade_smithing_template"
+  - "minecraft:raiser_armor_trim_smithing_template"
+  - "minecraft:rib_armor_trim_smithing_template"
+  - "minecraft:sentry_armor_trim_smithing_template"
+  - "minecraft:shaper_armor_trim_smithing_template"
+  - "minecraft:silence_armor_trim_smithing_template"
+  - "minecraft:snout_armor_trim_smithing_template"
+  - "minecraft:spire_armor_trim_smithing_template"
+  - "minecraft:tide_armor_trim_smithing_template"
+  - "minecraft:ward_armor_trim_smithing_template"
+  - "minecraft:wayfinder_armor_trim_smithing_template"
+  - "minecraft:wild_armor_trim_smithing_template"
+  - "minecraft:vex_armor_trim_smithing_template"
+
+  - "minecraft:coast_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:dune_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:eye_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:host_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:netherite_upgrade_smithing_template_smithing_trim"
+  - "minecraft:raiser_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:rib_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:sentry_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:shaper_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:silence_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:snout_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:spire_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:tide_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:ward_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:wayfinder_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:wild_armor_trim_smithing_template_smithing_trim"
+  - "minecraft:vex_armor_trim_smithing_template_smithing_trim"
+
 # Derived-type missing recipes
 manual:
   WHITE_SHULKER_BOX: SHULKER_BOX, WHITE_DYE
@@ -59,7 +144,7 @@ manual:
   GREEN_SHULKER_BOX: SHULKER_BOX, GREEN_DYE
   RED_SHULKER_BOX: SHULKER_BOX, RED_DYE
   BLACK_SHULKER_BOX: SHULKER_BOX, BLACK_DYE
-    
+
   WHITE_CONCRETE: WHITE_CONCRETE_POWDER
   ORANGE_CONCRETE: ORANGE_CONCRETE_POWDER
   MAGENTA_CONCRETE: MAGENTA_CONCRETE_POWDER
@@ -76,7 +161,7 @@ manual:
   GREEN_CONCRETE: GREEN_CONCRETE_POWDER
   RED_CONCRETE: RED_CONCRETE_POWDER
   BLACK_CONCRETE: BLACK_CONCRETE_POWDER
-    
+
   STRIPPED_OAK_LOG: OAK_LOG
   STRIPPED_SPRUCE_LOG: SPRUCE_LOG
   STRIPPED_BIRCH_LOG: BIRCH_LOG
@@ -86,9 +171,11 @@ manual:
   STRIPPED_MANGROVE_LOG: MANGROVE_LOG
   STRIPPED_CRIMSON_STEM: CRIMSON_STEM
   STRIPPED_WARPED_STEM: WARPED_STEM
-    
+  STRIPPED_BAMBOO_BLOCK: BAMBOO_BLOCK
+  STRIPPED_CHERRY_LOG: CHERRY_LOG
+
   CARVED_PUMPKIN: PUMPKIN
-    
+
   DEAD_TUBE_CORAL_BLOCK: TUBE_CORAL_BLOCK
   DEAD_BRAIN_CORAL_BLOCK: BRAIN_CORAL_BLOCK
   DEAD_BUBBLE_CORAL_BLOCK: BUBBLE_CORAL_BLOCK
@@ -104,17 +191,17 @@ manual:
   DEAD_BUBBLE_CORAL_FAN: BUBBLE_CORAL_FAN
   DEAD_FIRE_CORAL_FAN: FIRE_CORAL_FAN
   DEAD_HORN_CORAL_FAN: HORN_CORAL_FAN
-    
+
   COD: COD_BUCKET
   SALMON: SALMON_BUCKET
   TROPICAL_FISH: TROPICAL_FISH_BUCKET
   PUFFERFISH: PUFFERFISH_BUCKET
-    
+
   MUD: DIRT
-    
+
   WRITTEN_BOOK: WRITABLE_BOOK
   FILLED_MAP: MAP
-    
+
   DEEPSLATE_COAL_ORE: COAL_ORE
   DEEPSLATE_IRON_ORE: IRON_ORE
   DEEPSLATE_COPPER_ORE: COPPER_ORE
@@ -123,11 +210,57 @@ manual:
   DEEPSLATE_EMERALD_ORE: EMERALD_ORE
   DEEPSLATE_LAPIS_ORE: LAPIS_ORE
   DEEPSLATE_DIAMOND_ORE: DIAMOND_ORE
-    
+
   EXPOSED_COPPER: COPPER_BLOCK
   WEATHERED_COPPER: COPPER_BLOCK
   OXIDIZED_COPPER: COPPER_BLOCK
-    
+
   RAW_IRON: IRON_ORE
   RAW_COPPER: COPPER_ORE
   RAW_GOLD: GOLD_ORE
+
+  BLACK_BED: WHITE_BED, BLACK_DYE
+  BLACK_CARPET: WHITE_CARPET, BLACK_DYE
+  BLACK_WOOL: WHITE_WOOL, BLACK_DYE
+  BLUE_BED: WHITE_BED, BLUE_DYE
+  BLUE_CARPET: WHITE_CARPET, BLUE_DYE
+  BLUE_WOOL: WHITE_WOOL, BLUE_DYE
+  BROWN_BED: WHITE_BED, BROWN_DYE
+  BROWN_CARPET: WHITE_CARPET, BROWN_DYE
+  BROWN_WOOL: WHITE_WOOL, BROWN_DYE
+  CYAN_BED: WHITE_BED, CYAN_DYE
+  CYAN_CARPET: WHITE_CARPET, CYAN_DYE
+  CYAN_WOOL: WHITE_WOOL, CYAN_DYE
+  GRAY_BED: WHITE_BED, GRAY_DYE
+  GRAY_CARPET: WHITE_CARPET, GRAY_DYE
+  GRAY_WOOL: WHITE_WOOL, GRAY_DYE
+  GREEN_BED: WHITE_BED, GREEN_DYE
+  GREEN_CARPET: WHITE_CARPET, GREEN_DYE
+  GREEN_WOOL: WHITE_WOOL, GREEN_DYE
+  LIGHT_BLUE_BED: WHITE_BED, LIGHT_BLUE_DYE
+  LIGHT_BLUE_CARPET: WHITE_CARPET, LIGHT_BLUE_DYE
+  LIGHT_BLUE_WOOL: WHITE_WOOL, LIGHT_BLUE_DYE
+  LIGHT_GRAY_BED: WHITE_BED, LIGHT_GRAY_DYE
+  LIGHT_GRAY_CARPET: WHITE_CARPET, LIGHT_GRAY_DYE
+  LIGHT_GRAY_WOOL: WHITE_WOOL, LIGHT_GRAY_DYE
+  LIME_BED: WHITE_BED, LIME_DYE
+  LIME_CARPET: WHITE_CARPET, LIME_DYE
+  LIME_WOOL: WHITE_WOOL, LIME_DYE
+  MAGENTA_BED: WHITE_BED, MAGENTA_DYE
+  MAGENTA_CARPET: WHITE_CARPET, MAGENTA_DYE
+  MAGENTA_WOOL: WHITE_WOOL, MAGENTA_DYE
+  ORANGE_BED: WHITE_BED, ORANGE_DYE
+  ORANGE_CARPET: WHITE_CARPET, ORANGE_DYE
+  ORANGE_WOOL: WHITE_WOOL, ORANGE_DYE
+  PINK_BED: WHITE_BED, PINK_DYE
+  PINK_CARPET: WHITE_CARPET, PINK_DYE
+  PINK_WOOL: WHITE_WOOL, PINK_DYE
+  PURPLE_BED: WHITE_BED, PURPLE_DYE
+  PURPLE_CARPET: WHITE_CARPET, PURPLE_DYE
+  PURPLE_WOOL: WHITE_WOOL, PURPLE_DYE
+  RED_BED: WHITE_BED, RED_DYE
+  RED_CARPET: WHITE_CARPET, RED_DYE
+  RED_WOOL: WHITE_WOOL, RED_DYE
+  YELLOW_BED: WHITE_BED, YELLOW_DYE
+  YELLOW_CARPET: WHITE_CARPET, YELLOW_DYE
+  YELLOW_WOOL: WHITE_WOOL, YELLOW_DYE
