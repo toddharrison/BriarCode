@@ -3,6 +3,7 @@ package com.briarcraft.adventure
 import com.briarcraft.adventure.api.enchant.updateEnchantingLore
 import com.briarcraft.adventure.api.item.CustomItem
 import com.briarcraft.adventure.item.CustomItems
+import com.destroystokyo.paper.loottable.LootableBlockInventory
 import com.destroystokyo.paper.loottable.LootableEntityInventory
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPICommand
@@ -130,13 +131,13 @@ class AdventureCommand(customItems: CustomItems) {
                                 val distance = 5
                                 val entity = getEntityPlayerIsLookingAt(player, distance, setOf(EntityType.MINECART_CHEST))
                                 if (entity is StorageMinecart) {
-                                    getEntityLootTable(entity, player)
+                                    getEntityLootTable(entity, entity, player)
                                 } else {
                                     val block = player.getTargetBlock(null, distance) as Block?
                                     when (val state = block?.state) {
-                                        is Chest -> getBlockLootTable(state, player)
-                                        is ShulkerBox -> getBlockLootTable(state, player)
-                                        is Barrel -> getBlockLootTable(state, player)
+                                        is Chest -> getBlockLootTable(block, state, player)
+                                        is ShulkerBox -> getBlockLootTable(block, state, player)
+                                        is Barrel -> getBlockLootTable(block, state, player)
                                         else -> player.sendMessage("Not looking at container")
                                     }
                                 }
@@ -144,21 +145,23 @@ class AdventureCommand(customItems: CustomItems) {
                     .withSubcommand(
                         CommandAPICommand("set")
                             .withArguments(
-                                LootTableArgument("lootTable")
+                                LootTableArgument("lootTable"),
+                                IntegerArgument("seconds", 0).setOptional(true)
                             )
                             .executesPlayer(PlayerCommandExecutor { player, args ->
                                 val lootTable = args[0] as LootTable?
+                                val seconds = args[1] as Int?
                                 if (lootTable != null) {
                                     val distance = 5
                                     val entity = getEntityPlayerIsLookingAt(player, distance, setOf(EntityType.MINECART_CHEST))
                                     if (entity is StorageMinecart) {
-                                        setEntityLootTable(entity, lootTable, player)
+                                        setEntityLootTable(entity, lootTable, seconds, player)
                                     } else {
                                         val block = player.getTargetBlock(null, distance) as Block?
                                         when (val state = block?.state) {
-                                            is Chest -> setBlockLootTable(state, lootTable, player)
-                                            is ShulkerBox -> setBlockLootTable(state, lootTable, player)
-                                            is Barrel -> setBlockLootTable(state, lootTable, player)
+                                            is Chest -> setBlockLootTable(state, lootTable, seconds, player)
+                                            is ShulkerBox -> setBlockLootTable(state, lootTable, seconds, player)
+                                            is Barrel -> setLootTable(state, lootTable, player)
                                             else -> player.sendMessage("Not looking at container")
                                         }
                                     }
@@ -189,22 +192,32 @@ class AdventureCommand(customItems: CustomItems) {
         }?.hitEntity
     }
 
-    private fun getEntityLootTable(entity: LootableEntityInventory, player: Player) {
-        val lootTable = entity.lootTable
-        player.sendMessage("Loot table is '${lootTable?.key?.asString()}'")
+    private fun getEntityLootTable(entity: Entity, lootable: LootableEntityInventory, player: Player) {
+        val lootTable = lootable.lootTable
+        player.sendMessage("${entity.type} loot '${lootTable?.key?.asString()}'")
     }
 
-    private fun getBlockLootTable(state: Lootable, player: Player) {
+    private fun getBlockLootTable(block: Block, state: Lootable, player: Player) {
         val lootTable = state.lootTable
-        player.sendMessage("Loot table is '${lootTable?.key?.asString()}'")
+        player.sendMessage("${block.type} loot '${lootTable?.key?.asString()}'")
     }
 
-    private fun <E> setEntityLootTable(entity: E, lootTable: LootTable, player: Player) where E: Entity, E: LootableEntityInventory {
+    private fun <E> setEntityLootTable(entity: E, lootTable: LootTable, seconds: Int?, player: Player) where E: Entity, E: LootableEntityInventory {
         entity.lootTable = lootTable
+        val now = System.currentTimeMillis()
+        if (seconds != null) entity.setNextRefill(now + seconds * 1000)
         player.sendMessage("Setting loot table '${lootTable.key.asString()}' for ${entity.type}")
     }
 
-    private fun <S> setBlockLootTable(state: S, lootTable: LootTable, player: Player) where S: BlockState, S: Lootable {
+    private fun <S> setBlockLootTable(state: S, lootTable: LootTable, seconds: Int?, player: Player) where S: BlockState, S: LootableBlockInventory {
+        state.lootTable = lootTable
+        val now = System.currentTimeMillis()
+        if (seconds != null) state.setNextRefill(now + seconds * 1000)
+        state.update()
+        player.sendMessage("Setting loot table '${lootTable.key.asString()}' for ${state.type}")
+    }
+
+    private fun <S> setLootTable(state: S, lootTable: LootTable, player: Player) where S: BlockState, S: Lootable {
         state.lootTable = lootTable
         state.update()
         player.sendMessage("Setting loot table '${lootTable.key.asString()}' for ${state.type}")

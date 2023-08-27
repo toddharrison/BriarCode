@@ -47,8 +47,14 @@ class CustomItems(plugin: JavaPlugin, enchants: PotionEffectEnchantments) {
 
     init {
         items.forEach { item ->
-            if (item is CraftableItem) Bukkit.addRecipe(item.recipe)
-            if (item is ListenerItem) plugin.server.pluginManager.registerSuspendingEvents(item, plugin)
+            if (item is CraftableItem) {
+                Bukkit.addRecipe(item.recipe)
+                plugin.server.sendMessage(Component.text("Registering recipe for ${item.key.asString()}"))
+            }
+            if (item is ListenerItem) {
+                plugin.server.pluginManager.registerSuspendingEvents(item, plugin)
+                plugin.server.sendMessage(Component.text("Registering listener for ${item.key.asString()}"))
+            }
         }
     }
 }
