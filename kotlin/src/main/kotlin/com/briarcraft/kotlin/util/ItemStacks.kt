@@ -1,10 +1,12 @@
 package com.briarcraft.kotlin.util
 
 import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
-import java.util.EnumMap
+import org.bukkit.inventory.meta.Damageable
+import java.util.*
 import kotlin.math.min
 
 fun itemStackOf(
@@ -69,3 +71,47 @@ fun EnumMap<Material, Int>.intersection(items: EnumMap<Material, Int>) =
             }
         }
     }
+
+/**
+ * This method compares the specified ItemStack to see if they are equal, but does not consider durability (damage).
+ * Params:
+ * stack – the item stack to compare to
+ * Returns:
+ * true if the two stacks are equal, ignoring the durability
+ */
+fun ItemStack.equalsIgnoringDamage(obj: Any): Boolean {
+    if (this === obj) return true
+    if (obj !is ItemStack) return false
+
+    return amount == obj.amount && isSimilarIgnoringDamage(obj)
+}
+
+/**
+ * This method is the same as equals, but does not consider stack size (amount) or durability (damage).
+ * Params:
+ * stack – the item stack to compare to
+ * Returns:
+ * true if the two stacks are equal, ignoring the damage and amount
+ */
+@Suppress("DEPRECATION")
+fun ItemStack.isSimilarIgnoringDamage(stack: ItemStack?): Boolean {
+    if (stack == null) return false
+    if (stack == this) return true
+    if (hasItemMeta() != stack.hasItemMeta()) return false
+
+    val comparisonType = if (type.isLegacy) Bukkit.getUnsafe().fromLegacy(data, true) else type
+    return if (hasItemMeta()) {
+        val meta = itemMeta
+        val stackMeta = stack.itemMeta
+        if (meta is Damageable && stackMeta is Damageable) {
+            meta.damage = stackMeta.damage
+            comparisonType == stack.type
+                    && if (hasItemMeta()) Bukkit.getItemFactory().equals(meta, stackMeta) else true
+        } else {
+            comparisonType == stack.type
+                    && if (hasItemMeta()) Bukkit.getItemFactory().equals(itemMeta, stack.itemMeta) else true
+        }
+    } else {
+        comparisonType == stack.type
+    }
+}
