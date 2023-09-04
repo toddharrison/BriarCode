@@ -57,9 +57,10 @@ fun clearLore(item: ItemStack) {
 }
 
 fun getRepairCost(item: ItemStack): Int {
-    return getEnchants(item).map { (enchant, level) ->
+    return min(getEnchants(item).map { (enchant, level) ->
         when (enchant) {
             is LevelCostEnchantment -> enchant.getExperienceLevelCost(level)
+
             Enchantment.SILK_TOUCH,
             Enchantment.SOUL_SPEED,
             Enchantment.SWIFT_SNEAK,
@@ -68,6 +69,7 @@ fun getRepairCost(item: ItemStack): Int {
             Enchantment.BINDING_CURSE,
             Enchantment.VANISHING_CURSE,
             Enchantment.THORNS -> 4 * level
+
             Enchantment.MENDING,
             Enchantment.RIPTIDE,
             Enchantment.IMPALING,
@@ -85,7 +87,8 @@ fun getRepairCost(item: ItemStack): Int {
             Enchantment.DEPTH_STRIDER,
             Enchantment.FROST_WALKER,
             Enchantment.SWEEPING_EDGE -> 2 * level
+
             else -> 1 * level
         }
-    }.sum()
+    }.sum(), 39)
 }
