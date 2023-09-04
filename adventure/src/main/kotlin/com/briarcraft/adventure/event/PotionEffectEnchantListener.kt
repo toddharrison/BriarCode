@@ -1,12 +1,12 @@
 package com.briarcraft.adventure.event
 
 import com.briarcraft.adventure.api.enchant.potion.PotionEffectEnchantment
+import com.briarcraft.kotlin.util.isSimilarIgnoringDamage
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
@@ -14,34 +14,47 @@ class PotionEffectEnchantListener: Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun on(event: PlayerArmorChangeEvent) {
         val player = event.player
-        player.activePotionEffects.forEach { effect -> player.removePotionEffect(effect.type) }
-        player.inventory.armorContents
-            .filterNotNull()
-            .flatMap { it.enchantments.entries }
-            .mapNotNull { (enchant, level) -> if (enchant is PotionEffectEnchantment) enchant.effectType to level else null }
-            .groupBy { (effect, _) -> effect }
-            .map { (effect, levels) -> effect to levels.sumOf { it.second } }
-            .forEach { (effect, level) -> updateEffect(player, effect, level) }
-    }
+        val oldItem = event.oldItem
+        val newItem = event.newItem
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    fun on(event: EntityPotionEffectEvent) {
-        val entity = event.entity
-        if (entity is Player && event.cause == EntityPotionEffectEvent.Cause.EXPIRATION) {
-            val effectType = event.modifiedType
-            val amplifier = entity.inventory.armorContents
-                .filterNotNull()
-                .flatMap { it.enchantments.entries }
-                .filter { (enchant, _) -> enchant is PotionEffectEnchantment && enchant.effectType == effectType }
-                .sumOf { (_, level) -> level }
-            if (amplifier > 0) {
-                updateEffect(entity, effectType, amplifier)
+        if (oldItem == null || !oldItem.isSimilarIgnoringDamage(newItem)) {
+            if (oldItem != null) {
+                // Remove effects from old item
+                val oldEffectTypes = oldItem.enchantments
+                    .mapNotNull { (enchant, level) -> if (enchant is PotionEffectEnchantment) enchant.effectType to level else null }
+                oldEffectTypes.forEach { (type, level) ->
+                    val playerEffectLevel = player.activePotionEffects
+                        .filter { it.isInfinite }
+                        .filter { it.type == type }
+                        .sumOf { it.amplifier + 1 }
+                    val newLevel = playerEffectLevel - level
+                    player.removePotionEffect(type)
+                    if (newLevel > 0) {
+                        updateEffect(player, type, newLevel)
+                    }
+                }
+            }
+            if (newItem != null) {
+                // Add effects from new item
+                val newEffectTypes = newItem.enchantments
+                    .mapNotNull { (enchant, level) -> if (enchant is PotionEffectEnchantment) enchant.effectType to level else null }
+                newEffectTypes.forEach { (type, level) ->
+                    val playerEffectLevel = player.activePotionEffects
+                        .filter { it.isInfinite }
+                        .filter { it.type == type }
+                        .sumOf { it.amplifier + 1 }
+                    val newLevel = playerEffectLevel + level
+                    player.removePotionEffect(type)
+                    if (newLevel > 0) {
+                        updateEffect(player, type, newLevel)
+                    }
+                }
             }
         }
     }
 
     private fun updateEffect(player: Player, effectType: PotionEffectType, level: Int) {
-        val duration = 20 * 100_000
+        val duration = -1
         val amplifier = level - 1
         val ambient = false
         val particles = false
