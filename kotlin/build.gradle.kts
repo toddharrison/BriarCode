@@ -7,7 +7,7 @@ plugins {
     id("io.papermc.paperweight.userdev")
 }
 
-version = "2.0.0-${libs.versions.kotlin.get()}-SNAPSHOT"
+version = "2.0.0-${libs.versions.kotlin.get()}"
 description = ""
 
 dependencies {
