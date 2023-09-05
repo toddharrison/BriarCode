@@ -2,7 +2,7 @@ plugins {
     id("briarcode.kotlin-plugin-api")
 }
 
-version = "2.0"
+version = "2.1-SNAPSHOT"
 description = ""
 
 dependencies {
