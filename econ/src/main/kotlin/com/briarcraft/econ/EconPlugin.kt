@@ -77,16 +77,16 @@ class EconPlugin: SuspendingJavaPlugin() {
         recipeService = loadRecipeService(plugin, YamlConfiguration()
             .also { it.load(File(dataFolder, "recipes.yml")) })
             .also { it.registerService() }
+            .also { it.recipeManager.exportRecipes(File(dataFolder, "recipes.json")) }
         materialService = loadMaterialService(plugin, recipeService, YamlConfiguration()
             .also { it.load(File(dataFolder, "materials.yml")) })
             .also { it.registerService() }
+//            .also { println(it.baseItems.types) }
         marketService = loadMarketService(plugin, currencyService, recipeService, materialService, guiService, marketConfig)
             .also { it.registerService() }
         server.pluginManager.getPlugin("Vault")?.let {
             VaultService(plugin, currencyService).registerService()
         }
-
-        recipeService.recipeManager.exportRecipes(File(dataFolder, "recipes.json"))
 
         // Register commands
         currencyCommand = CurrencyCommand(currencyService).also { it.registerCommands() }

@@ -14,15 +14,28 @@ suspend fun forEntitiesInChunk(
     ignoreEntityTypes: Set<EntityType> = setOf(),
     action: suspend (Sequence<Entity>) -> Unit
 ) {
-    chunk.addPluginChunkTicket(plugin)
+//    chunk.addPluginChunkTicket(plugin)
 
     while (!chunk.isEntitiesLoaded) {
         delay(millisecondsBetweenLoadCheck)
     }
-    action(chunk.entities
+
+    var entities = chunk.entities
         .asSequence()
         .filterNot { it is Player }
-        .filter { !ignoreEntityTypes.contains(it.type) })
+        .filter { !ignoreEntityTypes.contains(it.type) }
 
-    chunk.removePluginChunkTicket(plugin)
+    if (!chunk.isLoaded) {
+        chunk.addPluginChunkTicket(plugin)
+        println("*** Force loading Chunk(${chunk.x}, ${chunk.z}) to save entities")
+        entities = chunk.entities
+            .asSequence()
+            .filterNot { it is Player }
+            .filter { !ignoreEntityTypes.contains(it.type) }
+        chunk.removePluginChunkTicket(plugin)
+    }
+
+    action(entities)
+
+//    chunk.removePluginChunkTicket(plugin)
 }

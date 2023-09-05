@@ -16,7 +16,7 @@ dependencies {
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}") // Kotlin
-    implementation("org.jetbrains.kotlinx:kover:${libs.versions.kover.get()}") // Kover
+    implementation("org.jetbrains.kotlinx:kover-gradle-plugin:${libs.versions.kover.get()}") // Kover
     implementation("info.solidsoft.gradle.pitest:gradle-pitest-plugin:${libs.versions.gradlepitestplugin.get()}") // Pitest
     implementation("net.minecrell:plugin-yml:${libs.versions.pluginyml.get()}") // Generates plugin.xml during build
     implementation("xyz.jpenilla:run-task:${libs.versions.runtask.get()}") // Adds runServer and runMojangMappedServer tasks for testing

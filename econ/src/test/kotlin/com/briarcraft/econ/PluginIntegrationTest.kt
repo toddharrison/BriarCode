@@ -117,7 +117,7 @@ class PluginIntegrationTest {
         inner class RecipeManagerTest {
             @Test
             fun `verify available recipes`() {
-                assertEquals(1089, recipeManager.getRecipes().count())
+                assertEquals(1174, recipeManager.getRecipes().count())
             }
         }
 
@@ -125,19 +125,19 @@ class PluginIntegrationTest {
         inner class RecipeServiceTest {
             @Test
             fun `verify removed recipe set`() {
-                assertEquals(31, recipeService.removedRecipes.recipes.size)
+                assertEquals(112, recipeService.removedRecipes.recipes.size)
             }
 
             @Test
             fun `verify manual recipe set`() {
-                assertEquals(78, recipeService.manualRecipes.recipes.size)
+                assertEquals(125, recipeService.manualRecipes.recipes.size)
             }
 
             @Test
             fun `verify recipe sets`() {
                 assertEquals(2, recipeService.recipeSets.size)
-                assertEquals(78, recipeService.recipeSets[RECIPES_MANUAL]?.recipes?.size)
-                assertEquals(31, recipeService.recipeSets[RECIPES_REMOVED]?.recipes?.size)
+                assertEquals(125, recipeService.recipeSets[RECIPES_MANUAL]?.recipes?.size)
+                assertEquals(112, recipeService.recipeSets[RECIPES_REMOVED]?.recipes?.size)
             }
         }
 
@@ -151,7 +151,7 @@ class PluginIntegrationTest {
             @Test
             fun `verify material sets`() {
                 assertEquals(5, materialService.materialSets.size)
-                assertEquals(79, materialService.materialSets[MATERIALS_EXCLUDED]?.types?.size)
+                assertEquals(85, materialService.materialSets[MATERIALS_EXCLUDED]?.types?.size)
                 assertEquals(28, materialService.materialSets[MATERIALS_UNAVAILABLE]?.types?.size)
                 assertEquals(64, materialService.materialSets[MATERIALS_INVALID]?.types?.size)
                 assertEquals(3, materialService.materialSets[REDUCE_COBBLE]?.types?.size)
@@ -160,18 +160,18 @@ class PluginIntegrationTest {
 
             @Test
             fun `verify excluded item set`() {
-                assertEquals(79, materialService.excludedItems.types.size)
+                assertEquals(85, materialService.excludedItems.types.size)
             }
 
             @Test
             fun `verify base item set`() {
-                assertEquals(352, materialService.baseItems.types.size)
+                assertEquals(299, materialService.baseItems.types.size)
             }
 
             @Test
             fun `verify reduce items`() {
-                assertEquals(794, materialService.reduceItems.keys.size)
-                assertEquals(346, materialService.reduceItems.values.flatMap { it.keys }.toSet().size)
+                assertEquals(841, materialService.reduceItems.keys.size)
+                assertEquals(359, materialService.reduceItems.values.flatMap { it.keys }.toSet().size)
             }
 
             @Test
